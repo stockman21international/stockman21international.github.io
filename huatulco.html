@@ -15,12 +15,8 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;}
-
-/* LANG */
 .lang-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:6px 16px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;cursor:pointer;transition:all .2s;}
 .lang-btn.active,.lang-btn:hover{background:var(--gold);color:var(--white);}
-
-/* HERO */
 .hero{position:relative;height:88vh;min-height:540px;overflow:hidden;display:flex;align-items:flex-end;padding-top:60px;}
 .hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&auto=format&fit=crop&q=85');background-size:cover;background-position:center 35%;}
 .hero-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,27,48,.95) 0%,rgba(11,27,48,.45) 48%,rgba(11,27,48,.1) 100%);}
@@ -30,21 +26,15 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--tex
 .hero-h em{font-style:italic;}
 .hero-line{width:48px;height:1px;background:var(--gold);margin:24px 0;opacity:.65;}
 .hero-sub{font-size:14px;font-weight:300;color:rgba(255,255,255,.72);line-height:1.88;max-width:510px;}
-
-/* TRUST BAR */
 .trust{background:var(--gold);padding:28px 72px;display:flex;justify-content:center;gap:60px;flex-wrap:wrap;}
 .t-item{text-align:center;color:var(--white);}
 .t-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;display:block;}
 .t-lbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.85;}
-
-/* CARDS SECTION */
 .props{padding:96px 72px;background:var(--cream);}
 .s-head{text-align:center;margin-bottom:68px;}
 .s-eye{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
 .s-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--text);}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1200px;margin:0 auto;}
-
-/* CARD */
 .card{background:var(--white);border:1px solid var(--border);display:flex;flex-direction:column;}
 .c-photos{display:grid;grid-template-columns:2fr 1fr 1fr;height:220px;gap:3px;}
 .c-photos .ph{background-size:cover;background-position:center;}
@@ -63,8 +53,6 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--tex
 .am::before{content:'✓';color:var(--gold);font-weight:700;font-size:13px;flex-shrink:0;}
 .c-cta{display:block;background:var(--gold);color:var(--white);border:none;padding:17px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;text-align:center;text-decoration:none;cursor:pointer;transition:background .2s;margin-top:auto;}
 .c-cta:hover{background:var(--gold-d);}
-
-/* DETAIL */
 .detail{background:var(--navy);padding:96px 72px;border-top:1px solid rgba(201,150,58,.15);}
 .d-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start;}
 .d-eye{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
@@ -80,13 +68,9 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--tex
 .d-hr{border:none;border-top:1px solid rgba(201,150,58,.2);margin:36px 0;}
 .d-slbl{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
 .d-sn{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:var(--white);line-height:1;}
-
-/* FOOTER */
 footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
 .f-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--gold);}
 .f-txt{font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.08em;}
-
-/* RESPONSIVE */
 @media(max-width:960px){
   .grid,.d-in{grid-template-columns:1fr;gap:44px;}
   .props,.detail{padding:72px 32px;}
@@ -98,16 +82,14 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
 </head>
 <body>
 
-<!-- HEADER -->
 <header style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,27,48,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,150,58,.18);">
   <div style="max-width:1200px;margin:0 auto;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;">
-    <!-- BRAND -->
     <div style="display:flex;align-items:center;gap:10px;">
       <svg width="32" height="32" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M48 18 C46 30 44 44 43 62" stroke="#c9963a" stroke-width="3" stroke-linecap="round" fill="none"/>
         <path d="M47 22 C36 12 22 13 16 22" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C42 8 46 0 55 4"    stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C56 10 66 10 70 18"  stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C42 8 46 0 55 4" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C56 10 66 10 70 18" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
         <polygon points="22,58 36,44 50,58" fill="#c9963a"/>
         <rect x="25" y="57" width="22" height="16" fill="#c9963a"/>
         <rect x="32" y="61" width="8" height="8" fill="#0b1b30" rx="1"/>
@@ -118,7 +100,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
         <div style="font-family:'Montserrat',sans-serif;font-size:.45rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(201,150,58,.7);margin-top:2px;">YOUR BETTER LIFE.</div>
       </div>
     </div>
-    <!-- NAV RIGHT -->
     <div style="display:flex;align-items:center;gap:6px;">
       <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
       <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">FR</button>
@@ -126,7 +107,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-ov"></div>
@@ -142,35 +122,19 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
   </div>
 </section>
 
-<!-- TRUST BAR -->
 <div class="trust">
-  <div class="t-item">
-    <span class="t-num">5.0 ★</span>
-    <span class="t-lbl" data-en="Perfect rating" data-fr="Note parfaite">Perfect rating</span>
-  </div>
-  <div class="t-item">
-    <span class="t-num" data-en="Superhost" data-fr="Superhôte">Superhost</span>
-    <span class="t-lbl" data-en="Verified on Airbnb" data-fr="Vérifié sur Airbnb">Verified on Airbnb</span>
-  </div>
-  <div class="t-item">
-    <span class="t-num">&lt;24h</span>
-    <span class="t-lbl" data-en="Response time" data-fr="Délai de réponse">Response time</span>
-  </div>
-  <div class="t-item">
-    <span class="t-num">10</span>
-    <span class="t-lbl" data-en="Nights minimum" data-fr="Nuits minimum">Nights minimum</span>
-  </div>
+  <div class="t-item"><span class="t-num">5.0 ★</span><span class="t-lbl" data-en="Perfect rating" data-fr="Note parfaite">Perfect rating</span></div>
+  <div class="t-item"><span class="t-num" data-en="Superhost" data-fr="Superhôte">Superhost</span><span class="t-lbl" data-en="Verified on Airbnb" data-fr="Vérifié sur Airbnb">Verified on Airbnb</span></div>
+  <div class="t-item"><span class="t-num">&lt;24h</span><span class="t-lbl" data-en="Response time" data-fr="Délai de réponse">Response time</span></div>
+  <div class="t-item"><span class="t-num">10</span><span class="t-lbl" data-en="Nights minimum" data-fr="Nuits minimum">Nights minimum</span></div>
 </div>
 
-<!-- CARDS -->
 <section class="props">
   <div class="s-head">
     <p class="s-eye" data-en="Our Properties" data-fr="Nos propriétés">Our Properties</p>
     <h2 class="s-title" data-en="Choose Your Escape" data-fr="Choisissez votre escapade">Choose Your Escape</h2>
   </div>
   <div class="grid">
-
-    <!-- SUITE SOLANA -->
     <div class="card">
       <div class="c-photos">
         <div class="ph" style="background-image:url('https://a0.muscache.com/im/pictures/hosting/Hosting-1488542384895420095/original/109e488a-0a3b-45ba-b3ae-09f951804ca3.jpeg')"></div>
@@ -181,28 +145,19 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
         <div class="c-tags" data-en="SUITE · BEACH CLUBS · CHAHUÉ · BLUE FLAG" data-fr="SUITE · BEACH CLUBS · CHAHUÉ · PAVILLON BLEU">SUITE · BEACH CLUBS · CHAHUÉ · BLUE FLAG</div>
         <div class="c-row">
           <h3 class="c-name">Suite Solana</h3>
-          <div class="c-pblock">
-            <div class="c-price">$110–130 CAD</div>
-            <div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div>
-          </div>
+          <div class="c-pblock"><div class="c-price">$110–130 CAD</div><div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div></div>
         </div>
         <div class="c-badge"><span class="st">★★★★★</span><span data-en="NEW · 5.0" data-fr="NOUVEAU · 5.0">NEW · 5.0</span></div>
-        <p class="c-desc"
-           data-en="Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation."
-           data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée.">
-          Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation.
-        </p>
+        <p class="c-desc" data-en="Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation." data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée.">Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation.</p>
         <div class="c-ams">
-          <div class="am" data-en="Starlink WiFi"          data-fr="WiFi Starlink">Starlink WiFi</div>
-          <div class="am" data-en="Swimming pool"          data-fr="Piscine">Swimming pool</div>
-          <div class="am" data-en="Air conditioning"       data-fr="Climatisation">Air conditioning</div>
+          <div class="am" data-en="Starlink WiFi" data-fr="WiFi Starlink">Starlink WiFi</div>
+          <div class="am" data-en="Swimming pool" data-fr="Piscine">Swimming pool</div>
+          <div class="am" data-en="Air conditioning" data-fr="Climatisation">Air conditioning</div>
           <div class="am" data-en="Fully equipped kitchen" data-fr="Cuisine entièrement équipée">Fully equipped kitchen</div>
         </div>
         <a href="https://www.airbnb.ca/rooms/1488542384895420095" target="_blank" rel="noopener noreferrer" class="c-cta" data-en="BOOK ON AIRBNB — SUITE SOLANA →" data-fr="RÉSERVER SUR AIRBNB — SUITE SOLANA →">BOOK ON AIRBNB — SUITE SOLANA →</a>
       </div>
     </div>
-
-    <!-- LOFT TAMARINDOS -->
     <div class="card">
       <div class="c-photos">
         <div class="ph" style="background-image:url('https://a0.muscache.com/im/pictures/miso/Hosting-47977613/original/000f7aa6-23fd-4037-9a8b-9ef30f98dfd0.jpeg')"></div>
@@ -213,55 +168,39 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
         <div class="c-tags" data-en="BOUTIQUE BUILDING · CHAHUÉ BEACH · COMMERCIAL ZONE" data-fr="IMMEUBLE BOUTIQUE · PLAGE CHAHUÉ · ZONE COMMERCIALE">BOUTIQUE BUILDING · CHAHUÉ BEACH · COMMERCIAL ZONE</div>
         <div class="c-row">
           <h3 class="c-name">Loft Tamarindos</h3>
-          <div class="c-pblock">
-            <div class="c-price">$70–105 CAD</div>
-            <div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div>
-          </div>
+          <div class="c-pblock"><div class="c-price">$70–105 CAD</div><div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div></div>
         </div>
         <div class="c-badge"><span class="st">★★★★★</span><span data-en="SUPERHOST · 4.9" data-fr="SUPERHÔTE · 4.9">SUPERHOST · 4.9</span></div>
-        <p class="c-desc"
-           data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers."
-           data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou le télétravail.">
-          Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers.
-        </p>
+        <p class="c-desc" data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers." data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou le télétravail.">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers.</p>
         <div class="c-ams">
-          <div class="am" data-en="Stable WiFi"       data-fr="WiFi stable">Stable WiFi</div>
-          <div class="am" data-en="Swimming pool"     data-fr="Piscine">Swimming pool</div>
+          <div class="am" data-en="Stable WiFi" data-fr="WiFi stable">Stable WiFi</div>
+          <div class="am" data-en="Swimming pool" data-fr="Piscine">Swimming pool</div>
           <div class="am" data-en="Beach 10 min away" data-fr="Plage à 10 minutes">Beach 10 min away</div>
-          <div class="am" data-en="Full kitchen"      data-fr="Cuisine complète">Full kitchen</div>
+          <div class="am" data-en="Full kitchen" data-fr="Cuisine complète">Full kitchen</div>
         </div>
         <a href="https://www.airbnb.ca/rooms/47977613" target="_blank" rel="noopener noreferrer" class="c-cta" data-en="BOOK ON AIRBNB — LOFT TAMARINDOS →" data-fr="RÉSERVER SUR AIRBNB — LOFT TAMARINDOS →">BOOK ON AIRBNB — LOFT TAMARINDOS →</a>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- DETAIL: SUITE SOLANA -->
 <section class="detail">
   <div class="d-in">
     <div>
       <p class="d-eye" data-en="Property detail" data-fr="Détail de la propriété">Property detail</p>
       <h2 class="d-name">Suite Solana</h2>
-      <p class="d-desc"
-         data-en="Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco."
-         data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage à seulement 5 minutes. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée au cœur de Huatulco.">
-        Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco.
-      </p>
-      <div class="d-host">
-        <div class="d-stars">★★★★★</div>
-        <div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div>
-      </div>
+      <p class="d-desc" data-en="Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco." data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage à seulement 5 minutes. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée au cœur de Huatulco.">Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco.</p>
+      <div class="d-host"><div class="d-stars">★★★★★</div><div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div></div>
     </div>
     <div>
       <p class="d-atitle" data-en="Full Amenities" data-fr="Équipements complets">Full Amenities</p>
       <ul class="d-ams">
-        <li data-en="Starlink WiFi"                  data-fr="WiFi Starlink">Starlink WiFi</li>
-        <li data-en="Swimming pool"                  data-fr="Piscine">Swimming pool</li>
-        <li data-en="Air conditioning"               data-fr="Climatisation">Air conditioning</li>
-        <li data-en="Fully equipped kitchen"         data-fr="Cuisine entièrement équipée">Fully equipped kitchen</li>
-        <li data-en="Beach within walking distance"  data-fr="Plage accessible à pied">Beach within walking distance</li>
-        <li data-en="Supermarket 5 min walk"         data-fr="Supermarché à 5 min à pied">Supermarket 5 min walk</li>
+        <li data-en="Starlink WiFi" data-fr="WiFi Starlink">Starlink WiFi</li>
+        <li data-en="Swimming pool" data-fr="Piscine">Swimming pool</li>
+        <li data-en="Air conditioning" data-fr="Climatisation">Air conditioning</li>
+        <li data-en="Fully equipped kitchen" data-fr="Cuisine entièrement équipée">Fully equipped kitchen</li>
+        <li data-en="Beach within walking distance" data-fr="Plage accessible à pied">Beach within walking distance</li>
+        <li data-en="Supermarket 5 min walk" data-fr="Supermarché à 5 min à pied">Supermarket 5 min walk</li>
       </ul>
       <hr class="d-hr">
       <p class="d-slbl" data-en="Minimum stay" data-fr="Séjour minimum">Minimum stay</p>
@@ -270,31 +209,23 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
   </div>
 </section>
 
-<!-- DETAIL: LOFT TAMARINDOS -->
 <section class="detail" style="border-top:1px solid rgba(201,150,58,.07)">
   <div class="d-in">
     <div>
       <p class="d-eye" data-en="Property detail" data-fr="Détail de la propriété">Property detail</p>
       <h2 class="d-name">Loft Tamarindos</h2>
-      <p class="d-desc"
-         data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast."
-         data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou les travailleurs à distance qui découvrent la côte Pacifique.">
-        Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast.
-      </p>
-      <div class="d-host">
-        <div class="d-stars">★★★★★</div>
-        <div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div>
-      </div>
+      <p class="d-desc" data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast." data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou les travailleurs à distance qui découvrent la côte Pacifique.">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast.</p>
+      <div class="d-host"><div class="d-stars">★★★★★</div><div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div></div>
     </div>
     <div>
       <p class="d-atitle" data-en="Full Amenities" data-fr="Équipements complets">Full Amenities</p>
       <ul class="d-ams">
-        <li data-en="Stable WiFi"     data-fr="WiFi stable">Stable WiFi</li>
-        <li data-en="Swimming pool"   data-fr="Piscine">Swimming pool</li>
+        <li data-en="Stable WiFi" data-fr="WiFi stable">Stable WiFi</li>
+        <li data-en="Swimming pool" data-fr="Piscine">Swimming pool</li>
         <li data-en="Beach 10 min away" data-fr="Plage à 10 minutes">Beach 10 min away</li>
-        <li data-en="Full kitchen"    data-fr="Cuisine complète">Full kitchen</li>
+        <li data-en="Full kitchen" data-fr="Cuisine complète">Full kitchen</li>
         <li data-en="Washer included" data-fr="Lave-linge inclus">Washer included</li>
-        <li data-en="Free parking"    data-fr="Stationnement gratuit">Free parking</li>
+        <li data-en="Free parking" data-fr="Stationnement gratuit">Free parking</li>
       </ul>
       <hr class="d-hr">
       <p class="d-slbl" data-en="Minimum stay" data-fr="Séjour minimum">Minimum stay</p>
