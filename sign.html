@@ -728,32 +728,14 @@ var S = {
 };
 
 // ══════════════════════════════════════════════
-//  PDF.JS WORKER — blob URL workaround
-//  Browsers block cross-origin Workers. We fetch the script
-//  from CDN, create a same-origin blob URL, and use that.
+//  PDF.JS WORKER — same-origin proxy
+//  Browsers block new Worker('cdn-url') (cross-origin).
+//  pdf.worker.js is a 1-line same-origin file that does
+//  importScripts(cdnUrl) — workers CAN importScripts cross-origin.
 // ══════════════════════════════════════════════
-var _workerReady = null;
-function ensureWorker() {
-  if (_workerReady) return _workerReady;
-  _workerReady = fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')
-    .then(function(r) { return r.blob(); })
-    .then(function(blob) {
-      var blobUrl = URL.createObjectURL(blob);
-      pdfjsLib.GlobalWorkerOptions.workerSrc = blobUrl;
-      return blobUrl;
-    })
-    .catch(function() {
-      // Fallback: try unpkg mirror
-      return fetch('https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js')
-        .then(function(r) { return r.blob(); })
-        .then(function(blob) {
-          var blobUrl = URL.createObjectURL(blob);
-          pdfjsLib.GlobalWorkerOptions.workerSrc = blobUrl;
-          return blobUrl;
-        });
-    });
-  return _workerReady;
-}
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.js';
+// ensureWorker: no-op promise for backward compat with callers
+function ensureWorker() { return Promise.resolve('pdf.worker.js'); }
 
 // ══════════════════════════════════════════════
 //  TAB SWITCHING
@@ -900,14 +882,11 @@ function onEnterStep3() {
 
 // PDF Viewer
 function initPdfViewer() {
-  ensureWorker().then(function() {
-    var loadingTask = pdfjsLib.getDocument({ data: S.pdfBuffer });
-    loadingTask.promise.then(function(pdf) {
-      S.pdfDoc   = pdf;
-      S.pdfPage  = 1;
-      S.pdfTotal = pdf.numPages;
-      renderPage(S.pdfPage);
-    });
+  pdfjsLib.getDocument({ data: S.pdfBuffer }).promise.then(function(pdf) {
+    S.pdfDoc   = pdf;
+    S.pdfPage  = 1;
+    S.pdfTotal = pdf.numPages;
+    renderPage(S.pdfPage);
   });
 }
 
@@ -1438,9 +1417,7 @@ function loadDirectPdf(docUrl) {
     })
     .then(function(buf) {
       DS.pdfBytes = buf;
-      return ensureWorker().then(function() {
-        return pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
-      });
+      return pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
     })
     .then(function(pdfJsDoc) {
       DS.pdfJsDoc    = pdfJsDoc;
@@ -1711,10 +1688,7 @@ function loadDsFile(file) {
     DS.pdfBytes = e.target.result;
     DS.sigPage  = 1;
 
-    ensureWorker()
-      .then(function() {
-        return pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise;
-      })
+    pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise
       .then(function(pdfJsDoc) {
         DS.pdfJsDoc   = pdfJsDoc;
         DS.totalPages = pdfJsDoc.numPages;
@@ -1744,7 +1718,7 @@ function loadDsFile(file) {
 document.addEventListener('DOMContentLoaded', function() {
   checkUrlParams();
   initDsDropZone();
-  ensureWorker(); // preload pdf.js worker blob in background so first upload is fast
+  ensureWorker(); // warms up the workerSrc reference (no-op, fast)
 });
 </script>
 </body>
