@@ -993,52 +993,56 @@ function renderTemplatePreview() {
 }
 
 // ══════════════════════════════════════════════
-//  PDF STORAGE — IndexedDB
-//  Stores the ArrayBuffer directly: no base64 overhead, no 5 MB cap.
-//  A 20 MB PDF is stored as 20 MB. Same-origin, persists on same device.
+//  PDF STORAGE — IndexedDB (simple, reliable)
+//  Opens a fresh connection each call — avoids stale-connection bugs.
+//  resolve() only fires on tx.oncomplete, guaranteeing the write is durable.
 // ══════════════════════════════════════════════
-var _idb = null;
-function openDB() {
-  if (_idb) return Promise.resolve(_idb);
+var IDB_NAME  = 'stk21-sign';
+var IDB_STORE = 'pdfs';
+
+function idbOpen() {
   return new Promise(function(resolve, reject) {
-    var req = indexedDB.open('stk21-sign', 1);
-    req.onupgradeneeded = function(e) { e.target.result.createObjectStore('pdfs'); };
-    req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+    var req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = function(e) {
+      e.target.result.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = function(e) { resolve(e.target.result); };
     req.onerror   = function(e) { reject(e.target.error); };
   });
 }
 
 function savePdfToStorage(code, buf) {
-  // Guard: reject empty or detached buffers
-  if (!buf || !code || buf.byteLength === 0) return Promise.resolve(false);
-  return openDB().then(function(db) {
+  if (!buf || !code || buf.byteLength === 0) {
+    console.warn('[IDB] savePdf rejected — empty buffer or missing code', code, buf && buf.byteLength);
+    return Promise.resolve(false);
+  }
+  console.log('[IDB] saving', buf.byteLength, 'bytes under key', code);
+  return idbOpen().then(function(db) {
     return new Promise(function(resolve) {
-      var tx    = db.transaction('pdfs', 'readwrite');
-      var store = tx.objectStore('pdfs');
-      // Clean up old entries
-      var keysReq = store.getAllKeys();
-      keysReq.onsuccess = function(e) {
-        e.target.result.forEach(function(k) { if (k !== code) store.delete(k); });
-      };
-      var put = store.put(buf, code);
-      put.onsuccess = function() { resolve(true); };
-      put.onerror   = function(e) {
-        console.warn('IDB write error:', e.target.error);
-        resolve(false);
-      };
+      var tx    = db.transaction(IDB_STORE, 'readwrite');
+      var store = tx.objectStore(IDB_STORE);
+      store.put(buf, code);
+      tx.oncomplete = function()  { console.log('[IDB] save OK'); resolve(true); };
+      tx.onerror    = function(e) { console.warn('[IDB] save ERR', e.target.error); resolve(false); };
+      tx.onabort    = function()  { console.warn('[IDB] save ABORT'); resolve(false); };
     });
-  }).catch(function(e) { console.warn('IDB error:', e); return false; });
+  }).catch(function(e) { console.warn('[IDB] open ERR', e); return false; });
 }
 
 function loadPdfFromStorage(code) {
-  return openDB().then(function(db) {
+  console.log('[IDB] loading key', code);
+  return idbOpen().then(function(db) {
     return new Promise(function(resolve) {
-      var tx  = db.transaction('pdfs', 'readonly');
-      var req = tx.objectStore('pdfs').get(code);
-      req.onsuccess = function(e) { resolve(e.target.result || null); };
-      req.onerror   = function()  { resolve(null); };
+      var tx  = db.transaction(IDB_STORE, 'readonly');
+      var req = tx.objectStore(IDB_STORE).get(code);
+      req.onsuccess = function(e) {
+        var val = e.target.result;
+        console.log('[IDB] load result:', val ? val.byteLength + ' bytes' : 'not found');
+        resolve(val || null);
+      };
+      req.onerror = function(e) { console.warn('[IDB] load ERR', e.target.error); resolve(null); };
     });
-  }).catch(function() { return null; });
+  }).catch(function(e) { console.warn('[IDB] open ERR', e); return null; });
 }
 
 // ══════════════════════════════════════════════
