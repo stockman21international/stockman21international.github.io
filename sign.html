@@ -6,6 +6,7 @@
 <title>Stockman 21 · Lease Signing</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root {
   --black:  #111111;
@@ -317,7 +318,7 @@ label.field-label {
       <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Document Source</h2>
       <p style="font-size:13px;color:#777;margin-bottom:24px;">Choose how to provide the lease document.</p>
 
-      <div class="source-cards" style="grid-template-columns:repeat(3,1fr);">
+      <div class="source-cards" style="grid-template-columns:repeat(2,1fr);max-width:600px;">
         <div class="source-card" id="card-upload" onclick="selectSource('upload')">
           <div class="card-icon">📎</div>
           Upload existing PDF
@@ -325,10 +326,6 @@ label.field-label {
         <div class="source-card" id="card-template" onclick="selectSource('template')">
           <div class="card-icon">📋</div>
           Use Stockman 21 template
-        </div>
-        <div class="source-card" id="card-url" onclick="selectSource('url')">
-          <div class="card-icon">🔗</div>
-          Pre-filled PDF (URL)
         </div>
       </div>
 
@@ -341,20 +338,6 @@ label.field-label {
           <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
         </div>
         <div id="upload-confirm" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-bottom:12px;"></div>
-      </div>
-
-      <!-- URL sub-panel -->
-      <div id="sub-url" style="display:none;" class="source-sub">
-        <div class="field-row">
-          <label class="field-label">PDF URL (relative path or full URL)</label>
-          <input type="text" id="pdf-url-input" placeholder="e.g. docs/contrato-arrendamiento.pdf">
-        </div>
-        <div class="field-row">
-          <label class="field-label">Document Title (shown to signer)</label>
-          <input type="text" id="pdf-url-title" placeholder="e.g. Contrato Arrendamiento — Tamarindos 2025">
-        </div>
-        <div id="url-status" style="display:none;font-size:13px;margin-bottom:12px;"></div>
-        <button class="btn-primary" onclick="loadPdfFromUrl()">Load PDF &amp; Place Signature →</button>
       </div>
 
       <!-- Template sub-panel -->
@@ -472,56 +455,45 @@ label.field-label {
       </div>
 
       <div class="nav-row">
-        <button class="btn-outline" onclick="goStep(2)">← Back</button>
+        <button class="btn-outline" onclick="goBackFromStep3()">← Back</button>
         <button class="btn-primary" onclick="goStep(4)">Continue →</button>
       </div>
     </div>
 
     <!-- STEP 4 — Access Code & Send -->
     <div class="step-panel" id="sp-4">
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Access Code &amp; Send</h2>
-      <p style="font-size:13px;color:#777;margin-bottom:20px;">Generate a code and send it to your tenant.</p>
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Send to Tenant</h2>
+      <p style="font-size:13px;color:#777;margin-bottom:24px;">Share the signing link and access code with your tenant.</p>
 
-      <div class="code-box" id="code-display"></div>
-
-      <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <!-- Code -->
+      <label class="field-label">Access Code</label>
+      <div class="code-box" id="code-display" style="margin-bottom:10px;"></div>
+      <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;">
         <button class="btn-outline btn-sm" onclick="newCode()">🎲 New code</button>
         <button class="btn-outline btn-sm" id="copy-code-btn" onclick="copyCode()">📋 Copy code</button>
       </div>
 
-      <div class="info-box">
-        <strong>Instructions for your tenant:</strong>
-        <ol style="margin-top:8px;padding-left:20px;line-height:2;">
-          <li>Open: <span style="font-family:monospace;">https://stockman21international.github.io/sign.html</span></li>
-          <li>Go to the <strong>Sign</strong> tab</li>
-          <li>Enter access code: <span class="code-sm" id="code-inline"></span></li>
-          <li>Sign and download the sealed document</li>
-        </ol>
-        <p style="margin-top:10px;font-size:11px;color:#888;">⚠ The access link works on the same browser and device where this document was prepared. If the tenant uses a different device, ask them to request a new link.</p>
+      <!-- Signing link -->
+      <label class="field-label">Signing Link</label>
+      <div class="link-box" id="sign-link-text" style="margin-bottom:8px;"></div>
+      <div style="display:flex;gap:8px;margin-bottom:28px;">
+        <button class="btn-outline btn-sm" onclick="copySignLink()">📋 Copy link</button>
+      </div>
+      <p id="sign-link-hint" style="font-size:11px;color:#999;margin-top:-22px;margin-bottom:24px;"></p>
+
+      <!-- Editable message -->
+      <div class="field-row">
+        <label class="field-label">Message for tenant <span style="font-weight:400;color:#aaa;">(editable)</span></label>
+        <textarea class="msg-textarea" id="send-msg" rows="9"></textarea>
       </div>
 
-      <div class="field-row" style="margin-top:16px;">
-        <label class="field-label">Message (editable)</label>
-        <textarea class="msg-textarea" id="send-msg" rows="10"></textarea>
-      </div>
-
+      <!-- Send buttons -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
-        <button class="btn-gold" onclick="sendWhatsApp()">📱 Send via WhatsApp</button>
-        <button class="btn-outline" onclick="sendEmail()">✉️ Send via Email</button>
+        <button class="btn-gold" onclick="sendWhatsApp()">📱 WhatsApp</button>
+        <button class="btn-outline" onclick="sendEmail()">✉️ Email</button>
       </div>
 
-      <!-- Signing link — always shown in step 4 -->
-      <div id="sign-link-box" style="display:none;margin-top:20px;" class="info-box">
-        <strong>🔗 Link de firma para el cliente</strong>
-        <p id="sign-link-hint" style="font-size:12px;color:#888;margin:6px 0 8px;"></p>
-        <div class="link-box" id="sign-link-text"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-          <button class="btn-outline btn-sm" onclick="copySignLink()">📋 Copiar link</button>
-          <button class="btn-outline btn-sm" onclick="sendSignLinkEmail()">✉️ Enviar por correo</button>
-        </div>
-      </div>
-
-      <div class="nav-row" style="margin-top:24px;">
+      <div class="nav-row" style="margin-top:28px;">
         <button class="btn-outline" onclick="goStep(3)">← Back</button>
       </div>
     </div>
@@ -738,6 +710,16 @@ var DS = {             // Direct-sign mode state
   fromUrl: false,      // true when tenant opened a ?direct=1 link (preserves URL position params)
 };
 
+// ══════════════════════════════════════════════
+//  CONFIGURATION — edit these values
+// ══════════════════════════════════════════════
+var CONFIG = {
+  adminEmail:        'roman@stockman21international.com',
+  emailjsPublicKey:  'YOUR_EMAILJS_PUBLIC_KEY',   // emailjs.com → Account → Public Key
+  emailjsServiceId:  'YOUR_EMAILJS_SERVICE_ID',   // emailjs.com → Email Services
+  emailjsTemplateId: 'YOUR_EMAILJS_TEMPLATE_ID',  // emailjs.com → Email Templates
+};
+
 var S = {
   currentTab: 'prepare',
   currentStep: 1,
@@ -813,7 +795,7 @@ function goStep(n) {
 // ══════════════════════════════════════════════
 function selectSource(type) {
   S.source = type;
-  ['upload','template','url'].forEach(function(t) {
+  ['upload','template'].forEach(function(t) {
     document.getElementById('card-'+t).classList.toggle('selected', t === type);
     document.getElementById('sub-'+t).style.display = t === type ? '' : 'none';
   });
@@ -874,8 +856,8 @@ function loadPdf(file) {
     dz.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">✅</div><div>' + file.name + '</div>';
     document.getElementById('upload-confirm').textContent = '✓ File loaded: ' + file.name;
     document.getElementById('upload-confirm').style.display = 'block';
-    // Auto-advance
-    setTimeout(function() { goStep(2); }, 600);
+    // Upload skips Step 2 (Lease Details) — goes straight to signature placement
+    setTimeout(function() { goStep(3); }, 600);
   };
   reader.readAsArrayBuffer(file);
 }
@@ -899,7 +881,7 @@ function validateStep2() {
 //  STEP 3 — SIGNATURE PLACEMENT
 // ══════════════════════════════════════════════
 function onEnterStep3() {
-  if ((S.source === 'upload' || S.source === 'url') && S.pdfBuffer) {
+  if (S.source === 'upload' && S.pdfBuffer) {
     document.getElementById('pdf-view').style.display  = '';
     document.getElementById('tmpl-view').style.display = 'none';
     document.getElementById('sp3-hint').textContent = 'Click "+ Add box" then click on the document to place a signature area. You can drag boxes to reposition them.';
@@ -989,6 +971,9 @@ function makeDraggable(el, box) {
   };
 }
 
+// Back from Step 3: upload skips Step 2, template comes from Step 2
+function goBackFromStep3() { goStep(S.source === 'upload' ? 1 : 2); }
+
 function addSigBox() {
   S.addingBox = true;
   var w = document.getElementById('pdf-wrapper');
@@ -1062,6 +1047,9 @@ function genCode() {
 }
 function newCode() {
   S.currentCode = genCode();
+  // Re-save PDF under new code, update link display
+  if (S.source === 'upload' && S.pdfBuffer) savePdfToStorage(S.currentCode, S.pdfBuffer);
+  document.getElementById('sign-link-text').textContent = buildSignLink();
   renderStep4();
 }
 function copyCode() {
@@ -1074,48 +1062,31 @@ function copyCode() {
 
 function onEnterStep4() {
   S.currentCode = genCode();
-  if (S.source !== 'url') S.leaseData = collectLeaseData();
-  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData || {}));
+  S.leaseData   = collectLeaseData();
+  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData));
 
-  // Save PDF bytes so tenant can sign without uploading (same device)
+  // Save PDF bytes so tenant can sign on same device without uploading
   var pdfSaved = false;
-  if (S.source !== 'url' && S.pdfBuffer) {
+  if (S.source === 'upload' && S.pdfBuffer) {
     pdfSaved = savePdfToStorage(S.currentCode, S.pdfBuffer);
   }
 
-  renderStep4();
-
-  // Build and show signing link
+  // Build and display signing link
   var sigLink = buildSignLink();
   document.getElementById('sign-link-text').textContent = sigLink;
-  document.getElementById('sign-link-box').style.display = '';
+  document.getElementById('sign-link-hint').textContent = pdfSaved
+    ? '✓ Documento guardado. El cliente solo necesita abrir el link, ingresar el código y firmar.'
+    : '⚠ El PDF no cupo en el almacenamiento local. Adjunta el PDF al correo — el cliente lo subirá antes de firmar.';
 
-  // Hint text
-  var hint = document.getElementById('sign-link-hint');
-  if (S.source === 'url') {
-    hint.textContent = 'El cliente abre este link y firma directamente — el PDF carga solo.';
-  } else if (pdfSaved) {
-    hint.textContent = 'PDF guardado. Envía este link al cliente — ' +
-      'al entrar el código el documento abre automáticamente y el cliente solo firma.';
-  } else {
-    hint.textContent = 'El PDF es muy grande para guardarlo localmente. ' +
-      'Envía el link + adjunta el PDF al correo; el cliente lo sube antes de firmar.';
-  }
+  renderStep4();
 }
 
 function buildSignLink() {
   var base  = window.location.origin + window.location.pathname;
   var title = (S.leaseData && (S.leaseData.unit || S.leaseData.tenantName)) || '';
 
-  var link;
-  if (S.source === 'url' && S.pdfUrlSrc) {
-    // URL-based: PDF loads automatically from the URL
-    link = base + '?doc=' + encodeURIComponent(S.pdfUrlSrc);
-  } else {
-    // Upload-based: tenant needs to upload the PDF themselves
-    // Include the access code so the gateway can pre-fill it
-    link = base + '?direct=1&code=' + encodeURIComponent(S.currentCode || '');
-  }
+  // Link always uses direct=1 mode (upload or template)
+  var link = base + '?direct=1&code=' + encodeURIComponent(S.currentCode || '');
   if (title) link += '&title=' + encodeURIComponent(title);
 
   // Embed sig box position if admin placed one
@@ -1137,20 +1108,32 @@ function copySignLink() {
   var text = document.getElementById('sign-link-text').textContent;
   navigator.clipboard.writeText(text).then(function() {
     var btn = event.target;
-    btn.textContent = '✓ Copiado!';
-    setTimeout(function() { btn.textContent = '📋 Copiar link'; }, 2000);
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() { btn.textContent = '📋 Copy link'; }, 2000);
   });
 }
 
-function sendSignLinkEmail() {
-  var d    = S.leaseData || collectLeaseData();
-  var name = d.tenantName || '';
-  var unit = d.unit || '';
-  var subj = 'Lease Agreement — Stockman 21' + (unit ? ' — ' + unit : '');
-  var body = document.getElementById('send-msg').value;
-  window.location.href = 'mailto:' + (d.tenantEmail || '') +
-    '?subject=' + encodeURIComponent(subj) +
-    '&body='    + encodeURIComponent(body);
+// ── Admin notification via EmailJS ──────────────────────────────────────────
+// Fired from the client's browser after they sign. No backend required.
+// Set up your template at emailjs.com with variables:
+//   {{to_email}} {{signer_name}} {{signer_date}} {{doc_title}} {{hash_code}} {{signed_at}}
+function sendAdminNotification(signerName, signerDate, docTitle, hash) {
+  if (!CONFIG.emailjsPublicKey || CONFIG.emailjsPublicKey === 'YOUR_EMAILJS_PUBLIC_KEY') {
+    console.info('[EmailJS] Not configured — skipping admin notification. Set CONFIG values to enable.');
+    return;
+  }
+  emailjs.send(CONFIG.emailjsServiceId, CONFIG.emailjsTemplateId, {
+    to_email:    CONFIG.adminEmail,
+    signer_name: signerName,
+    signer_date: signerDate,
+    doc_title:   docTitle  || 'Lease Agreement',
+    hash_code:   hash,
+    signed_at:   new Date().toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short' }),
+  }).then(function() {
+    console.info('[EmailJS] Admin notification sent.');
+  }).catch(function(err) {
+    console.warn('[EmailJS] Notification failed:', err);
+  });
 }
 
 function collectLeaseData() {
@@ -1175,39 +1158,26 @@ function collectLeaseData() {
 
 function renderStep4() {
   document.getElementById('code-display').textContent = S.currentCode;
-  document.getElementById('code-inline').textContent  = S.currentCode;
-  // Save with new code
   localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData || collectLeaseData()));
   buildSendMessage();
 }
 
 function buildSendMessage() {
-  var d    = S.leaseData || collectLeaseData();
-  var tenant = d.tenantName || '[tenant name]';
-  var unit   = d.unit       || '[property]';
+  var d      = S.leaseData || collectLeaseData();
+  var tenant = d.tenantName  || '[tenant name]';
+  var unit   = d.unit        || '[property]';
   var link   = buildSignLink();
-  var msg;
+  var code   = S.currentCode || '';
 
-  if (S.source === 'url') {
-    // PDF is hosted — link opens it directly
-    msg = 'Hi ' + tenant + ',\n\n' +
-      'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
-      'Please open this link to review and sign the document:\n' +
-      link + '\n\n' +
-      'Steps: open the link → draw your signature → click Sign & Download.\n\n' +
-      'Best regards,\nStockman 21';
-  } else {
-    var code = S.currentCode || '';
-    msg = 'Hi ' + tenant + ',\n\n' +
-      'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
-      '── SIGNING INSTRUCTIONS ──\n' +
-      '1. Open this link:  ' + link + '\n' +
-      '2. Enter your access code:  ' + code + '\n' +
-      '3. The document will open automatically — review it\n' +
-      '4. Draw your signature in the gold box\n' +
-      '5. Click "Sign & Download PDF" to get your signed copy\n\n' +
-      'Best regards,\nStockman 21';
-  }
+  var msg = 'Hi ' + tenant + ',\n\n' +
+    'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
+    '1. Open this link:  ' + link + '\n' +
+    '2. Enter your access code when prompted:  ' + code + '\n' +
+    '3. Review the document\n' +
+    '4. Draw your signature in the gold box\n' +
+    '5. Click "Sign & Download PDF"\n\n' +
+    'Best regards,\nStockman 21';
+
   document.getElementById('send-msg').value = msg;
 }
 
@@ -1366,6 +1336,9 @@ function submitSignature() {
     var resultEl = document.getElementById('sign-result');
     resultEl.style.display = 'block';
     resultEl.scrollIntoView({ behavior: 'smooth' });
+    // Notify admin
+    var lease = S.loadedLease || {};
+    sendAdminNotification(name, date, lease.unit || lease.tenantName || S.loadedCode, hash);
   });
 }
 
@@ -1838,6 +1811,8 @@ function directSignAndDownload() {
                 document.getElementById('direct-sign-result').scrollIntoView({behavior:'smooth'});
                 if (DS.overlayEl) { DS.overlayEl.classList.add('sig-field-signed'); DS.overlayEl.innerHTML='✓ Firmado'; }
                 btn.disabled=false; btn.textContent='✓ Sign & Download PDF';
+                // Notify admin
+                sendAdminNotification(name, date, DS.docTitle, hash);
               });
             });
           });
@@ -1951,9 +1926,13 @@ function loadDsFile(file) {
 
 // Run on page load
 document.addEventListener('DOMContentLoaded', function() {
+  // Init EmailJS (safe to call even if not configured — sendAdminNotification guards it)
+  if (typeof emailjs !== 'undefined' && CONFIG.emailjsPublicKey !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+    emailjs.init({ publicKey: CONFIG.emailjsPublicKey });
+  }
   checkUrlParams();
   initDsDropZone();
-  ensureWorker(); // warms up the workerSrc reference (no-op, fast)
+  ensureWorker();
 });
 </script>
 </body>
