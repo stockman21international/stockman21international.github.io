@@ -851,6 +851,12 @@ function loadPdf(file) {
   var reader = new FileReader();
   reader.onload = function(e) {
     S.pdfBuffer = e.target.result;
+    // CRITICAL: make a separate copy BEFORE pdf.js ever sees the buffer.
+    // pdf.js transfers ArrayBuffers to its Worker thread (structured-clone transfer),
+    // which detaches the original and makes it empty (byteLength === 0).
+    // S.pdfBufferSafe is never passed to pdf.js, so it always stays intact for IndexedDB.
+    S.pdfBufferSafe = e.target.result.slice(0);
+
     var dz = document.getElementById('dropZone');
     dz.classList.add('file-ok');
     dz.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">✅</div><div>' + file.name + '</div>';
@@ -1008,7 +1014,8 @@ function openDB() {
 }
 
 function savePdfToStorage(code, buf) {
-  if (!buf || !code) return Promise.resolve(false);
+  // Guard: reject empty or detached buffers
+  if (!buf || !code || buf.byteLength === 0) return Promise.resolve(false);
   return openDB().then(function(db) {
     return new Promise(function(resolve) {
       var tx    = db.transaction('pdfs', 'readwrite');
@@ -1072,13 +1079,17 @@ function onEnterStep4() {
   document.getElementById('sign-link-hint').textContent = '⏳ Guardando documento…';
   renderStep4();
 
-  // Save PDF to IndexedDB (async — no size limit)
-  if (S.source === 'upload' && S.pdfBuffer) {
-    savePdfToStorage(S.currentCode, S.pdfBuffer).then(function(saved) {
+  // Save PDF to IndexedDB using the safe copy (never passed to pdf.js → never detached)
+  var bufToSave = S.pdfBufferSafe || S.pdfBuffer;
+  if (S.source === 'upload' && bufToSave && bufToSave.byteLength > 0) {
+    savePdfToStorage(S.currentCode, bufToSave).then(function(saved) {
       document.getElementById('sign-link-hint').textContent = saved
         ? '✓ Listo. El cliente abre el link, ingresa el código y firma — sin subir nada.'
         : '⚠ No se pudo guardar el PDF en este dispositivo. Adjúntalo al correo.';
     });
+  } else if (S.source === 'upload') {
+    document.getElementById('sign-link-hint').textContent =
+      '⚠ No se encontró el archivo PDF. Regresa al Step 1 y vuelve a subirlo.';
   } else {
     document.getElementById('sign-link-hint').textContent = '';
   }
