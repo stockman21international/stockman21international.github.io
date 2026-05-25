@@ -518,9 +518,9 @@ label.field-label {
       <div class="info-box" style="margin-bottom:24px;">
         <strong style="font-size:13px;">📋 Instrucciones</strong>
         <ol style="margin:10px 0 0 18px;font-size:13px;line-height:2.1;color:#444;">
-          <li>Ingresa el código de acceso que recibiste en el correo</li>
-          <li>Sube el PDF adjunto del correo</li>
-          <li>Firma en el recuadro dorado que aparece en el documento</li>
+          <li>Ingresa el código de acceso y haz clic en <strong>Acceder al documento</strong></li>
+          <li>El contrato abrirá automáticamente en pantalla</li>
+          <li>Firma en el recuadro dorado</li>
           <li>Descarga tu copia firmada</li>
         </ol>
       </div>
@@ -896,7 +896,9 @@ function onEnterStep3() {
 
 // PDF Viewer
 function initPdfViewer() {
-  pdfjsLib.getDocument({ data: S.pdfBuffer }).promise.then(function(pdf) {
+  // .slice(0) copies the buffer so the Worker doesn't detach S.pdfBuffer.
+  // Without this, S.pdfBuffer is empty by the time we reach Step 4.
+  pdfjsLib.getDocument({ data: S.pdfBuffer.slice(0) }).promise.then(function(pdf) {
     S.pdfDoc   = pdf;
     S.pdfPage  = 1;
     S.pdfTotal = pdf.numPages;
