@@ -728,6 +728,34 @@ var S = {
 };
 
 // ══════════════════════════════════════════════
+//  PDF.JS WORKER — blob URL workaround
+//  Browsers block cross-origin Workers. We fetch the script
+//  from CDN, create a same-origin blob URL, and use that.
+// ══════════════════════════════════════════════
+var _workerReady = null;
+function ensureWorker() {
+  if (_workerReady) return _workerReady;
+  _workerReady = fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var blobUrl = URL.createObjectURL(blob);
+      pdfjsLib.GlobalWorkerOptions.workerSrc = blobUrl;
+      return blobUrl;
+    })
+    .catch(function() {
+      // Fallback: try unpkg mirror
+      return fetch('https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js')
+        .then(function(r) { return r.blob(); })
+        .then(function(blob) {
+          var blobUrl = URL.createObjectURL(blob);
+          pdfjsLib.GlobalWorkerOptions.workerSrc = blobUrl;
+          return blobUrl;
+        });
+    });
+  return _workerReady;
+}
+
+// ══════════════════════════════════════════════
 //  TAB SWITCHING
 // ══════════════════════════════════════════════
 function switchTab(name) {
@@ -872,14 +900,14 @@ function onEnterStep3() {
 
 // PDF Viewer
 function initPdfViewer() {
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  var loadingTask = pdfjsLib.getDocument({ data: S.pdfBuffer });
-  loadingTask.promise.then(function(pdf) {
-    S.pdfDoc  = pdf;
-    S.pdfPage = 1;
-    S.pdfTotal = pdf.numPages;
-    renderPage(S.pdfPage);
+  ensureWorker().then(function() {
+    var loadingTask = pdfjsLib.getDocument({ data: S.pdfBuffer });
+    loadingTask.promise.then(function(pdf) {
+      S.pdfDoc   = pdf;
+      S.pdfPage  = 1;
+      S.pdfTotal = pdf.numPages;
+      renderPage(S.pdfPage);
+    });
   });
 }
 
@@ -1410,9 +1438,9 @@ function loadDirectPdf(docUrl) {
     })
     .then(function(buf) {
       DS.pdfBytes = buf;
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      return pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+      return ensureWorker().then(function() {
+        return pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+      });
     })
     .then(function(pdfJsDoc) {
       DS.pdfJsDoc    = pdfJsDoc;
@@ -1670,37 +1698,44 @@ function loadDsFile(file) {
     '<div style="font-weight:600;">' + esc(file.name) + '</div>' +
     '<div style="font-size:11px;margin-top:6px;">PDF loaded — see below</div>';
 
+  // Show sign UI immediately with loading indicator
+  document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('ds-sign-ui').style.display = '';
+  document.getElementById('direct-doc-title').textContent = DS.docTitle;
+  document.getElementById('direct-doc-sub').textContent = 'Cargando PDF…';
+  document.getElementById('direct-pdf-viewer').innerHTML =
+    '<div style="padding:40px;text-align:center;color:#aaa;font-size:13px;">⏳ Procesando PDF…</div>';
+
   var reader = new FileReader();
   reader.onload = function(e) {
     DS.pdfBytes = e.target.result;
-    DS.sigPage  = 1; // will be updated to last page after doc loads
+    DS.sigPage  = 1;
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    ensureWorker()
+      .then(function() {
+        return pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise;
+      })
+      .then(function(pdfJsDoc) {
+        DS.pdfJsDoc   = pdfJsDoc;
+        DS.totalPages = pdfJsDoc.numPages;
+        DS.sigPage    = pdfJsDoc.numPages; // default: last page
 
-    pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise.then(function(pdfJsDoc) {
-      DS.pdfJsDoc   = pdfJsDoc;
-      DS.totalPages = pdfJsDoc.numPages;
-      DS.sigPage    = pdfJsDoc.numPages; // default: last page for signature
+        document.getElementById('direct-doc-sub').textContent =
+          DS.totalPages + ' página' + (DS.totalPages > 1 ? 's' : '') +
+          ' · Arrastra el recuadro dorado a la línea de firma';
 
-      // Update info line
-      document.getElementById('direct-doc-title').textContent = DS.docTitle;
-      document.getElementById('direct-doc-sub').textContent   =
-        DS.totalPages + ' page' + (DS.totalPages > 1 ? 's' : '') +
-        ' · Drag the gold field to the signature line';
-
-      // Pre-fill date
-      document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
-
-      // Show signing UI and render
-      document.getElementById('ds-sign-ui').style.display = '';
-
-      renderDirectAllPages();
-      initDirectSigPad();
-    }).catch(function(err) {
-      dz.classList.remove('file-ok');
-      dz.innerHTML = '<div style="color:var(--red);">✗ Could not read PDF: ' + esc(err.message) + '</div>';
-    });
+        renderDirectAllPages();
+        initDirectSigPad();
+        // Scroll sign UI into view
+        setTimeout(function() {
+          document.getElementById('ds-sign-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      })
+      .catch(function(err) {
+        dz.classList.remove('file-ok');
+        dz.innerHTML = '<div style="color:var(--red);padding:16px;">✗ Error al leer el PDF: ' + esc(err.message) + '</div>';
+        document.getElementById('ds-sign-ui').style.display = 'none';
+      });
   };
   reader.readAsArrayBuffer(file);
 }
@@ -1709,6 +1744,7 @@ function loadDsFile(file) {
 document.addEventListener('DOMContentLoaded', function() {
   checkUrlParams();
   initDsDropZone();
+  ensureWorker(); // preload pdf.js worker blob in background so first upload is fast
 });
 </script>
 </body>
