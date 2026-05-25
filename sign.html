@@ -535,8 +535,38 @@ label.field-label {
 <div class="tab-panel" id="tab-sign">
   <div class="main">
 
+    <!-- ── TENANT GATEWAY — shown when link opened with ?direct=1 ── -->
+    <div id="ds-gateway" style="display:none;max-width:480px;margin:0 auto 32px;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">STOCKMAN 21</div>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;color:var(--black);" id="gw-doc-title">Lease Agreement</h2>
+        <p style="font-size:13px;color:#666;">Tu contrato está listo para firmar</p>
+      </div>
+
+      <div class="info-box" style="margin-bottom:24px;">
+        <strong style="font-size:13px;">📋 Instrucciones</strong>
+        <ol style="margin:10px 0 0 18px;font-size:13px;line-height:2.1;color:#444;">
+          <li>Ingresa el código de acceso que recibiste en el correo</li>
+          <li>Sube el PDF adjunto del correo</li>
+          <li>Firma en el recuadro dorado que aparece en el documento</li>
+          <li>Descarga tu copia firmada</li>
+        </ol>
+      </div>
+
+      <label class="field-label" style="display:block;margin-bottom:6px;">Código de acceso</label>
+      <input type="text" id="gw-code-input"
+        style="font-size:22px;letter-spacing:5px;text-transform:uppercase;text-align:center;padding:14px;width:100%;margin-bottom:12px;border:2px solid var(--lgray);border-radius:4px;outline:none;font-family:inherit;background:#fff;"
+        placeholder="STK-XXXXXX"
+        oninput="this.value=this.value.toUpperCase()"
+        onkeydown="if(event.key==='Enter')gatewayAccess()">
+      <button class="btn-primary" style="width:100%;padding:14px;font-size:14px;" onclick="gatewayAccess()">
+        Acceder al documento →
+      </button>
+      <div id="gw-error" style="display:none;color:var(--red);font-size:12px;margin-top:10px;padding:10px 14px;background:#fff5f5;border-radius:4px;text-align:center;border:1px solid #f5c0c0;"></div>
+    </div>
+
     <!-- ── MODE TOGGLE ── -->
-    <div style="display:flex;gap:0;margin-bottom:28px;border:1px solid var(--lgray);border-radius:4px;overflow:hidden;">
+    <div id="sign-mode-toggle" style="display:flex;gap:0;margin-bottom:28px;border:1px solid var(--lgray);border-radius:4px;overflow:hidden;">
       <button onclick="setSignMode('upload')" id="smode-upload"
         style="flex:1;padding:12px;background:var(--black);color:var(--gold);border:none;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;">
         📎 Upload PDF to Sign
@@ -705,6 +735,7 @@ var DS = {             // Direct-sign mode state
   renderedPageW: 0, renderedPageH: 0,
   renderScale: 1.3,
   signedHash: null,
+  fromUrl: false,      // true when tenant opened a ?direct=1 link (preserves URL position params)
 };
 
 var S = {
@@ -1010,8 +1041,8 @@ function onEnterStep4() {
   if (S.source === 'url') {
     hint.textContent = 'El cliente abre este link y firma directamente — el PDF carga solo.';
   } else {
-    hint.textContent = 'Envía este link al cliente junto con el PDF adjunto por correo. ' +
-      'El cliente abre el link, sube el PDF y firma. El recuadro aparece ya posicionado.';
+    hint.textContent = 'El link incluye el código de acceso (' + (S.currentCode || '') + ') y la posición del recuadro. ' +
+      'Envíalo al cliente junto con el PDF adjunto. El cliente abre el link, confirma el código, sube el PDF y firma.';
   }
 }
 
@@ -1025,7 +1056,8 @@ function buildSignLink() {
     link = base + '?doc=' + encodeURIComponent(S.pdfUrlSrc);
   } else {
     // Upload-based: tenant needs to upload the PDF themselves
-    link = base + '?direct=1';
+    // Include the access code so the gateway can pre-fill it
+    link = base + '?direct=1&code=' + encodeURIComponent(S.currentCode || '');
   }
   if (title) link += '&title=' + encodeURIComponent(title);
 
@@ -1108,14 +1140,17 @@ function buildSendMessage() {
       'Steps: open the link → draw your signature → click Sign & Download.\n\n' +
       'Best regards,\nStockman 21';
   } else {
-    // PDF is attached — tenant uploads it after opening the link
+    // PDF is attached — tenant uploads it after entering their access code
+    var code = S.currentCode || '';
     msg = 'Hi ' + tenant + ',\n\n' +
       'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
-      '1. Open this link: ' + link + '\n' +
-      '2. Upload the PDF attached to this email\n' +
-      '3. Your signature field will appear automatically\n' +
-      '4. Draw your signature and click "Sign & Download PDF"\n\n' +
-      '⚠️ Do not forget to attach the PDF to this email before sending.\n\n' +
+      '── SIGNING INSTRUCTIONS ──\n' +
+      '1. Open this link:  ' + link + '\n' +
+      '2. Enter your access code:  ' + code + '\n' +
+      '3. Upload the PDF attached to this email\n' +
+      '4. Your signature field will appear in the document automatically\n' +
+      '5. Draw your signature and click "Sign & Download PDF"\n\n' +
+      '⚠️  Remember to save the PDF attached to this email — you will need to upload it in step 3.\n\n' +
       'Best regards,\nStockman 21';
   }
   document.getElementById('send-msg').value = msg;
@@ -1430,7 +1465,7 @@ function checkUrlParams() {
   var isDirect = params.get('direct') === '1';
   if (!docUrl && !isDirect) return;
 
-  // Parse sig position params
+  // Parse sig position params — stored in DS state for use after PDF loads
   DS.sigPage  = parseInt(params.get('p') || '1');
   DS.sigXFrac = params.get('x') != null ? parseFloat(params.get('x')) : null;
   DS.sigYFrac = params.get('y') != null ? parseFloat(params.get('y')) : null;
@@ -1439,31 +1474,82 @@ function checkUrlParams() {
   DS.docTitle = params.get('title') ||
     (docUrl ? decodeURIComponent(docUrl).split('/').pop().replace(/\.pdf$/i,'') : 'Lease Agreement');
 
-  // Switch to Sign tab, upload mode
   switchTab('sign');
-  setSignMode('upload');
-  document.getElementById('direct-doc-title').textContent = DS.docTitle;
-  document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0,10);
 
   if (docUrl) {
-    // PDF hosted at URL — load it automatically
+    // PDF hosted at URL — load automatically (no code gate needed)
+    setSignMode('upload');
+    document.getElementById('direct-doc-title').textContent = DS.docTitle;
+    document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0,10);
     document.getElementById('direct-doc-sub').textContent = 'Cargando PDF…';
     document.getElementById('ds-sign-ui').style.display = '';
     document.getElementById('direct-pdf-viewer').innerHTML =
       '<div style="padding:40px;text-align:center;color:#aaa;">⏳ Cargando PDF…</div>';
     initDirectSigPad();
+    DS.fromUrl = true;
     loadDirectPdf(docUrl);
   } else {
-    // direct=1: tenant needs to upload the PDF they received by email
-    var dz = document.getElementById('ds-dropzone');
-    dz.innerHTML =
-      '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
-      '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Sube el PDF adjunto del correo</div>' +
-      '<div style="font-size:12px;color:#666;margin-bottom:8px;">Stockman 21 te envió el contrato como archivo adjunto</div>' +
-      '<div style="font-size:11px;color:#aaa;">Clic aquí o arrastra el PDF</div>' +
-      '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
-    initDsDropZone();
+    // direct=1 — show the access-code gateway
+    // Flag that position params came from URL (preserved in loadDsFile)
+    DS.fromUrl = true;
+
+    // Hide mode toggle and both sign sections; show only gateway
+    document.getElementById('sign-mode-toggle').style.display  = 'none';
+    document.getElementById('direct-sign-wrapper').style.display = 'none';
+    document.getElementById('access-code-section').style.display = 'none';
+    document.getElementById('ds-gateway').style.display = '';
+
+    // Set document title in gateway
+    document.getElementById('gw-doc-title').textContent = DS.docTitle;
+
+    // Pre-fill code from URL if present (admin embedded it in the link)
+    var urlCode = params.get('code');
+    if (urlCode) {
+      document.getElementById('gw-code-input').value = urlCode.toUpperCase();
+    }
   }
+}
+
+// ── Called when tenant clicks "Acceder al documento →" in the gateway ──
+function gatewayAccess() {
+  var codeEl = document.getElementById('gw-code-input');
+  var errEl  = document.getElementById('gw-error');
+  var code   = codeEl.value.trim().toUpperCase();
+
+  if (!code) {
+    errEl.textContent = 'Por favor ingresa el código de acceso que recibiste en el correo.';
+    errEl.style.display = '';
+    codeEl.focus();
+    return;
+  }
+
+  // Accept any non-empty code (validation is the code being in the link itself)
+  errEl.style.display = 'none';
+
+  // Transition: hide gateway → show upload area
+  document.getElementById('ds-gateway').style.display = 'none';
+  // Keep mode toggle hidden (tenant is in link-driven mode)
+  document.getElementById('sign-mode-toggle').style.display = 'none';
+  document.getElementById('direct-sign-wrapper').style.display = '';
+
+  // Set up drop zone with tenant instructions
+  var dz = document.getElementById('ds-dropzone');
+  dz.innerHTML =
+    '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
+    '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Sube el PDF adjunto del correo</div>' +
+    '<div style="font-size:12px;color:#666;margin-bottom:8px;">Stockman 21 te envió el contrato como archivo adjunto</div>' +
+    '<div style="font-size:11px;color:#aaa;">Clic aquí o arrastra el PDF hacia esta área</div>' +
+    '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
+
+  // Pre-set today's date
+  document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
+
+  initDsDropZone();
+
+  // Scroll to drop zone
+  setTimeout(function() {
+    dz.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 }
 
 function loadDirectPdf(docUrl) {
@@ -1743,17 +1829,22 @@ function loadDsFile(file) {
   var reader = new FileReader();
   reader.onload = function(e) {
     DS.pdfBytes = e.target.result;
-    DS.sigPage  = 1;
+    // Only reset sigPage if we're NOT in URL-link mode (which pre-sets it from URL params)
+    if (!DS.fromUrl) DS.sigPage = 1;
 
     pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise
       .then(function(pdfJsDoc) {
         DS.pdfJsDoc   = pdfJsDoc;
         DS.totalPages = pdfJsDoc.numPages;
-        DS.sigPage    = pdfJsDoc.numPages; // default: last page
+        // Default to last page only if no position was pre-set from URL
+        if (!DS.fromUrl) DS.sigPage = pdfJsDoc.numPages;
+        // Clamp to valid page range (safety)
+        DS.sigPage = Math.max(1, Math.min(DS.sigPage, DS.totalPages));
 
         document.getElementById('direct-doc-sub').textContent =
           DS.totalPages + ' página' + (DS.totalPages > 1 ? 's' : '') +
-          ' · Arrastra el recuadro dorado a la línea de firma';
+          (DS.fromUrl ? ' · El recuadro dorado está en la posición configurada — arrástralo si lo necesitas mover'
+                      : ' · Arrastra el recuadro dorado a la línea de firma');
 
         renderDirectAllPages();
         initDirectSigPad();
