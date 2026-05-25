@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stockman 21 · Lease Signing</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
 :root {
   --black:  #111111;
@@ -251,6 +252,14 @@ label.field-label {
 /* ── Dropdowns source section ── */
 .source-sub { margin-top:16px; }
 
+/* ── Direct Sign PDF viewer ── */
+.pdf-scroll-viewer{max-height:68vh;overflow-y:auto;border:1px solid var(--lgray);border-radius:6px;margin-bottom:16px;background:#525659;scroll-behavior:smooth;}
+.pdf-page-wrap{position:relative;margin:10px auto;display:block;width:fit-content;}
+.sig-field-overlay{position:absolute;border:3px dashed var(--gold);background:rgba(184,149,90,.12);cursor:grab;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--gold);user-select:none;border-radius:4px;box-shadow:0 0 0 2px rgba(184,149,90,.25);transition:background .2s;}
+.sig-field-overlay:active{cursor:grabbing;}
+.sig-field-signed{border-color:var(--green)!important;background:rgba(45,122,79,.12)!important;color:var(--green)!important;border-style:solid!important;}
+.link-box{background:var(--black);color:var(--gold);font-family:'Courier New',monospace;font-size:11px;padding:12px 14px;border-radius:4px;word-break:break-all;line-height:1.6;margin:10px 0;}
+
 /* ── Responsive ── */
 @media(max-width:768px) {
   .main { padding:24px 16px 48px; }
@@ -308,7 +317,7 @@ label.field-label {
       <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Document Source</h2>
       <p style="font-size:13px;color:#777;margin-bottom:24px;">Choose how to provide the lease document.</p>
 
-      <div class="source-cards">
+      <div class="source-cards" style="grid-template-columns:repeat(3,1fr);">
         <div class="source-card" id="card-upload" onclick="selectSource('upload')">
           <div class="card-icon">📎</div>
           Upload existing PDF
@@ -316,6 +325,10 @@ label.field-label {
         <div class="source-card" id="card-template" onclick="selectSource('template')">
           <div class="card-icon">📋</div>
           Use Stockman 21 template
+        </div>
+        <div class="source-card" id="card-url" onclick="selectSource('url')">
+          <div class="card-icon">🔗</div>
+          Pre-filled PDF (URL)
         </div>
       </div>
 
@@ -328,6 +341,20 @@ label.field-label {
           <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
         </div>
         <div id="upload-confirm" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-bottom:12px;"></div>
+      </div>
+
+      <!-- URL sub-panel -->
+      <div id="sub-url" style="display:none;" class="source-sub">
+        <div class="field-row">
+          <label class="field-label">PDF URL (relative path or full URL)</label>
+          <input type="text" id="pdf-url-input" placeholder="e.g. docs/contrato-arrendamiento.pdf">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Document Title (shown to signer)</label>
+          <input type="text" id="pdf-url-title" placeholder="e.g. Contrato Arrendamiento — Tamarindos 2025">
+        </div>
+        <div id="url-status" style="display:none;font-size:13px;margin-bottom:12px;"></div>
+        <button class="btn-primary" onclick="loadPdfFromUrl()">Load PDF &amp; Place Signature →</button>
       </div>
 
       <!-- Template sub-panel -->
@@ -483,6 +510,14 @@ label.field-label {
         <button class="btn-outline" onclick="sendEmail()">✉️ Send via Email</button>
       </div>
 
+      <!-- Signing link (shown when source=url) -->
+      <div id="sign-link-box" style="display:none;" class="info-box" style="margin-top:20px;">
+        <strong>🔗 Direct Signing Link</strong>
+        <p style="font-size:12px;color:#888;margin:6px 0 8px;">Share this link with your tenant. They open it, see the pre-filled PDF, and sign — no access code needed.</p>
+        <div class="link-box" id="sign-link-text"></div>
+        <button class="btn-outline btn-sm" onclick="copySignLink()">📋 Copy link</button>
+      </div>
+
       <div class="nav-row" style="margin-top:24px;">
         <button class="btn-outline" onclick="goStep(3)">← Back</button>
       </div>
@@ -496,6 +531,49 @@ label.field-label {
 ════════════════════════════════════════════ -->
 <div class="tab-panel" id="tab-sign">
   <div class="main">
+
+    <!-- ── DIRECT SIGN MODE (?doc= URL param) ── -->
+    <div id="direct-sign-wrapper" style="display:none;">
+      <div class="info-box" style="margin-bottom:20px;">
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="direct-doc-title"></div>
+        <div style="font-size:12px;color:#888;" id="direct-doc-sub">Review the document, then draw your signature below.</div>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Document</h3>
+      <p style="font-size:12px;color:#777;margin-bottom:10px;">The signature field is marked in gold — drag to reposition if needed.</p>
+      <div class="pdf-scroll-viewer" id="direct-pdf-viewer">
+        <div style="padding:24px;text-align:center;color:#ccc;font-size:13px;">Loading document…</div>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:700;margin:20px 0 6px;">Draw Your Signature</h3>
+      <canvas id="directSigCanvas" height="160" style="border:1px solid var(--lgray);border-radius:4px;display:block;width:100%;touch-action:none;background:#fff;cursor:crosshair;margin-bottom:8px;"></canvas>
+      <button class="btn-outline btn-sm" onclick="clearDirectSig()" style="margin-bottom:20px;">Clear</button>
+
+      <div class="form-grid-2" style="margin-bottom:20px;">
+        <div class="field-row">
+          <label class="field-label">Full Name *</label>
+          <input type="text" id="direct-signer-name" placeholder="Your full legal name">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Date</label>
+          <input type="date" id="direct-signing-date">
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;padding:14px;" onclick="directSignAndDownload()">
+        ✓ Sign &amp; Download PDF
+      </button>
+
+      <div class="result-card" id="direct-sign-result" style="display:none;margin-top:24px;">
+        <div style="font-size:24px;color:var(--green);margin-bottom:8px;">✓ Document Signed</div>
+        <p style="font-size:13px;color:#555;margin-bottom:14px;">Your signed PDF was downloaded. Save this validation code:</p>
+        <div class="hash-box" id="direct-sign-hash"></div>
+        <button class="btn-outline btn-sm" id="direct-copy-hash" onclick="copyDirectHash()" style="margin-top:8px;">Copy code</button>
+      </div>
+    </div>
+
+    <!-- ── ACCESS CODE MODE (existing) ── -->
+    <div id="access-code-section">
     <div class="info-box" style="margin-bottom:24px;">
       You received an access code from Stockman 21. Enter it below to view and sign your lease.
     </div>
@@ -548,6 +626,7 @@ label.field-label {
         </div>
       </div>
     </div>
+    </div><!-- /access-code-section -->
   </div>
 </div>
 
@@ -591,6 +670,21 @@ label.field-label {
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
+var DS = {             // Direct-sign mode state
+  pdfBytes: null,      // ArrayBuffer — original PDF
+  pdfJsDoc: null,      // pdf.js document instance
+  totalPages: 0,
+  sigPage: 1,
+  sigXFrac: null, sigYFrac: null,  // null = default position
+  sigWFrac: 0.42, sigHFrac: 0.09,
+  docTitle: '',
+  overlayEl: null,
+  overlayX: 0, overlayY: 0, overlayW: 0, overlayH: 0,
+  renderedPageW: 0, renderedPageH: 0,
+  renderScale: 1.3,
+  signedHash: null,
+};
+
 var S = {
   currentTab: 'prepare',
   currentStep: 1,
@@ -603,6 +697,7 @@ var S = {
   addingBox: false,
   currentCode: null,
   leaseData: null,
+  pdfUrlSrc: null,    // URL when source='url'
   // sign tab
   loadedCode: null,
   loadedLease: null,
@@ -657,11 +752,39 @@ function goStep(n) {
 // ══════════════════════════════════════════════
 function selectSource(type) {
   S.source = type;
-  document.getElementById('card-upload').classList.toggle('selected', type === 'upload');
-  document.getElementById('card-template').classList.toggle('selected', type === 'template');
-  document.getElementById('sub-upload').style.display   = type === 'upload'   ? '' : 'none';
-  document.getElementById('sub-template').style.display = type === 'template' ? '' : 'none';
+  ['upload','template','url'].forEach(function(t) {
+    document.getElementById('card-'+t).classList.toggle('selected', t === type);
+    document.getElementById('sub-'+t).style.display = t === type ? '' : 'none';
+  });
   if (type === 'upload') initDropZone();
+}
+
+function loadPdfFromUrl() {
+  var url   = document.getElementById('pdf-url-input').value.trim();
+  var title = document.getElementById('pdf-url-title').value.trim();
+  var stat  = document.getElementById('url-status');
+  if (!url) { alert('Please enter a PDF URL.'); return; }
+  stat.style.display = '';
+  stat.style.color   = '#888';
+  stat.textContent   = '⏳ Loading PDF…';
+  fetch(url)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.arrayBuffer();
+    })
+    .then(function(buf) {
+      S.pdfBuffer  = buf;
+      S.pdfUrlSrc  = url;
+      S.leaseData  = S.leaseData || {};
+      S.leaseData.unit = title || url.split('/').pop().replace(/\.pdf$/i,'');
+      stat.style.color = 'var(--green)';
+      stat.textContent = '✓ Loaded: ' + url.split('/').pop();
+      setTimeout(function() { goStep(3); }, 500);
+    })
+    .catch(function(err) {
+      stat.style.color = 'var(--red)';
+      stat.textContent = '✗ Error: ' + err.message;
+    });
 }
 
 function initDropZone() {
@@ -715,7 +838,7 @@ function validateStep2() {
 //  STEP 3 — SIGNATURE PLACEMENT
 // ══════════════════════════════════════════════
 function onEnterStep3() {
-  if (S.source === 'upload' && S.pdfBuffer) {
+  if ((S.source === 'upload' || S.source === 'url') && S.pdfBuffer) {
     document.getElementById('pdf-view').style.display  = '';
     document.getElementById('tmpl-view').style.display = 'none';
     document.getElementById('sp3-hint').textContent = 'Click "+ Add box" then click on the document to place a signature area. You can drag boxes to reposition them.';
@@ -846,10 +969,47 @@ function copyCode() {
 
 function onEnterStep4() {
   S.currentCode = genCode();
-  S.leaseData   = collectLeaseData();
-  // Store in localStorage
-  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData));
+  if (S.source !== 'url') S.leaseData = collectLeaseData();
+  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData || {}));
   renderStep4();
+  // Build signing link if source=url
+  var linkBox = document.getElementById('sign-link-box');
+  if (S.source === 'url' && S.pdfUrlSrc) {
+    linkBox.style.display = '';
+    document.getElementById('sign-link-text').textContent = buildSignLink();
+  } else {
+    linkBox.style.display = 'none';
+  }
+}
+
+function buildSignLink() {
+  var base  = window.location.origin + window.location.pathname;
+  var url   = S.pdfUrlSrc;
+  var title = (S.leaseData && S.leaseData.unit) || '';
+  var box   = S.sigBoxes[0];
+  var link  = base + '?doc=' + encodeURIComponent(url);
+  if (title) link += '&title=' + encodeURIComponent(title);
+  if (box) {
+    // Get canvas dims from current wrapper
+    var canvas = document.querySelector('#pdf-wrapper canvas');
+    if (canvas) {
+      link += '&p='  + (box.page || 1);
+      link += '&x='  + (box.x / canvas.width).toFixed(3);
+      link += '&y='  + (box.y / canvas.height).toFixed(3);
+      link += '&w='  + (box.w / canvas.width).toFixed(3);
+      link += '&h='  + (box.h / canvas.height).toFixed(3);
+    }
+  }
+  return link;
+}
+
+function copySignLink() {
+  var text = document.getElementById('sign-link-text').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() { btn.textContent = '📋 Copy link'; }, 2000);
+  });
 }
 
 function collectLeaseData() {
@@ -1194,6 +1354,257 @@ function esc(s) {
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ══════════════════════════════════════════════
+//  DIRECT SIGN MODE  (?doc= URL param)
+// ══════════════════════════════════════════════
+function checkUrlParams() {
+  var params = new URLSearchParams(window.location.search);
+  var docUrl = params.get('doc');
+  if (!docUrl) return;
+
+  // Switch to Sign tab, show direct wrapper, hide access-code section
+  switchTab('sign');
+  document.getElementById('direct-sign-wrapper').style.display = '';
+  document.getElementById('access-code-section').style.display = 'none';
+
+  // Parse params
+  DS.sigPage  = parseInt(params.get('p') || '1');
+  DS.sigXFrac = params.get('x') != null ? parseFloat(params.get('x')) : null;
+  DS.sigYFrac = params.get('y') != null ? parseFloat(params.get('y')) : null;
+  DS.sigWFrac = parseFloat(params.get('w') || '0.42');
+  DS.sigHFrac = parseFloat(params.get('h') || '0.09');
+  DS.docTitle = params.get('title') || decodeURIComponent(docUrl).split('/').pop().replace(/\.pdf$/i,'');
+
+  document.getElementById('direct-doc-title').textContent = DS.docTitle;
+  document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0,10);
+
+  initDirectSigPad();
+  loadDirectPdf(docUrl);
+}
+
+function loadDirectPdf(docUrl) {
+  fetch(docUrl)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.arrayBuffer();
+    })
+    .then(function(buf) {
+      DS.pdfBytes = buf;
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      return pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+    })
+    .then(function(pdfJsDoc) {
+      DS.pdfJsDoc    = pdfJsDoc;
+      DS.totalPages  = pdfJsDoc.numPages;
+      renderDirectAllPages();
+    })
+    .catch(function(err) {
+      document.getElementById('direct-pdf-viewer').innerHTML =
+        '<div style="padding:24px;color:#ff8080;text-align:center;">Could not load: ' + err.message + '</div>';
+    });
+}
+
+function renderDirectAllPages() {
+  var container = document.getElementById('direct-pdf-viewer');
+  container.innerHTML = '';
+  var promises = [];
+  for (var i = 1; i <= DS.totalPages; i++) promises.push(renderDirectPage(i, container));
+  Promise.all(promises).catch(function(e) { console.error('Page render error', e); });
+}
+
+function renderDirectPage(pageNum, container) {
+  return DS.pdfJsDoc.getPage(pageNum).then(function(page) {
+    var viewport = page.getViewport({ scale: DS.renderScale });
+    var wrap = document.createElement('div');
+    wrap.className = 'pdf-page-wrap';
+    wrap.style.width = viewport.width + 'px';
+
+    var canvas = document.createElement('canvas');
+    canvas.width  = viewport.width;
+    canvas.height = viewport.height;
+    wrap.appendChild(canvas);
+    container.appendChild(wrap);
+
+    if (pageNum === DS.sigPage) {
+      // Store rendered dims for pdf-lib coordinate conversion
+      DS.renderedPageW = viewport.width;
+      DS.renderedPageH = viewport.height;
+      addSigOverlay(wrap, viewport);
+    }
+    return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise
+      .then(function() {
+        if (pageNum === DS.sigPage) {
+          // Scroll sig page into center after render
+          setTimeout(function() {
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 200);
+        }
+      });
+  });
+}
+
+function addSigOverlay(wrap, viewport) {
+  var pw = viewport.width, ph = viewport.height;
+  var xF = DS.sigXFrac != null ? DS.sigXFrac : 0.06;
+  var yF = DS.sigYFrac != null ? DS.sigYFrac : 0.82;
+
+  var ox = xF * pw, oy = yF * ph;
+  var ow = DS.sigWFrac * pw, oh = DS.sigHFrac * ph;
+
+  var el = document.createElement('div');
+  el.className = 'sig-field-overlay';
+  el.id = 'ds-overlay';
+  el.innerHTML = '✍ Firma aquí · Sign here';
+  el.style.left = ox+'px'; el.style.top = oy+'px';
+  el.style.width = ow+'px'; el.style.height = oh+'px';
+
+  DS.overlayEl = el;
+  DS.overlayX = ox; DS.overlayY = oy;
+  DS.overlayW = ow; DS.overlayH = oh;
+
+  // Draggable
+  var sx, sy, ox0, oy0;
+  function startDrag(cx, cy) { sx=cx; sy=cy; ox0=DS.overlayX; oy0=DS.overlayY; }
+  function moveDrag(cx, cy) {
+    DS.overlayX = ox0+cx-sx; DS.overlayY = oy0+cy-sy;
+    el.style.left=DS.overlayX+'px'; el.style.top=DS.overlayY+'px';
+  }
+  el.addEventListener('mousedown', function(e) { e.preventDefault(); startDrag(e.clientX,e.clientY);
+    document.addEventListener('mousemove', function mm(e) { moveDrag(e.clientX,e.clientY); });
+    document.addEventListener('mouseup', function mu() {
+      document.removeEventListener('mousemove', mm);
+      document.removeEventListener('mouseup', mu);
+    });
+  });
+  el.addEventListener('touchstart', function(e) { e.preventDefault(); var t=e.touches[0]; startDrag(t.clientX,t.clientY); }, {passive:false});
+  el.addEventListener('touchmove',  function(e) { e.preventDefault(); var t=e.touches[0]; moveDrag(t.clientX,t.clientY); }, {passive:false});
+
+  wrap.appendChild(el);
+}
+
+function initDirectSigPad() {
+  var old = document.getElementById('directSigCanvas');
+  var neo = old.cloneNode(false);
+  old.parentNode.replaceChild(neo, old);
+  var cw = neo.parentElement.clientWidth || 680;
+  neo.width = Math.min(700, cw); neo.height = 160;
+  var ctx = neo.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,neo.width,neo.height);
+  ctx.strokeStyle='#111'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round';
+  var drawing = false;
+  function pos(e) {
+    var r=neo.getBoundingClientRect(), sx=neo.width/r.width, sy=neo.height/r.height;
+    var src = e.touches ? e.touches[0] : e;
+    return {x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy};
+  }
+  neo.addEventListener('mousedown', function(e){drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);});
+  neo.addEventListener('mousemove', function(e){if(!drawing)return;var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();});
+  neo.addEventListener('mouseup',   function(){drawing=false;});
+  neo.addEventListener('mouseleave',function(){drawing=false;});
+  neo.addEventListener('touchstart',function(e){e.preventDefault();drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});
+  neo.addEventListener('touchmove', function(e){e.preventDefault();if(!drawing)return;var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();},{passive:false});
+  neo.addEventListener('touchend',  function(){drawing=false;});
+}
+
+function clearDirectSig() {
+  var c=document.getElementById('directSigCanvas');
+  var ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height);
+}
+
+function isDirectSigBlank() {
+  var c=document.getElementById('directSigCanvas');
+  var tmp=document.createElement('canvas'); tmp.width=c.width; tmp.height=c.height;
+  var ctx=tmp.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,tmp.width,tmp.height);
+  return c.toDataURL()===tmp.toDataURL();
+}
+
+function directSignAndDownload() {
+  var name = document.getElementById('direct-signer-name').value.trim();
+  var date = document.getElementById('direct-signing-date').value;
+  if (!name) { alert('Please enter your full name.'); return; }
+  if (!date) { alert('Please select the signing date.'); return; }
+  if (isDirectSigBlank()) { alert('Please draw your signature first.'); return; }
+  if (!DS.pdfBytes) { alert('PDF still loading — please wait a moment.'); return; }
+
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ Generating PDF…';
+
+  var sigCanvas = document.getElementById('directSigCanvas');
+  var sigDataUrl = sigCanvas.toDataURL('image/png');
+  var sigBase64  = sigDataUrl.split(',')[1];
+
+  PDFLib.PDFDocument.load(DS.pdfBytes)
+    .then(function(pdfDoc) {
+      var sigBytes = Uint8Array.from(atob(sigBase64), function(c){return c.charCodeAt(0);});
+      return pdfDoc.embedPng(sigBytes).then(function(sigImg) {
+        var pages  = pdfDoc.getPages();
+        var page   = pages[DS.sigPage - 1];
+        var sz     = page.getSize();
+        var sc     = DS.renderScale;
+
+        // Convert rendered pixels → PDF points (PDF origin is bottom-left)
+        var pdfSigX = DS.overlayX / sc;
+        var pdfSigW = DS.overlayW / sc;
+        var pdfSigH = DS.overlayH / sc;
+        var pdfSigY = sz.height - (DS.overlayY / sc) - pdfSigH;
+
+        page.drawImage(sigImg, { x:pdfSigX, y:pdfSigY, width:pdfSigW, height:pdfSigH, opacity:0.95 });
+
+        return PDFLib.PDFDocument.create().then(function(dummy) {
+          // embed font inline
+          return pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica).then(function(font) {
+            // Signer info text below signature
+            page.drawText(name + '  ·  ' + date, {
+              x: pdfSigX, y: Math.max(8, pdfSigY - 11),
+              size: 7.5, font: font, color: PDFLib.rgb(0.25,0.25,0.25), maxWidth: pdfSigW,
+            });
+            // SHA-256 footer
+            var payload = JSON.stringify({nombre:name,fecha:date,doc:DS.docTitle,ts:new Date().toISOString(),p:sigDataUrl.slice(0,80)});
+            return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload)).then(function(buf) {
+              var hash = Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+              DS.signedHash = hash;
+              page.drawText('Stockman 21 · SHA-256: ' + hash.slice(0,40) + '…', {
+                x:36, y:14, size:5.5, font:font, color:PDFLib.rgb(0.55,0.55,0.55),
+              });
+              localStorage.setItem('stk:signed:'+hash, JSON.stringify({nombre:name,fecha:date,code:DS.docTitle,ts:new Date().toISOString()}));
+              S.signedLog.push({nombre:name,fecha:date,code:DS.docTitle,hash:hash});
+              return pdfDoc.save().then(function(signedBytes) {
+                var blob = new Blob([signedBytes],{type:'application/pdf'});
+                var url  = URL.createObjectURL(blob);
+                var a    = document.createElement('a');
+                a.href = url;
+                a.download = 'signed-' + DS.docTitle.replace(/[^a-zA-Z0-9\-]/g,'_') + '.pdf';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                setTimeout(function(){URL.revokeObjectURL(url);},5000);
+                // UI feedback
+                document.getElementById('direct-sign-hash').textContent = hash;
+                document.getElementById('direct-sign-result').style.display = '';
+                document.getElementById('direct-sign-result').scrollIntoView({behavior:'smooth'});
+                if (DS.overlayEl) { DS.overlayEl.classList.add('sig-field-signed'); DS.overlayEl.innerHTML='✓ Firmado'; }
+                btn.disabled=false; btn.textContent='✓ Sign & Download PDF';
+              });
+            });
+          });
+        });
+      });
+    })
+    .catch(function(err) {
+      btn.disabled=false; btn.textContent='✓ Sign & Download PDF';
+      alert('Error: ' + err.message); console.error(err);
+    });
+}
+
+function copyDirectHash() {
+  navigator.clipboard.writeText(DS.signedHash||'').then(function(){
+    var btn=document.getElementById('direct-copy-hash');
+    btn.textContent='✓ Copied!'; setTimeout(function(){btn.textContent='Copy code';},2000);
+  });
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', checkUrlParams);
 </script>
 </body>
 </html>
