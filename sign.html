@@ -990,50 +990,51 @@ function renderTemplatePreview() {
 }
 
 // ══════════════════════════════════════════════
-//  PDF STORAGE — base64 in localStorage
-//  Lets the tenant sign on the same device without uploading.
-//  Keyed as  stk:pdf:<CODE>
+//  PDF STORAGE — IndexedDB
+//  Stores the ArrayBuffer directly: no base64 overhead, no 5 MB cap.
+//  A 20 MB PDF is stored as 20 MB. Same-origin, persists on same device.
 // ══════════════════════════════════════════════
-function pdfBufToBase64(buf) {
-  // Convert ArrayBuffer → base64 string in chunks (avoids call-stack overflow on large files)
-  var bytes  = new Uint8Array(buf);
-  var binary = '';
-  var CHUNK  = 8192;
-  for (var i = 0; i < bytes.byteLength; i += CHUNK) {
-    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
-  }
-  return btoa(binary);
-}
-
-function base64ToPdfBuf(b64) {
-  var binary = atob(b64);
-  var bytes  = new Uint8Array(binary.length);
-  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes.buffer;
+var _idb = null;
+function openDB() {
+  if (_idb) return Promise.resolve(_idb);
+  return new Promise(function(resolve, reject) {
+    var req = indexedDB.open('stk21-sign', 1);
+    req.onupgradeneeded = function(e) { e.target.result.createObjectStore('pdfs'); };
+    req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+    req.onerror   = function(e) { reject(e.target.error); };
+  });
 }
 
 function savePdfToStorage(code, buf) {
-  if (!buf || !code) return false;
-  try {
-    // Clean up any old stk:pdf: entries first to free space
-    Object.keys(localStorage).forEach(function(k) {
-      if (k.startsWith('stk:pdf:') && k !== 'stk:pdf:' + code) {
-        localStorage.removeItem(k);
-      }
+  if (!buf || !code) return Promise.resolve(false);
+  return openDB().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx    = db.transaction('pdfs', 'readwrite');
+      var store = tx.objectStore('pdfs');
+      // Clean up old entries
+      var keysReq = store.getAllKeys();
+      keysReq.onsuccess = function(e) {
+        e.target.result.forEach(function(k) { if (k !== code) store.delete(k); });
+      };
+      var put = store.put(buf, code);
+      put.onsuccess = function() { resolve(true); };
+      put.onerror   = function(e) {
+        console.warn('IDB write error:', e.target.error);
+        resolve(false);
+      };
     });
-    localStorage.setItem('stk:pdf:' + code, pdfBufToBase64(buf));
-    return true;
-  } catch(e) {
-    console.warn('PDF too large for localStorage (', Math.round((buf.byteLength||0)/1024), 'KB):', e.name);
-    return false;
-  }
+  }).catch(function(e) { console.warn('IDB error:', e); return false; });
 }
 
 function loadPdfFromStorage(code) {
-  try {
-    var b64 = localStorage.getItem('stk:pdf:' + code);
-    return b64 ? base64ToPdfBuf(b64) : null;
-  } catch(e) { return null; }
+  return openDB().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx  = db.transaction('pdfs', 'readonly');
+      var req = tx.objectStore('pdfs').get(code);
+      req.onsuccess = function(e) { resolve(e.target.result || null); };
+      req.onerror   = function()  { resolve(null); };
+    });
+  }).catch(function() { return null; });
 }
 
 // ══════════════════════════════════════════════
@@ -1047,9 +1048,8 @@ function genCode() {
 }
 function newCode() {
   S.currentCode = genCode();
-  // Re-save PDF under new code, update link display
-  if (S.source === 'upload' && S.pdfBuffer) savePdfToStorage(S.currentCode, S.pdfBuffer);
   document.getElementById('sign-link-text').textContent = buildSignLink();
+  if (S.source === 'upload' && S.pdfBuffer) savePdfToStorage(S.currentCode, S.pdfBuffer);
   renderStep4();
 }
 function copyCode() {
@@ -1065,20 +1065,21 @@ function onEnterStep4() {
   S.leaseData   = collectLeaseData();
   localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData));
 
-  // Save PDF bytes so tenant can sign on same device without uploading
-  var pdfSaved = false;
-  if (S.source === 'upload' && S.pdfBuffer) {
-    pdfSaved = savePdfToStorage(S.currentCode, S.pdfBuffer);
-  }
-
-  // Build and display signing link
-  var sigLink = buildSignLink();
-  document.getElementById('sign-link-text').textContent = sigLink;
-  document.getElementById('sign-link-hint').textContent = pdfSaved
-    ? '✓ Documento guardado. El cliente solo necesita abrir el link, ingresar el código y firmar.'
-    : '⚠ El PDF no cupo en el almacenamiento local. Adjunta el PDF al correo — el cliente lo subirá antes de firmar.';
-
+  // Show link immediately
+  document.getElementById('sign-link-text').textContent = buildSignLink();
+  document.getElementById('sign-link-hint').textContent = '⏳ Guardando documento…';
   renderStep4();
+
+  // Save PDF to IndexedDB (async — no size limit)
+  if (S.source === 'upload' && S.pdfBuffer) {
+    savePdfToStorage(S.currentCode, S.pdfBuffer).then(function(saved) {
+      document.getElementById('sign-link-hint').textContent = saved
+        ? '✓ Listo. El cliente abre el link, ingresa el código y firma — sin subir nada.'
+        : '⚠ No se pudo guardar el PDF en este dispositivo. Adjúntalo al correo.';
+    });
+  } else {
+    document.getElementById('sign-link-hint').textContent = '';
+  }
 }
 
 function buildSignLink() {
@@ -1552,64 +1553,63 @@ function gatewayAccess() {
   }
   errEl.style.display = 'none';
 
-  // Hide gateway, keep mode toggle hidden (tenant is in link-driven mode)
+  // Hide gateway, show wrapper with loading indicator
   document.getElementById('ds-gateway').style.display = 'none';
   document.getElementById('sign-mode-toggle').style.display = 'none';
   document.getElementById('direct-sign-wrapper').style.display = '';
-
-  // Set today's date
   document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
 
-  // ── Try to load PDF from localStorage ──────────────────────────────────
-  var pdfBuf = loadPdfFromStorage(code);
+  // Show spinner while IndexedDB loads
+  var dz = document.getElementById('ds-dropzone');
+  dz.style.display = '';
+  dz.innerHTML = '<div style="padding:40px;text-align:center;color:#aaa;font-size:13px;">⏳ Cargando documento…</div>';
 
-  if (pdfBuf) {
-    // ✓ PDF found — load it directly, no upload required
-    DS.pdfBytes  = pdfBuf;
-    DS.fromUrl   = true; // preserve URL position params
+  // ── Load PDF from IndexedDB (async) ────────────────────────────────────
+  loadPdfFromStorage(code).then(function(pdfBuf) {
 
-    // Hide drop zone, show sign UI immediately
-    document.getElementById('ds-dropzone').style.display = 'none';
-    document.getElementById('ds-sign-ui').style.display  = '';
-    document.getElementById('direct-doc-title').textContent = DS.docTitle;
-    document.getElementById('direct-doc-sub').textContent  = 'Cargando documento…';
-    document.getElementById('direct-pdf-viewer').innerHTML =
-      '<div style="padding:40px;text-align:center;color:#aaa;font-size:13px;">⏳ Abriendo contrato…</div>';
+    if (pdfBuf) {
+      // ✓ PDF found — show it directly, no upload
+      DS.pdfBytes = pdfBuf;
+      DS.fromUrl  = true;
 
-    pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise
-      .then(function(pdfJsDoc) {
-        DS.pdfJsDoc   = pdfJsDoc;
-        DS.totalPages = pdfJsDoc.numPages;
-        DS.sigPage    = Math.max(1, Math.min(DS.sigPage, DS.totalPages));
-        document.getElementById('direct-doc-sub').textContent =
-          DS.totalPages + ' página' + (DS.totalPages > 1 ? 's' : '') +
-          ' · Revisa el documento y firma en el recuadro dorado';
-        renderDirectAllPages();
-        initDirectSigPad();
-        setTimeout(function() {
-          document.getElementById('ds-sign-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 300);
-      })
-      .catch(function(err) {
-        document.getElementById('direct-pdf-viewer').innerHTML =
-          '<div style="padding:24px;color:var(--red);text-align:center;">Error al abrir el PDF: ' + esc(err.message) + '</div>';
-      });
+      dz.style.display = 'none';
+      document.getElementById('ds-sign-ui').style.display  = '';
+      document.getElementById('direct-doc-title').textContent = DS.docTitle;
+      document.getElementById('direct-doc-sub').textContent  = 'Abriendo contrato…';
+      document.getElementById('direct-pdf-viewer').innerHTML =
+        '<div style="padding:40px;text-align:center;color:#aaa;font-size:13px;">⏳ Renderizando páginas…</div>';
 
-  } else {
-    // ✗ PDF not in localStorage (different device or quota exceeded) — fallback: upload
-    document.getElementById('ds-dropzone').style.display = '';
-    var dz = document.getElementById('ds-dropzone');
-    dz.innerHTML =
-      '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
-      '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Sube el PDF adjunto del correo</div>' +
-      '<div style="font-size:12px;color:#666;margin-bottom:8px;">No encontramos el documento en este dispositivo.<br>Ábrelo desde el mismo dispositivo donde se preparó, o sube el PDF aquí.</div>' +
-      '<div style="font-size:11px;color:#aaa;">Clic aquí o arrastra el PDF hacia esta área</div>' +
-      '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
-    initDsDropZone();
-    setTimeout(function() {
-      dz.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
+      pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise
+        .then(function(pdfJsDoc) {
+          DS.pdfJsDoc   = pdfJsDoc;
+          DS.totalPages = pdfJsDoc.numPages;
+          DS.sigPage    = Math.max(1, Math.min(DS.sigPage, DS.totalPages));
+          document.getElementById('direct-doc-sub').textContent =
+            DS.totalPages + ' página' + (DS.totalPages > 1 ? 's' : '') +
+            ' · Revisa el documento y firma en el recuadro dorado';
+          renderDirectAllPages();
+          initDirectSigPad();
+          setTimeout(function() {
+            document.getElementById('ds-sign-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        })
+        .catch(function(err) {
+          document.getElementById('direct-pdf-viewer').innerHTML =
+            '<div style="padding:24px;color:var(--red);text-align:center;">Error al abrir el PDF: ' + esc(err.message) + '</div>';
+        });
+
+    } else {
+      // ✗ Not on this device — fallback upload
+      dz.innerHTML =
+        '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Abre este link en el dispositivo original</div>' +
+        '<div style="font-size:12px;color:#666;margin-bottom:12px;">El documento no está en este dispositivo.<br>Ábrelo desde el mismo teléfono o computadora donde se preparó el contrato.</div>' +
+        '<div style="border-top:1px solid var(--lgray);padding-top:12px;font-size:11px;color:#aaa;">¿Tienes el PDF? Súbelo aquí como alternativa</div>' +
+        '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
+      initDsDropZone();
+      setTimeout(function() { dz.scrollIntoView({ behavior:'smooth', block:'center' }); }, 100);
+    }
+  });
 }
 
 function loadDirectPdf(docUrl) {
