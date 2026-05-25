@@ -1005,6 +1005,53 @@ function renderTemplatePreview() {
 }
 
 // ══════════════════════════════════════════════
+//  PDF STORAGE — base64 in localStorage
+//  Lets the tenant sign on the same device without uploading.
+//  Keyed as  stk:pdf:<CODE>
+// ══════════════════════════════════════════════
+function pdfBufToBase64(buf) {
+  // Convert ArrayBuffer → base64 string in chunks (avoids call-stack overflow on large files)
+  var bytes  = new Uint8Array(buf);
+  var binary = '';
+  var CHUNK  = 8192;
+  for (var i = 0; i < bytes.byteLength; i += CHUNK) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  return btoa(binary);
+}
+
+function base64ToPdfBuf(b64) {
+  var binary = atob(b64);
+  var bytes  = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function savePdfToStorage(code, buf) {
+  if (!buf || !code) return false;
+  try {
+    // Clean up any old stk:pdf: entries first to free space
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('stk:pdf:') && k !== 'stk:pdf:' + code) {
+        localStorage.removeItem(k);
+      }
+    });
+    localStorage.setItem('stk:pdf:' + code, pdfBufToBase64(buf));
+    return true;
+  } catch(e) {
+    console.warn('PDF too large for localStorage (', Math.round((buf.byteLength||0)/1024), 'KB):', e.name);
+    return false;
+  }
+}
+
+function loadPdfFromStorage(code) {
+  try {
+    var b64 = localStorage.getItem('stk:pdf:' + code);
+    return b64 ? base64ToPdfBuf(b64) : null;
+  } catch(e) { return null; }
+}
+
+// ══════════════════════════════════════════════
 //  STEP 4 — CODE & SEND
 // ══════════════════════════════════════════════
 var CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1029,20 +1076,30 @@ function onEnterStep4() {
   S.currentCode = genCode();
   if (S.source !== 'url') S.leaseData = collectLeaseData();
   localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData || {}));
+
+  // Save PDF bytes so tenant can sign without uploading (same device)
+  var pdfSaved = false;
+  if (S.source !== 'url' && S.pdfBuffer) {
+    pdfSaved = savePdfToStorage(S.currentCode, S.pdfBuffer);
+  }
+
   renderStep4();
 
-  // Always build and show signing link
+  // Build and show signing link
   var sigLink = buildSignLink();
   document.getElementById('sign-link-text').textContent = sigLink;
   document.getElementById('sign-link-box').style.display = '';
 
-  // Adapt hint text to source type
+  // Hint text
   var hint = document.getElementById('sign-link-hint');
   if (S.source === 'url') {
     hint.textContent = 'El cliente abre este link y firma directamente — el PDF carga solo.';
+  } else if (pdfSaved) {
+    hint.textContent = 'PDF guardado. Envía este link al cliente — ' +
+      'al entrar el código el documento abre automáticamente y el cliente solo firma.';
   } else {
-    hint.textContent = 'El link incluye el código de acceso (' + (S.currentCode || '') + ') y la posición del recuadro. ' +
-      'Envíalo al cliente junto con el PDF adjunto. El cliente abre el link, confirma el código, sube el PDF y firma.';
+    hint.textContent = 'El PDF es muy grande para guardarlo localmente. ' +
+      'Envía el link + adjunta el PDF al correo; el cliente lo sube antes de firmar.';
   }
 }
 
@@ -1140,17 +1197,15 @@ function buildSendMessage() {
       'Steps: open the link → draw your signature → click Sign & Download.\n\n' +
       'Best regards,\nStockman 21';
   } else {
-    // PDF is attached — tenant uploads it after entering their access code
     var code = S.currentCode || '';
     msg = 'Hi ' + tenant + ',\n\n' +
       'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
       '── SIGNING INSTRUCTIONS ──\n' +
       '1. Open this link:  ' + link + '\n' +
       '2. Enter your access code:  ' + code + '\n' +
-      '3. Upload the PDF attached to this email\n' +
-      '4. Your signature field will appear in the document automatically\n' +
-      '5. Draw your signature and click "Sign & Download PDF"\n\n' +
-      '⚠️  Remember to save the PDF attached to this email — you will need to upload it in step 3.\n\n' +
+      '3. The document will open automatically — review it\n' +
+      '4. Draw your signature in the gold box\n' +
+      '5. Click "Sign & Download PDF" to get your signed copy\n\n' +
       'Best regards,\nStockman 21';
   }
   document.getElementById('send-msg').value = msg;
@@ -1522,34 +1577,66 @@ function gatewayAccess() {
     codeEl.focus();
     return;
   }
-
-  // Accept any non-empty code (validation is the code being in the link itself)
   errEl.style.display = 'none';
 
-  // Transition: hide gateway → show upload area
+  // Hide gateway, keep mode toggle hidden (tenant is in link-driven mode)
   document.getElementById('ds-gateway').style.display = 'none';
-  // Keep mode toggle hidden (tenant is in link-driven mode)
   document.getElementById('sign-mode-toggle').style.display = 'none';
   document.getElementById('direct-sign-wrapper').style.display = '';
 
-  // Set up drop zone with tenant instructions
-  var dz = document.getElementById('ds-dropzone');
-  dz.innerHTML =
-    '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
-    '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Sube el PDF adjunto del correo</div>' +
-    '<div style="font-size:12px;color:#666;margin-bottom:8px;">Stockman 21 te envió el contrato como archivo adjunto</div>' +
-    '<div style="font-size:11px;color:#aaa;">Clic aquí o arrastra el PDF hacia esta área</div>' +
-    '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
-
-  // Pre-set today's date
+  // Set today's date
   document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
 
-  initDsDropZone();
+  // ── Try to load PDF from localStorage ──────────────────────────────────
+  var pdfBuf = loadPdfFromStorage(code);
 
-  // Scroll to drop zone
-  setTimeout(function() {
-    dz.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 100);
+  if (pdfBuf) {
+    // ✓ PDF found — load it directly, no upload required
+    DS.pdfBytes  = pdfBuf;
+    DS.fromUrl   = true; // preserve URL position params
+
+    // Hide drop zone, show sign UI immediately
+    document.getElementById('ds-dropzone').style.display = 'none';
+    document.getElementById('ds-sign-ui').style.display  = '';
+    document.getElementById('direct-doc-title').textContent = DS.docTitle;
+    document.getElementById('direct-doc-sub').textContent  = 'Cargando documento…';
+    document.getElementById('direct-pdf-viewer').innerHTML =
+      '<div style="padding:40px;text-align:center;color:#aaa;font-size:13px;">⏳ Abriendo contrato…</div>';
+
+    pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise
+      .then(function(pdfJsDoc) {
+        DS.pdfJsDoc   = pdfJsDoc;
+        DS.totalPages = pdfJsDoc.numPages;
+        DS.sigPage    = Math.max(1, Math.min(DS.sigPage, DS.totalPages));
+        document.getElementById('direct-doc-sub').textContent =
+          DS.totalPages + ' página' + (DS.totalPages > 1 ? 's' : '') +
+          ' · Revisa el documento y firma en el recuadro dorado';
+        renderDirectAllPages();
+        initDirectSigPad();
+        setTimeout(function() {
+          document.getElementById('ds-sign-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      })
+      .catch(function(err) {
+        document.getElementById('direct-pdf-viewer').innerHTML =
+          '<div style="padding:24px;color:var(--red);text-align:center;">Error al abrir el PDF: ' + esc(err.message) + '</div>';
+      });
+
+  } else {
+    // ✗ PDF not in localStorage (different device or quota exceeded) — fallback: upload
+    document.getElementById('ds-dropzone').style.display = '';
+    var dz = document.getElementById('ds-dropzone');
+    dz.innerHTML =
+      '<div style="font-size:36px;margin-bottom:10px;">📎</div>' +
+      '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Sube el PDF adjunto del correo</div>' +
+      '<div style="font-size:12px;color:#666;margin-bottom:8px;">No encontramos el documento en este dispositivo.<br>Ábrelo desde el mismo dispositivo donde se preparó, o sube el PDF aquí.</div>' +
+      '<div style="font-size:11px;color:#aaa;">Clic aquí o arrastra el PDF hacia esta área</div>' +
+      '<input type="file" id="ds-file-input" accept=".pdf" style="display:none;">';
+    initDsDropZone();
+    setTimeout(function() {
+      dz.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
 }
 
 function loadDirectPdf(docUrl) {
