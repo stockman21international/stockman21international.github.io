@@ -455,16 +455,34 @@ function submitMtlForm() {
   var msg   = document.getElementById('mtl-msg').value.trim();
   if(!name)  { alert('Please enter your full name.');  return; }
   if(!email) { alert('Please enter your email address.'); return; }
-  var subject = encodeURIComponent('Pre-Reservation Interest — Tour des Canadiens 2, Floor 45');
-  var body = encodeURIComponent(
-    'Full Name: ' + name + '\n' +
-    'Email: ' + email + '\n' +
-    'Phone / WhatsApp: ' + (phone || 'Not provided') + '\n\n' +
-    'Message:\n' + (msg || 'No message provided') + '\n\n' +
-    '--- Sent from stockman21international.github.io ---'
-  );
-  window.location.href = 'mailto:stockman21ceo@gmail.com?subject=' + subject + '&body=' + body;
-  document.getElementById('mtl-confirm').style.display = 'block';
+
+  var btn = document.querySelector('#mtl-form button') || document.querySelector('[onclick="submitMtlForm()"]');
+  if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: 'f80fd2dc-5ff8-4763-aada-9138f2035285',
+      subject:    'Pre-Reservation — Tour des Canadiens 2, Floor 45',
+      name:       name,
+      email:      email,
+      phone:      phone || 'Not provided',
+      property:   'Tour des Canadiens 2 — Floor 45, Montréal',
+      message:    msg || 'No message provided'
+    })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(data){
+    if(data.success){
+      document.getElementById('mtl-confirm').style.display = 'block';
+      if(btn){ btn.textContent = '✓ Sent'; }
+    } else { throw new Error('failed'); }
+  })
+  .catch(function(){
+    alert('Could not send. Please email us at stockman21ceo@gmail.com');
+    if(btn){ btn.disabled = false; btn.textContent = 'Request Pre-Reservation →'; }
+  });
 }
 </script>
 
