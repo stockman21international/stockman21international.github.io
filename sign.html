@@ -23,7 +23,7 @@ body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:var(--cream
 
 /* ── Floating CTA ── */
 #sign-float {
-  position:fixed; top:18px; right:18px; z-index:9999;
+  position:fixed; bottom:24px; right:20px; z-index:9999;
   background:var(--black); color:var(--gold);
   text-decoration:none; border:none; cursor:pointer;
   font-family:inherit; font-size:12px; font-weight:700;
@@ -38,7 +38,7 @@ body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:var(--cream
 @media(max-width:480px) {
   #sign-float .btn-full  { display:none; }
   #sign-float .btn-short { display:inline; }
-  #sign-float { top:12px; right:12px; padding:9px 13px; }
+  #sign-float { bottom:16px; right:12px; padding:9px 13px; }
 }
 
 /* ── Header ── */
@@ -532,48 +532,67 @@ label.field-label {
 <div class="tab-panel" id="tab-sign">
   <div class="main">
 
-    <!-- ── DIRECT SIGN MODE (?doc= URL param) ── -->
-    <div id="direct-sign-wrapper" style="display:none;">
-      <div class="info-box" style="margin-bottom:20px;">
-        <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="direct-doc-title"></div>
-        <div style="font-size:12px;color:#888;" id="direct-doc-sub">Review the document, then draw your signature below.</div>
-      </div>
-
-      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Document</h3>
-      <p style="font-size:12px;color:#777;margin-bottom:10px;">The signature field is marked in gold — drag to reposition if needed.</p>
-      <div class="pdf-scroll-viewer" id="direct-pdf-viewer">
-        <div style="padding:24px;text-align:center;color:#ccc;font-size:13px;">Loading document…</div>
-      </div>
-
-      <h3 style="font-size:14px;font-weight:700;margin:20px 0 6px;">Draw Your Signature</h3>
-      <canvas id="directSigCanvas" height="160" style="border:1px solid var(--lgray);border-radius:4px;display:block;width:100%;touch-action:none;background:#fff;cursor:crosshair;margin-bottom:8px;"></canvas>
-      <button class="btn-outline btn-sm" onclick="clearDirectSig()" style="margin-bottom:20px;">Clear</button>
-
-      <div class="form-grid-2" style="margin-bottom:20px;">
-        <div class="field-row">
-          <label class="field-label">Full Name *</label>
-          <input type="text" id="direct-signer-name" placeholder="Your full legal name">
-        </div>
-        <div class="field-row">
-          <label class="field-label">Date</label>
-          <input type="date" id="direct-signing-date">
-        </div>
-      </div>
-
-      <button class="btn-primary" style="width:100%;padding:14px;" onclick="directSignAndDownload()">
-        ✓ Sign &amp; Download PDF
+    <!-- ── MODE TOGGLE ── -->
+    <div style="display:flex;gap:0;margin-bottom:28px;border:1px solid var(--lgray);border-radius:4px;overflow:hidden;">
+      <button onclick="setSignMode('upload')" id="smode-upload"
+        style="flex:1;padding:12px;background:var(--black);color:var(--gold);border:none;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;">
+        📎 Upload PDF to Sign
       </button>
+      <button onclick="setSignMode('code')" id="smode-code"
+        style="flex:1;padding:12px;background:var(--white);color:#888;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border-left:1px solid var(--lgray);">
+        🔑 Access Code
+      </button>
+    </div>
 
-      <div class="result-card" id="direct-sign-result" style="display:none;margin-top:24px;">
-        <div style="font-size:24px;color:var(--green);margin-bottom:8px;">✓ Document Signed</div>
-        <p style="font-size:13px;color:#555;margin-bottom:14px;">Your signed PDF was downloaded. Save this validation code:</p>
-        <div class="hash-box" id="direct-sign-hash"></div>
-        <button class="btn-outline btn-sm" id="direct-copy-hash" onclick="copyDirectHash()" style="margin-top:8px;">Copy code</button>
+    <!-- ── UPLOAD PDF TO SIGN ── -->
+    <div id="direct-sign-wrapper">
+      <!-- Drop zone -->
+      <div id="ds-dropzone" class="drop-zone" style="margin-bottom:20px;">
+        <div style="font-size:36px;margin-bottom:10px;">📄</div>
+        <div><strong>Click to select</strong> or drag &amp; drop your PDF</div>
+        <div style="font-size:11px;margin-top:6px;color:#aaa;">The document will open here — draw your signature and download the signed copy</div>
+        <input type="file" id="ds-file-input" accept=".pdf" style="display:none;">
+      </div>
+
+      <!-- PDF + signature UI (shown after upload) -->
+      <div id="ds-sign-ui" style="display:none;">
+        <div class="info-box" style="margin-bottom:16px;">
+          <strong id="direct-doc-title"></strong>
+          <span style="display:block;font-size:11px;color:#888;margin-top:3px;" id="direct-doc-sub">Drag the gold field to the signature line, then draw below.</span>
+        </div>
+
+        <div class="pdf-scroll-viewer" id="direct-pdf-viewer"></div>
+
+        <h3 style="font-size:14px;font-weight:700;margin:20px 0 6px;">Your Signature</h3>
+        <canvas id="directSigCanvas" height="160" style="border:1px solid var(--lgray);border-radius:4px;display:block;width:100%;touch-action:none;background:#fff;cursor:crosshair;margin-bottom:8px;"></canvas>
+        <button class="btn-outline btn-sm" onclick="clearDirectSig()" style="margin-bottom:20px;">Clear</button>
+
+        <div class="form-grid-2" style="margin-bottom:20px;">
+          <div class="field-row">
+            <label class="field-label">Full Name *</label>
+            <input type="text" id="direct-signer-name" placeholder="Your full legal name">
+          </div>
+          <div class="field-row">
+            <label class="field-label">Date</label>
+            <input type="date" id="direct-signing-date">
+          </div>
+        </div>
+
+        <button class="btn-primary" style="width:100%;padding:14px;" onclick="directSignAndDownload()">
+          ✓ Sign &amp; Download PDF
+        </button>
+
+        <div class="result-card" id="direct-sign-result" style="display:none;margin-top:24px;">
+          <div style="font-size:24px;color:var(--green);margin-bottom:8px;">✓ Document Signed</div>
+          <p style="font-size:13px;color:#555;margin-bottom:14px;">Signed PDF downloaded. Save this validation code:</p>
+          <div class="hash-box" id="direct-sign-hash"></div>
+          <button class="btn-outline btn-sm" id="direct-copy-hash" onclick="copyDirectHash()" style="margin-top:8px;">Copy code</button>
+        </div>
       </div>
     </div>
 
-    <!-- ── ACCESS CODE MODE (existing) ── -->
-    <div id="access-code-section">
+    <!-- ── ACCESS CODE MODE ── -->
+    <div id="access-code-section" style="display:none;">
     <div class="info-box" style="margin-bottom:24px;">
       You received an access code from Stockman 21. Enter it below to view and sign your lease.
     </div>
@@ -1603,8 +1622,94 @@ function copyDirectHash() {
   });
 }
 
+// ══════════════════════════════════════════════
+//  DIRECT UPLOAD MODE — mode toggle + drop zone
+// ══════════════════════════════════════════════
+function setSignMode(mode) {
+  var isUpload = mode === 'upload';
+  document.getElementById('direct-sign-wrapper').style.display  = isUpload ? '' : 'none';
+  document.getElementById('access-code-section').style.display  = isUpload ? 'none' : '';
+
+  var btnUp   = document.getElementById('smode-upload');
+  var btnCode = document.getElementById('smode-code');
+
+  btnUp.style.background   = isUpload ? 'var(--black)' : 'var(--white)';
+  btnUp.style.color        = isUpload ? 'var(--gold)'  : '#888';
+  btnCode.style.background = isUpload ? 'var(--white)' : 'var(--black)';
+  btnCode.style.color      = isUpload ? '#888'         : 'var(--gold)';
+}
+
+function initDsDropZone() {
+  var dz = document.getElementById('ds-dropzone');
+  var fi = document.getElementById('ds-file-input');
+  if (!dz || !fi) return;
+
+  dz.onclick = function(e) {
+    // Don't trigger if user clicked the hidden input itself
+    if (e.target === fi) return;
+    fi.click();
+  };
+  dz.ondragover  = function(e) { e.preventDefault(); dz.classList.add('drag-over'); };
+  dz.ondragleave = function()  { dz.classList.remove('drag-over'); };
+  dz.ondrop = function(e) {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    var f = e.dataTransfer.files[0];
+    if (f && f.type === 'application/pdf') loadDsFile(f);
+    else alert('Please drop a PDF file.');
+  };
+  fi.onchange = function() { if (fi.files[0]) loadDsFile(fi.files[0]); };
+}
+
+function loadDsFile(file) {
+  DS.docTitle = file.name.replace(/\.pdf$/i, '');
+
+  // Update drop zone to show file name
+  var dz = document.getElementById('ds-dropzone');
+  dz.classList.add('file-ok');
+  dz.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">✅</div>' +
+    '<div style="font-weight:600;">' + esc(file.name) + '</div>' +
+    '<div style="font-size:11px;margin-top:6px;">PDF loaded — see below</div>';
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    DS.pdfBytes = e.target.result;
+    DS.sigPage  = 1; // will be updated to last page after doc loads
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    pdfjsLib.getDocument({ data: DS.pdfBytes.slice(0) }).promise.then(function(pdfJsDoc) {
+      DS.pdfJsDoc   = pdfJsDoc;
+      DS.totalPages = pdfJsDoc.numPages;
+      DS.sigPage    = pdfJsDoc.numPages; // default: last page for signature
+
+      // Update info line
+      document.getElementById('direct-doc-title').textContent = DS.docTitle;
+      document.getElementById('direct-doc-sub').textContent   =
+        DS.totalPages + ' page' + (DS.totalPages > 1 ? 's' : '') +
+        ' · Drag the gold field to the signature line';
+
+      // Pre-fill date
+      document.getElementById('direct-signing-date').value = new Date().toISOString().slice(0, 10);
+
+      // Show signing UI and render
+      document.getElementById('ds-sign-ui').style.display = '';
+
+      renderDirectAllPages();
+      initDirectSigPad();
+    }).catch(function(err) {
+      dz.classList.remove('file-ok');
+      dz.innerHTML = '<div style="color:var(--red);">✗ Could not read PDF: ' + esc(err.message) + '</div>';
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
 // Run on page load
-document.addEventListener('DOMContentLoaded', checkUrlParams);
+document.addEventListener('DOMContentLoaded', function() {
+  checkUrlParams();
+  initDsDropZone();
+});
 </script>
 </body>
 </html>
