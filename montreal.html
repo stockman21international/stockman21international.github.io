@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stockman 21 · Montréal — Tour des Canadiens 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:  #111111;
+  --white:  #ffffff;
+  --cream:  #f7f5f0;
+  --gold:   #b8955a;
+  --gold2:  #d4a96a;
+  --lgray:  #e8e6e1;
+  --dgray:  #444444;
+  --green:  #2d7a4f;
+  --red:    #b83232;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Montserrat',sans-serif; background:var(--cream); color:var(--black); -webkit-font-smoothing:antialiased; }
+
+/* ── Floating CTA ── */
+#sign-float-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  background: var(--black);
+  color: var(--gold);
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+#sign-float-btn:hover { background: #222; color: var(--gold2); }
+#sign-float-btn .btn-short { display: none; }
+@media (max-width: 480px) {
+  #sign-float-btn .btn-full  { display: none; }
+  #sign-float-btn .btn-short { display: inline; }
+  #sign-float-btn { top: 12px; right: 12px; padding: 9px 13px; }
+}
+
+/* ── Header ── */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(17,17,17,.94); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(184,149,90,.18);
+}
+.site-header .inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 40px;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: #fff; line-height: 1;
+}
+.brand-name span { color: var(--gold); }
+.brand-tag {
+  font-size: .45rem; font-weight: 600; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(184,149,90,.7); margin-top: 2px;
+}
+.nav-back {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gold); text-decoration: none;
+  border: 1px solid rgba(184,149,90,.4); padding: 6px 14px; border-radius: 3px;
+  transition: background .2s, color .2s;
+}
+.nav-back:hover { background: var(--gold); color: var(--black); }
+
+/* ── Hero ── */
+.hero {
+  position: relative; min-height: 70vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 24px 80px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('img/montreal/tdc2-exterior.jpg') center/cover no-repeat;
+}
+.hero-ov {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.62);
+}
+.hero-content {
+  position: relative; z-index: 1; text-align: center; max-width: 680px;
+}
+.hero-badge {
+  display: inline-block;
+  background: var(--gold); color: var(--black);
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; padding: 6px 18px; border-radius: 20px;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 300; color: #fff; line-height: 1.15; margin-bottom: 16px;
+}
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,.75);
+  line-height: 1.8; margin-bottom: 36px;
+}
+.hero-cta {
+  display: inline-block;
+  background: var(--gold); color: var(--black);
+  text-decoration: none; font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 15px 32px; border-radius: 4px;
+  transition: background .2s;
+}
+.hero-cta:hover { background: var(--gold2); }
+
+/* ── Content ── */
+.content { background: var(--cream); padding: 80px 24px; }
+.content-inner { max-width: 960px; margin: 0 auto; }
+
+/* ── Section header ── */
+.section-badge {
+  display: inline-block;
+  background: var(--gold); color: var(--black);
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 2px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 300; color: var(--black);
+  margin-bottom: 8px;
+}
+.section-sub {
+  font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px;
+}
+.section-desc {
+  font-size: 15px; color: var(--dgray);
+  line-height: 1.8; max-width: 620px; margin-bottom: 40px;
+}
+
+/* ── Amenity cards (light theme) ── */
+.amenity-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 16px; margin-bottom: 56px;
+}
+.amenity-card {
+  background: var(--white); border: 1px solid var(--gold);
+  border-radius: 6px; padding: 20px; text-align: center;
+}
+.amenity-icon { font-size: 28px; margin-bottom: 8px; }
+.amenity-label {
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--black); font-weight: 700;
+}
+
+/* ── Image gallery ── */
+.montreal-gallery {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; margin-bottom: 64px;
+}
+.montreal-gallery img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover;
+  border-radius: 4px; cursor: pointer;
+  transition: transform .3s ease, opacity .2s;
+}
+.montreal-gallery img:hover { transform: scale(1.02); }
+
+/* ── Contact form ── */
+.contact-section { max-width: 560px; margin: 0 auto; }
+.contact-title {
+  text-align: center; font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 300; margin-bottom: 6px;
+}
+.contact-sub { text-align: center; color: #888; font-size: 13px; margin-bottom: 32px; }
+.field-label {
+  display: block; font-size: 11px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: var(--dgray); margin-bottom: 5px;
+}
+.field-row { margin-bottom: 14px; }
+.field-row input, .field-row textarea {
+  width: 100%; padding: 11px 14px;
+  font-family: inherit; font-size: 13px;
+  border: 1px solid var(--lgray); border-radius: 4px;
+  background: var(--white); color: var(--black);
+  outline: none; transition: border-color .2s;
+}
+.field-row input:focus, .field-row textarea:focus { border-color: var(--gold); }
+.field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.submit-btn {
+  width: 100%; background: var(--gold); color: var(--black);
+  border: none; border-radius: 4px; padding: 14px;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; transition: background .2s;
+}
+.submit-btn:hover { background: var(--gold2); }
+.form-confirm {
+  display: none; margin-top: 16px;
+  background: #f0f8f3; border: 1px solid var(--green);
+  border-radius: 4px; padding: 14px; text-align: center;
+  color: var(--green); font-size: 13px;
+}
+
+/* ── Sign link ── */
+.sign-link-wrap {
+  text-align: center; margin-top: 28px; padding-top: 24px;
+  border-top: 1px solid var(--lgray);
+}
+.sign-link-wrap p { color: #999; font-size: 12px; margin-bottom: 12px; letter-spacing: .5px; text-transform: uppercase; }
+.sign-link {
+  display: inline-block; border: 1px solid var(--gold);
+  color: var(--gold); text-decoration: none;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 10px 22px; border-radius: 4px;
+  transition: all .2s;
+}
+.sign-link:hover { background: var(--gold); color: var(--black); }
+
+/* ── Footer ── */
+footer {
+  background: #060e1a; padding: 40px 72px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 16px;
+}
+.f-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 300; color: var(--gold);
+}
+.f-txt { font-size: 11px; color: rgba(255,255,255,.28); letter-spacing: .08em; }
+
+/* ── Lightbox ── */
+#stk-lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.93); z-index: 99999;
+  align-items: center; justify-content: center; flex-direction: column;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .amenity-grid, .montreal-gallery { grid-template-columns: repeat(2,1fr); }
+  .field-grid-2 { grid-template-columns: 1fr; }
+  footer { padding: 32px; flex-direction: column; text-align: center; }
+  .site-header .inner { padding: 0 16px; }
+}
+@media (max-width: 480px) {
+  .amenity-grid, .montreal-gallery { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating Sign button -->
+<a href="https://stockman21international.github.io/sign.html"
+   id="sign-float-btn"
+   title="Sign your lease agreement">
+  <span class="btn-full">Sign Your Lease →</span>
+  <span class="btn-short">Sign →</span>
+</a>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="inner">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 18 C46 30 44 44 43 62" stroke="#b8955a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C36 12 22 13 16 22" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C42 8 46 0 55 4" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C56 10 66 10 70 18" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <polygon points="22,58 36,44 50,58" fill="#b8955a"/>
+        <rect x="25" y="57" width="22" height="16" fill="#b8955a"/>
+        <rect x="32" y="61" width="8" height="8" fill="#111" rx="1"/>
+        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#b8955a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div>
+        <div class="brand-name">STOCKMAN <span>21</span></div>
+        <div class="brand-tag">YOUR BETTER LIFE.</div>
+      </div>
+    </div>
+    <a href="huatulco.html" class="nav-back">← Huatulco Properties</a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Available May 2027</div>
+    <h1>Floor 45 · Tour des Canadiens 2</h1>
+    <p class="hero-sub">Downtown Montréal · Where the city meets world-class living.</p>
+    <a href="#mtl-contact" class="hero-cta">Request Pre-Reservation →</a>
+  </div>
+</section>
+
+<!-- Main content -->
+<div class="content">
+  <div class="content-inner">
+
+    <!-- Section header -->
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="section-badge">Now in Montréal</div>
+      <h2 class="section-title">Tour des Canadiens 2</h2>
+      <p class="section-sub">Downtown · Floor 45 · Available May 2027</p>
+      <p class="section-desc" style="margin:0 auto 20px;">A landmark residence steps from Centre Bell and the heart of downtown Montréal. Floor 45 — panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
+      <span style="border:1px solid var(--gold);color:var(--gold);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 20px;border-radius:20px;">Available May 2027</span>
+    </div>
+
+    <!-- Amenities -->
+    <div class="amenity-grid">
+      <div class="amenity-card">
+        <div class="amenity-icon">🏊</div>
+        <div class="amenity-label">Indoor Pool</div>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">♨️</div>
+        <div class="amenity-label">Rooftop Jacuzzi</div>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">🏋️</div>
+        <div class="amenity-label">Fully Equipped Gym</div>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">🛎️</div>
+        <div class="amenity-label">Concierge Service</div>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">🌆</div>
+        <div class="amenity-label">Panoramic City Views</div>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">🏒</div>
+        <div class="amenity-label">Steps from Centre Bell</div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="montreal-gallery">
+      <img src="img/montreal/tdc2-exterior.jpg"  alt="Tour des Canadiens 2 exterior" loading="lazy">
+      <img src="img/montreal/tdc2-gym.jpg"       alt="Fully equipped gym" loading="lazy">
+      <img src="img/montreal/tdc2-tower.jpg"     alt="Glass tower" loading="lazy">
+      <img src="img/montreal/tdc2-jacuzzi.jpg"   alt="Rooftop jacuzzi" loading="lazy">
+      <img src="img/montreal/tdc2-lounge.jpg"    alt="Lobby lounge" loading="lazy">
+      <img src="img/montreal/tdc2-lounge2.jpg"   alt="Upper lounge at night" loading="lazy">
+      <img src="img/montreal/tdc2-pool.jpg"      alt="Indoor lap pool" loading="lazy">
+      <img src="img/montreal/tdc2-unit1.jpg"     alt="Unit living room with city view" loading="lazy">
+      <img src="img/montreal/tdc2-unit2.jpg"     alt="Unit dining area floor-to-ceiling windows" loading="lazy">
+    </div>
+
+    <!-- Contact form -->
+    <div class="contact-section" id="mtl-contact">
+      <h3 class="contact-title">Reserve Your Spot</h3>
+      <p class="contact-sub">Floor 45 · Tour des Canadiens 2 · Available May 2027</p>
+
+      <div class="field-row">
+        <label class="field-label">Full Name *</label>
+        <input id="mtl-name" type="text" placeholder="Your full name" required>
+      </div>
+      <div class="field-grid-2">
+        <div class="field-row">
+          <label class="field-label">Email *</label>
+          <input id="mtl-email" type="email" placeholder="your@email.com" required>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Phone / WhatsApp</label>
+          <input id="mtl-phone" type="tel" placeholder="+1 514 000 0000">
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Message</label>
+        <textarea id="mtl-msg" rows="4" placeholder="Tell us about your interest in Floor 45 — move-in timeline, unit type preference, any questions..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitMtlForm()">Request Pre-Reservation →</button>
+      <div class="form-confirm" id="mtl-confirm">✓ Thank you. We will be in touch shortly.</div>
+
+      <div class="sign-link-wrap">
+        <p>Already have a lease to sign?</p>
+        <a href="https://stockman21international.github.io/sign.html" class="sign-link">Sign Your Lease →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="f-brand">Stockman 21</div>
+  <p class="f-txt">© 2025 Stockman 21 · Montréal · Huatulco</p>
+</footer>
+
+<!-- Lightbox -->
+<div id="stk-lightbox">
+  <button onclick="stkLbClose()" style="position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;line-height:1;">×</button>
+  <button onclick="stkLbNav(-1)" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">‹</button>
+  <button onclick="stkLbNav(1)"  style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">›</button>
+  <img id="stk-lb-img" src="" alt="" style="max-width:90vw;max-height:88vh;object-fit:contain;border-radius:4px;">
+</div>
+
+<script>
+(function(){
+  var activeImgs = [], cur = 0;
+  function init(){
+    var lb = document.getElementById('stk-lightbox');
+    lb.style.display = 'none';
+    var imgs = Array.from(document.querySelectorAll('.montreal-gallery img'));
+    imgs.forEach(function(img, i){
+      img.addEventListener('click', function(){ stkLbOpen(i, imgs); });
+    });
+    lb.addEventListener('click', function(e){ if(e.target===lb) stkLbClose(); });
+    document.addEventListener('keydown', function(e){
+      var lb = document.getElementById('stk-lightbox');
+      if(lb.style.display==='flex'){
+        if(e.key==='Escape') stkLbClose();
+        if(e.key==='ArrowLeft') stkLbNav(-1);
+        if(e.key==='ArrowRight') stkLbNav(1);
+      }
+    });
+  }
+  window.stkLbOpen = function(i, imgs){
+    activeImgs = imgs || activeImgs;
+    cur = i;
+    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
+    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
+    document.getElementById('stk-lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+  window.stkLbClose = function(){
+    document.getElementById('stk-lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+  window.stkLbNav = function(dir){
+    cur = (cur + dir + activeImgs.length) % activeImgs.length;
+    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
+    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
+  };
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+
+function submitMtlForm() {
+  var name  = document.getElementById('mtl-name').value.trim();
+  var email = document.getElementById('mtl-email').value.trim();
+  var phone = document.getElementById('mtl-phone').value.trim();
+  var msg   = document.getElementById('mtl-msg').value.trim();
+  if(!name)  { alert('Please enter your full name.');  return; }
+  if(!email) { alert('Please enter your email address.'); return; }
+  var subject = encodeURIComponent('Pre-Reservation Interest — Tour des Canadiens 2, Floor 45');
+  var body = encodeURIComponent(
+    'Full Name: ' + name + '\n' +
+    'Email: ' + email + '\n' +
+    'Phone / WhatsApp: ' + (phone || 'Not provided') + '\n\n' +
+    'Message:\n' + (msg || 'No message provided') + '\n\n' +
+    '--- Sent from stockman21international.github.io ---'
+  );
+  window.location.href = 'mailto:stockman21ceo@gmail.com?subject=' + subject + '&body=' + body;
+  document.getElementById('mtl-confirm').style.display = 'block';
+}
+</script>
+</body>
+</html>

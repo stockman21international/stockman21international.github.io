@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stockman 21 · Lease Signing</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --black:  #111111;
+  --white:  #ffffff;
+  --cream:  #f7f5f0;
+  --gold:   #b8955a;
+  --gold2:  #d4a96a;
+  --lgray:  #e8e6e1;
+  --dgray:  #444444;
+  --green:  #2d7a4f;
+  --red:    #b83232;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:var(--cream); color:var(--black); -webkit-font-smoothing:antialiased; }
+
+/* ── Floating CTA ── */
+#sign-float {
+  position:fixed; top:18px; right:18px; z-index:9999;
+  background:var(--black); color:var(--gold);
+  text-decoration:none; border:none; cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:10px 18px; border-radius:4px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.18);
+  transition:background .2s, color .2s;
+  white-space:nowrap;
+}
+#sign-float:hover { background:#222; color:var(--gold2); }
+#sign-float .btn-short { display:none; }
+@media(max-width:480px) {
+  #sign-float .btn-full  { display:none; }
+  #sign-float .btn-short { display:inline; }
+  #sign-float { top:12px; right:12px; padding:9px 13px; }
+}
+
+/* ── Header ── */
+.site-header {
+  background:var(--black); padding:0 32px; height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
+}
+.header-brand { display:flex; align-items:baseline; gap:0; }
+.header-brand .brand-name { font-size:15px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; }
+.header-brand .brand-name span { color:var(--gold); }
+.header-brand .brand-tag { font-size:10px; color:#666; margin-left:10px; font-style:italic; }
+.header-right { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#555; }
+
+/* ── Tab bar ── */
+.tab-bar {
+  background:var(--white); border-bottom:2px solid var(--lgray);
+  display:flex; gap:0; padding:0 32px;
+}
+.tab-btn {
+  background:none; border:none; cursor:pointer;
+  font-family:inherit; font-size:13px; font-weight:600;
+  color:#888; padding:14px 20px; border-bottom:2px solid transparent;
+  margin-bottom:-2px; transition:color .2s, border-color .2s;
+  letter-spacing:.02em;
+}
+.tab-btn.active { color:var(--black); border-bottom-color:var(--gold); }
+.tab-btn:hover:not(.active) { color:#555; }
+
+/* ── Tab panels ── */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ── Main container ── */
+.main { max-width:860px; margin:0 auto; padding:32px 24px 60px; }
+
+/* ── Step indicator ── */
+.steps {
+  display:flex; gap:0; margin-bottom:32px;
+  border-bottom:1px solid var(--lgray); padding-bottom:0;
+}
+.step-item {
+  flex:1; text-align:center; padding:10px 4px 12px;
+  font-size:11px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:#aaa;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  cursor:default; transition:color .2s, border-color .2s;
+}
+.step-item.active   { color:var(--black); border-bottom-color:var(--gold); }
+.step-item.done     { color:var(--green); border-bottom-color:var(--green); }
+
+/* ── Source cards ── */
+.source-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+.source-card {
+  border:2px solid var(--lgray); border-radius:6px; padding:28px 20px;
+  text-align:center; cursor:pointer; transition:border-color .2s, background .2s;
+  font-size:14px; font-weight:600; color:var(--dgray);
+}
+.source-card:hover { border-color:var(--gold); }
+.source-card.selected { border-color:var(--gold); background:#faf4e8; color:var(--black); }
+.source-card .card-icon { font-size:28px; margin-bottom:10px; }
+
+/* ── Drop zone ── */
+.drop-zone {
+  border:2px dashed var(--lgray); border-radius:6px;
+  padding:40px 20px; text-align:center; cursor:pointer;
+  transition:border-color .2s, background .2s; margin-bottom:16px;
+  font-size:13px; color:#888;
+}
+.drop-zone.drag-over { border-color:var(--gold); background:#faf4e8; }
+.drop-zone.file-ok { border-color:var(--green); background:#f0f8f3; color:var(--green); font-weight:600; }
+
+/* ── Select inputs ── */
+select, input[type=text], input[type=email], input[type=tel], input[type=date], input[type=number], textarea {
+  width:100%; padding:10px 12px; font-family:inherit; font-size:13px;
+  border:1px solid var(--lgray); border-radius:4px; background:var(--white);
+  color:var(--black); outline:none; transition:border-color .2s;
+}
+select:focus, input:focus, textarea:focus { border-color:var(--gold); }
+label.field-label {
+  display:block; font-size:11px; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase;
+  color:var(--dgray); margin-bottom:5px;
+}
+.field-row { margin-bottom:14px; }
+
+/* ── Form grid ── */
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+@media(max-width:640px) {
+  .form-grid-2, .form-grid-3 { grid-template-columns:1fr; }
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  background:var(--black); color:var(--white); border:none;
+  border-radius:4px; padding:12px 24px; font-family:inherit;
+  font-size:12px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer; transition:background .2s;
+}
+.btn-primary:hover { background:#2a2a2a; }
+.btn-outline {
+  background:none; color:var(--black); border:1px solid var(--lgray);
+  border-radius:4px; padding:12px 24px; font-family:inherit;
+  font-size:12px; font-weight:600; letter-spacing:.5px;
+  cursor:pointer; transition:border-color .2s, color .2s;
+}
+.btn-outline:hover { border-color:var(--dgray); }
+.btn-gold {
+  background:var(--gold); color:var(--black); border:none;
+  border-radius:4px; padding:12px 24px; font-family:inherit;
+  font-size:12px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer; transition:background .2s;
+}
+.btn-gold:hover { background:var(--gold2); }
+.btn-sm { padding:8px 16px; font-size:11px; }
+.nav-row { display:flex; gap:10px; justify-content:space-between; margin-top:24px; }
+
+/* ── Step content panels ── */
+.step-panel { display:none; }
+.step-panel.active { display:block; }
+
+/* ── PDF viewer ── */
+#pdf-wrapper { position:relative; width:100%; overflow-x:auto; margin-bottom:16px; }
+#pdf-wrapper canvas { display:block; max-width:100%; margin:0 auto; }
+.sig-box {
+  position:absolute; border:2px dashed var(--gold);
+  background:rgba(184,149,90,0.08); cursor:move;
+  min-width:120px; min-height:40px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:var(--gold); user-select:none;
+}
+
+/* ── PDF page nav ── */
+.pdf-nav {
+  display:flex; align-items:center; gap:12px; margin-bottom:12px;
+  font-size:12px; color:var(--dgray);
+}
+
+/* ── Code display ── */
+.code-box {
+  background:var(--black); color:var(--gold);
+  font-family:'Courier New',Courier,monospace; font-size:28px;
+  letter-spacing:6px; text-align:center; padding:20px 24px;
+  border-radius:4px; margin:16px 0; user-select:all;
+}
+.code-sm {
+  background:var(--black); color:var(--gold);
+  font-family:'Courier New',Courier,monospace; font-size:14px;
+  letter-spacing:3px; padding:8px 16px; border-radius:3px;
+  display:inline-block;
+}
+.hash-box {
+  background:var(--cream); color:var(--green);
+  font-family:'Courier New',Courier,monospace; font-size:13px;
+  letter-spacing:1px; word-break:break-all; padding:14px 16px;
+  border:1px solid var(--lgray); border-radius:4px; margin:12px 0;
+}
+
+/* ── Info box ── */
+.info-box {
+  background:#faf4e8; border:1px solid var(--gold); border-radius:4px;
+  padding:16px 20px; margin:16px 0; font-size:13px; line-height:1.7;
+}
+.msg-textarea {
+  width:100%; min-height:160px; font-family:'Courier New',Courier,monospace;
+  font-size:12px; line-height:1.6; padding:12px; border:1px solid var(--lgray);
+  border-radius:4px; resize:vertical; color:var(--black); background:var(--white);
+  outline:none;
+}
+.msg-textarea:focus { border-color:var(--gold); }
+
+/* ── Signature pad ── */
+#sigCanvas {
+  border:1px solid var(--lgray); border-radius:4px;
+  display:block; width:100%; touch-action:none;
+  background:var(--white); cursor:crosshair;
+}
+
+/* ── Contract preview ── */
+.contract-card {
+  background:var(--white); border:1px solid var(--lgray); border-radius:4px;
+  padding:28px 32px; max-height:440px; overflow-y:auto;
+  font-family:'Times New Roman',Times,Georgia,serif; font-size:14px;
+  line-height:1.8; color:#222; margin-bottom:20px;
+}
+
+/* ── Tenant sign result ── */
+.result-card {
+  background:var(--white); border:2px solid var(--green);
+  border-radius:6px; padding:28px 24px; text-align:center; margin-top:24px;
+}
+
+/* ── Validate result boxes ── */
+.val-ok    { background:#f0f8f3; border:1px solid var(--green); border-radius:4px; padding:14px 18px; color:var(--green); font-size:14px; font-weight:600; margin-top:16px; }
+.val-warn  { background:#fffbe6; border:1px solid #b88a00; border-radius:4px; padding:14px 18px; color:#7a5c00; font-size:14px; font-weight:600; margin-top:16px; }
+.val-err   { background:#fff0f0; border:1px solid var(--red); border-radius:4px; padding:14px 18px; color:var(--red); font-size:14px; font-weight:600; margin-top:16px; }
+
+/* ── Session log ── */
+.session-log { margin-top:32px; }
+.log-row { font-size:12px; padding:8px 0; border-bottom:1px solid var(--lgray); color:var(--dgray); }
+.log-empty { font-size:13px; color:#aaa; padding:16px 0; text-align:center; }
+
+/* ── Template preview ── */
+.tmpl-preview {
+  background:var(--white); border:1px solid var(--lgray); border-radius:4px;
+  padding:32px; font-family:Georgia,serif; font-size:14px; line-height:1.8;
+  max-height:480px; overflow-y:auto; margin-bottom:16px;
+}
+
+/* ── Dropdowns source section ── */
+.source-sub { margin-top:16px; }
+
+/* ── Responsive ── */
+@media(max-width:768px) {
+  .main { padding:24px 16px 48px; }
+  .tab-bar { padding:0 16px; }
+  .tab-btn { padding:12px 12px; font-size:12px; }
+  .site-header { padding:0 16px; }
+}
+@media(max-width:480px) {
+  .source-cards { grid-template-columns:1fr; }
+  .nav-row { flex-wrap:wrap; }
+  .nav-row .btn-primary, .nav-row .btn-outline { width:100%; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating CTA -->
+<button id="sign-float" onclick="activateSignTab()" title="Sign your lease agreement">
+  <span class="btn-full">Sign Your Lease →</span>
+  <span class="btn-short">Sign →</span>
+</button>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-brand">
+    <span class="brand-name">STOCKMAN <span>21</span></span>
+    <span class="brand-tag">Your Better Life.</span>
+  </div>
+  <div class="header-right">Lease Signing</div>
+</header>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-prepare-btn" onclick="switchTab('prepare')">Prepare</button>
+  <button class="tab-btn"        id="tab-sign-btn"    onclick="switchTab('sign')">Sign</button>
+  <button class="tab-btn"        id="tab-validate-btn" onclick="switchTab('validate')">Validate</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 1 — PREPARE
+════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-prepare">
+  <div class="main">
+
+    <!-- Step indicator -->
+    <div class="steps">
+      <div class="step-item active" id="si-1">Source</div>
+      <div class="step-item"        id="si-2">Details</div>
+      <div class="step-item"        id="si-3">Signature</div>
+      <div class="step-item"        id="si-4">Send</div>
+    </div>
+
+    <!-- STEP 1 — Document Source -->
+    <div class="step-panel active" id="sp-1">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Document Source</h2>
+      <p style="font-size:13px;color:#777;margin-bottom:24px;">Choose how to provide the lease document.</p>
+
+      <div class="source-cards">
+        <div class="source-card" id="card-upload" onclick="selectSource('upload')">
+          <div class="card-icon">📎</div>
+          Upload existing PDF
+        </div>
+        <div class="source-card" id="card-template" onclick="selectSource('template')">
+          <div class="card-icon">📋</div>
+          Use Stockman 21 template
+        </div>
+      </div>
+
+      <!-- Upload sub-panel -->
+      <div id="sub-upload" style="display:none;">
+        <div class="drop-zone" id="dropZone">
+          <div style="font-size:32px;margin-bottom:10px;">📄</div>
+          <div><strong>Click to select</strong> or drag &amp; drop your PDF here</div>
+          <div style="font-size:11px;margin-top:6px;">PDF files only</div>
+          <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
+        </div>
+        <div id="upload-confirm" style="display:none;font-size:13px;color:var(--green);font-weight:600;margin-bottom:12px;"></div>
+      </div>
+
+      <!-- Template sub-panel -->
+      <div id="sub-template" style="display:none;" class="source-sub">
+        <div class="form-grid-2">
+          <div class="field-row">
+            <label class="field-label">Contract Type</label>
+            <select id="tmpl-type">
+              <option value="residential">Residential Lease</option>
+              <option value="commercial">Commercial Lease</option>
+              <option value="vacation">Vacation Rental Agreement</option>
+              <option value="parking">Parking Agreement</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Jurisdiction</label>
+            <select id="tmpl-jurisdiction">
+              <option value="mx-oaxaca">Mexico — Oaxaca</option>
+              <option value="mx-other">Mexico (other)</option>
+              <option value="ca-qc">Quebec, Canada</option>
+              <option value="ca-on">Ontario, Canada</option>
+              <option value="us">United States</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — Lease Details -->
+    <div class="step-panel" id="sp-2">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Lease Details</h2>
+      <p style="font-size:13px;color:#777;margin-bottom:24px;">Fill in the details for the lease agreement.</p>
+
+      <div class="form-grid-2">
+        <div class="field-row">
+          <label class="field-label">Tenant Full Name *</label>
+          <input type="text" id="f-tenant-name" placeholder="Full legal name" required>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Tenant Email *</label>
+          <input type="email" id="f-tenant-email" placeholder="tenant@email.com" required>
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="field-row">
+          <label class="field-label">WhatsApp Number</label>
+          <input type="tel" id="f-whatsapp" placeholder="+1 514 000 0000">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Unit / Property Name</label>
+          <input type="text" id="f-unit" placeholder="e.g. Loft Tamarindos">
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Full Property Address</label>
+        <input type="text" id="f-address" placeholder="Street, City, State, Country">
+      </div>
+      <div class="form-grid-3">
+        <div class="field-row">
+          <label class="field-label">Start Date *</label>
+          <input type="date" id="f-start" required>
+        </div>
+        <div class="field-row">
+          <label class="field-label">End Date *</label>
+          <input type="date" id="f-end" required>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Monthly Rent</label>
+          <input type="text" id="f-rent" placeholder="e.g. $2,500 CAD">
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="field-row">
+          <label class="field-label">Deposit</label>
+          <input type="text" id="f-deposit" placeholder="e.g. $5,000 CAD">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Minimum Stay</label>
+          <input type="text" id="f-minstay" placeholder="e.g. 10 nights">
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Additional Clauses</label>
+        <textarea id="f-clauses" rows="3" placeholder="Any specific clauses, rules, or conditions…"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-outline" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" onclick="validateStep2()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Signature Placement -->
+    <div class="step-panel" id="sp-3">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Signature Placement</h2>
+      <p style="font-size:13px;color:#777;margin-bottom:20px;" id="sp3-hint"></p>
+
+      <!-- PDF viewer (shown when source=upload) -->
+      <div id="pdf-view" style="display:none;">
+        <div class="pdf-nav">
+          <button class="btn-outline btn-sm" onclick="prevPage()">← Prev</button>
+          <span id="pdf-page-info">Page 1 of 1</span>
+          <button class="btn-outline btn-sm" onclick="nextPage()">Next →</button>
+          <button class="btn-gold btn-sm" onclick="addSigBox()" style="margin-left:auto;">+ Add box</button>
+          <button class="btn-outline btn-sm" onclick="clearBoxes()">Clear all</button>
+        </div>
+        <div id="pdf-wrapper"></div>
+      </div>
+
+      <!-- Template preview (shown when source=template) -->
+      <div id="tmpl-view" style="display:none;">
+        <div class="tmpl-preview" id="tmpl-content"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-outline" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" onclick="goStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Access Code & Send -->
+    <div class="step-panel" id="sp-4">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Access Code &amp; Send</h2>
+      <p style="font-size:13px;color:#777;margin-bottom:20px;">Generate a code and send it to your tenant.</p>
+
+      <div class="code-box" id="code-display"></div>
+
+      <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="btn-outline btn-sm" onclick="newCode()">🎲 New code</button>
+        <button class="btn-outline btn-sm" id="copy-code-btn" onclick="copyCode()">📋 Copy code</button>
+      </div>
+
+      <div class="info-box">
+        <strong>Instructions for your tenant:</strong>
+        <ol style="margin-top:8px;padding-left:20px;line-height:2;">
+          <li>Open: <span style="font-family:monospace;">https://stockman21international.github.io/sign.html</span></li>
+          <li>Go to the <strong>Sign</strong> tab</li>
+          <li>Enter access code: <span class="code-sm" id="code-inline"></span></li>
+          <li>Sign and download the sealed document</li>
+        </ol>
+        <p style="margin-top:10px;font-size:11px;color:#888;">⚠ The access link works on the same browser and device where this document was prepared. If the tenant uses a different device, ask them to request a new link.</p>
+      </div>
+
+      <div class="field-row" style="margin-top:16px;">
+        <label class="field-label">Message (editable)</label>
+        <textarea class="msg-textarea" id="send-msg" rows="10"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+        <button class="btn-gold" onclick="sendWhatsApp()">📱 Send via WhatsApp</button>
+        <button class="btn-outline" onclick="sendEmail()">✉️ Send via Email</button>
+      </div>
+
+      <div class="nav-row" style="margin-top:24px;">
+        <button class="btn-outline" onclick="goStep(3)">← Back</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 2 — SIGN
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-sign">
+  <div class="main">
+    <div class="info-box" style="margin-bottom:24px;">
+      You received an access code from Stockman 21. Enter it below to view and sign your lease.
+    </div>
+
+    <div style="max-width:480px;margin:0 auto;">
+      <input type="text" id="access-code-input"
+        placeholder="e.g. STK-AB3X7K"
+        style="font-size:20px;letter-spacing:4px;text-transform:uppercase;text-align:center;padding:14px;width:100%;margin-bottom:12px;"
+        oninput="this.value=this.value.toUpperCase()">
+      <button class="btn-primary" style="width:100%;padding:14px;" onclick="loadDocument()">
+        Access Document →
+      </button>
+      <div id="access-error" style="display:none;" class="val-err" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Contract + signature (shown after valid code) -->
+    <div id="sign-content" style="display:none;margin-top:32px;">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Lease Agreement</h3>
+      <div class="contract-card" id="contract-preview"></div>
+
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Your Signature</h3>
+      <div style="position:relative;margin-bottom:10px;">
+        <canvas id="sigCanvas" height="200"></canvas>
+      </div>
+      <button class="btn-outline btn-sm" onclick="clearSig()" style="margin-bottom:20px;">Clear signature</button>
+
+      <div class="form-grid-2" style="margin-bottom:16px;">
+        <div class="field-row">
+          <label class="field-label">Full Name *</label>
+          <input type="text" id="signer-name" placeholder="Your full name as it appears on ID">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Signing Date *</label>
+          <input type="date" id="signing-date">
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;padding:14px;" onclick="submitSignature()">
+        ✓  Sign Document
+      </button>
+
+      <!-- Result -->
+      <div class="result-card" id="sign-result" style="display:none;">
+        <div style="font-size:24px;color:var(--green);margin-bottom:8px;">✓ Document Signed</div>
+        <p style="font-size:13px;color:#555;margin-bottom:16px;">Save this validation code — it proves your signature is authentic:</p>
+        <div class="hash-box" id="sign-hash"></div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+          <button class="btn-primary" onclick="downloadSigned()">⬇ Download signed document</button>
+          <button class="btn-outline" id="copy-hash-btn" onclick="copyHash()">Copy code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 3 — VALIDATE
+════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-validate">
+  <div class="main">
+    <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Validate a Signature</h2>
+    <p style="font-size:13px;color:#777;margin-bottom:24px;">Enter the validation code and signer details to verify authenticity.</p>
+
+    <div class="field-row">
+      <label class="field-label">SHA-256 Validation Code</label>
+      <input type="text" id="val-hash" placeholder="Paste the full validation code here" style="font-family:monospace;font-size:12px;">
+    </div>
+    <div class="form-grid-2">
+      <div class="field-row">
+        <label class="field-label">Signer Full Name</label>
+        <input type="text" id="val-name" placeholder="As entered at signing">
+      </div>
+      <div class="field-row">
+        <label class="field-label">Signing Date</label>
+        <input type="date" id="val-date">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="validateSig()">Verify →</button>
+
+    <div id="val-result"></div>
+
+    <!-- Session log -->
+    <div class="session-log">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:14px;margin-top:32px;padding-top:24px;border-top:1px solid var(--lgray);">
+        Signed documents — this session
+      </h3>
+      <div id="session-log-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+var S = {
+  currentTab: 'prepare',
+  currentStep: 1,
+  source: null,           // 'upload' | 'template'
+  pdfBuffer: null,
+  pdfDoc: null,
+  pdfPage: 1,
+  pdfTotal: 1,
+  sigBoxes: [],
+  addingBox: false,
+  currentCode: null,
+  leaseData: null,
+  // sign tab
+  loadedCode: null,
+  loadedLease: null,
+  sigDataUrl: null,
+  signedHash: null,
+  signerName: null,
+  signerDate: null,
+  signedLog: [],
+};
+
+// ══════════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(name) {
+  ['prepare','sign','validate'].forEach(function(t) {
+    document.getElementById('tab-'+t).classList.remove('active');
+    document.getElementById('tab-'+t+'-btn').classList.remove('active');
+  });
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('tab-'+name+'-btn').classList.add('active');
+  S.currentTab = name;
+  if (name === 'validate') renderSessionLog();
+}
+
+function activateSignTab() {
+  switchTab('sign');
+  var inp = document.getElementById('access-code-input');
+  if (inp) { inp.focus(); inp.select(); }
+}
+
+// ══════════════════════════════════════════════
+//  STEP NAVIGATION
+// ══════════════════════════════════════════════
+function goStep(n) {
+  // Hide all
+  [1,2,3,4].forEach(function(i) {
+    document.getElementById('sp-'+i).classList.remove('active');
+    var si = document.getElementById('si-'+i);
+    si.classList.remove('active','done');
+    if (i < n) si.classList.add('done');
+  });
+  document.getElementById('sp-'+n).classList.add('active');
+  document.getElementById('si-'+n).classList.add('active');
+  S.currentStep = n;
+
+  if (n === 3) onEnterStep3();
+  if (n === 4) onEnterStep4();
+}
+
+// ══════════════════════════════════════════════
+//  STEP 1 — SOURCE
+// ══════════════════════════════════════════════
+function selectSource(type) {
+  S.source = type;
+  document.getElementById('card-upload').classList.toggle('selected', type === 'upload');
+  document.getElementById('card-template').classList.toggle('selected', type === 'template');
+  document.getElementById('sub-upload').style.display   = type === 'upload'   ? '' : 'none';
+  document.getElementById('sub-template').style.display = type === 'template' ? '' : 'none';
+  if (type === 'upload') initDropZone();
+}
+
+function initDropZone() {
+  var dz = document.getElementById('dropZone');
+  var fi = document.getElementById('pdfFileInput');
+  dz.onclick = function() { fi.click(); };
+  dz.ondragover = function(e) { e.preventDefault(); dz.classList.add('drag-over'); };
+  dz.ondragleave = function() { dz.classList.remove('drag-over'); };
+  dz.ondrop = function(e) {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    var f = e.dataTransfer.files[0];
+    if (f && f.type === 'application/pdf') loadPdf(f);
+    else alert('Please drop a PDF file.');
+  };
+  fi.onchange = function() {
+    if (fi.files[0]) loadPdf(fi.files[0]);
+  };
+}
+
+function loadPdf(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    S.pdfBuffer = e.target.result;
+    var dz = document.getElementById('dropZone');
+    dz.classList.add('file-ok');
+    dz.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">✅</div><div>' + file.name + '</div>';
+    document.getElementById('upload-confirm').textContent = '✓ File loaded: ' + file.name;
+    document.getElementById('upload-confirm').style.display = 'block';
+    // Auto-advance
+    setTimeout(function() { goStep(2); }, 600);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ══════════════════════════════════════════════
+//  STEP 2 — VALIDATE
+// ══════════════════════════════════════════════
+function validateStep2() {
+  var name  = document.getElementById('f-tenant-name').value.trim();
+  var email = document.getElementById('f-tenant-email').value.trim();
+  var start = document.getElementById('f-start').value;
+  var end   = document.getElementById('f-end').value;
+  if (!name)  { alert('Tenant full name is required.'); return; }
+  if (!email) { alert('Tenant email is required.'); return; }
+  if (!start) { alert('Start date is required.'); return; }
+  if (!end)   { alert('End date is required.'); return; }
+  goStep(3);
+}
+
+// ══════════════════════════════════════════════
+//  STEP 3 — SIGNATURE PLACEMENT
+// ══════════════════════════════════════════════
+function onEnterStep3() {
+  if (S.source === 'upload' && S.pdfBuffer) {
+    document.getElementById('pdf-view').style.display  = '';
+    document.getElementById('tmpl-view').style.display = 'none';
+    document.getElementById('sp3-hint').textContent = 'Click "+ Add box" then click on the document to place a signature area. You can drag boxes to reposition them.';
+    initPdfViewer();
+  } else {
+    document.getElementById('pdf-view').style.display  = 'none';
+    document.getElementById('tmpl-view').style.display = '';
+    document.getElementById('sp3-hint').textContent = 'Review the contract below. The signature placeholder is automatically placed at the bottom.';
+    renderTemplatePreview();
+  }
+}
+
+// PDF Viewer
+function initPdfViewer() {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var loadingTask = pdfjsLib.getDocument({ data: S.pdfBuffer });
+  loadingTask.promise.then(function(pdf) {
+    S.pdfDoc  = pdf;
+    S.pdfPage = 1;
+    S.pdfTotal = pdf.numPages;
+    renderPage(S.pdfPage);
+  });
+}
+
+function renderPage(pageNum) {
+  // CRITICAL BUG FIX: replace wrapper to prevent listener accumulation
+  var oldWrapper = document.getElementById('pdf-wrapper');
+  var newWrapper = oldWrapper.cloneNode(false);
+  oldWrapper.parentNode.replaceChild(newWrapper, oldWrapper);
+
+  var canvas = document.createElement('canvas');
+  newWrapper.appendChild(canvas);
+
+  document.getElementById('pdf-page-info').textContent =
+    'Page ' + pageNum + ' of ' + S.pdfTotal;
+
+  S.pdfDoc.getPage(pageNum).then(function(page) {
+    var viewport = page.getViewport({ scale: 1.4 });
+    canvas.width  = viewport.width;
+    canvas.height = viewport.height;
+    var ctx = canvas.getContext('2d');
+    page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function() {
+      // Re-draw existing sig boxes
+      S.sigBoxes.forEach(function(b) { placeSigBoxEl(b, newWrapper); });
+      // Add click listener for new box placement
+      newWrapper.addEventListener('click', function(e) {
+        if (!S.addingBox) return;
+        var rect = newWrapper.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var box = { x:x, y:y, w:180, h:50, page: S.pdfPage };
+        S.sigBoxes.push(box);
+        placeSigBoxEl(box, newWrapper);
+        S.addingBox = false;
+        newWrapper.style.cursor = '';
+      });
+    });
+  });
+}
+
+function placeSigBoxEl(box, wrapper) {
+  var el = document.createElement('div');
+  el.className = 'sig-box';
+  el.style.left   = box.x + 'px';
+  el.style.top    = box.y + 'px';
+  el.style.width  = box.w + 'px';
+  el.style.height = box.h + 'px';
+  el.textContent  = 'Signature';
+  makeDraggable(el, box);
+  wrapper.appendChild(el);
+}
+
+function makeDraggable(el, box) {
+  var startX, startY, origX, origY;
+  el.onmousedown = function(e) {
+    e.stopPropagation();
+    startX = e.clientX; startY = e.clientY;
+    origX = box.x; origY = box.y;
+    document.onmousemove = function(e2) {
+      box.x = origX + e2.clientX - startX;
+      box.y = origY + e2.clientY - startY;
+      el.style.left = box.x + 'px';
+      el.style.top  = box.y + 'px';
+    };
+    document.onmouseup = function() {
+      document.onmousemove = null;
+      document.onmouseup   = null;
+    };
+  };
+}
+
+function addSigBox() {
+  S.addingBox = true;
+  var w = document.getElementById('pdf-wrapper');
+  w.style.cursor = 'crosshair';
+}
+function clearBoxes() { S.sigBoxes = []; renderPage(S.pdfPage); }
+function prevPage() { if (S.pdfPage > 1) { S.pdfPage--; renderPage(S.pdfPage); } }
+function nextPage() { if (S.pdfPage < S.pdfTotal) { S.pdfPage++; renderPage(S.pdfPage); } }
+
+// Template preview
+function renderTemplatePreview() {
+  var d = collectLeaseData();
+  document.getElementById('tmpl-content').innerHTML = buildContractHtml(d, false);
+}
+
+// ══════════════════════════════════════════════
+//  STEP 4 — CODE & SEND
+// ══════════════════════════════════════════════
+var CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function genCode() {
+  var code = 'STK-';
+  for (var i = 0; i < 6; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+  return code;
+}
+function newCode() {
+  S.currentCode = genCode();
+  renderStep4();
+}
+function copyCode() {
+  navigator.clipboard.writeText(S.currentCode).then(function() {
+    var btn = document.getElementById('copy-code-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() { btn.textContent = '📋 Copy code'; }, 1800);
+  });
+}
+
+function onEnterStep4() {
+  S.currentCode = genCode();
+  S.leaseData   = collectLeaseData();
+  // Store in localStorage
+  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData));
+  renderStep4();
+}
+
+function collectLeaseData() {
+  return {
+    tenantName:   (document.getElementById('f-tenant-name')  || {value:''}).value.trim(),
+    tenantEmail:  (document.getElementById('f-tenant-email') || {value:''}).value.trim(),
+    whatsapp:     (document.getElementById('f-whatsapp')     || {value:''}).value.trim(),
+    unit:         (document.getElementById('f-unit')         || {value:''}).value.trim(),
+    address:      (document.getElementById('f-address')      || {value:''}).value.trim(),
+    startDate:    (document.getElementById('f-start')        || {value:''}).value,
+    endDate:      (document.getElementById('f-end')          || {value:''}).value,
+    rent:         (document.getElementById('f-rent')         || {value:''}).value.trim(),
+    deposit:      (document.getElementById('f-deposit')      || {value:''}).value.trim(),
+    minStay:      (document.getElementById('f-minstay')      || {value:''}).value.trim(),
+    clauses:      (document.getElementById('f-clauses')      || {value:''}).value.trim(),
+    contractType: S.source === 'template' ? (document.getElementById('tmpl-type') || {value:'residential'}).value : 'custom',
+    jurisdiction: S.source === 'template' ? (document.getElementById('tmpl-jurisdiction') || {value:'other'}).value : '',
+    source:       S.source,
+    ts:           new Date().toISOString(),
+  };
+}
+
+function renderStep4() {
+  document.getElementById('code-display').textContent = S.currentCode;
+  document.getElementById('code-inline').textContent  = S.currentCode;
+  // Save with new code
+  localStorage.setItem('stk:doc:' + S.currentCode, JSON.stringify(S.leaseData || collectLeaseData()));
+  buildSendMessage();
+}
+
+function buildSendMessage() {
+  var d = S.leaseData || collectLeaseData();
+  var tenant = d.tenantName || '[tenant name]';
+  var unit   = d.unit       || '[property]';
+  var msg =
+    'Hi ' + tenant + ',\n\n' +
+    'Your lease agreement for ' + unit + ' is ready to sign.\n\n' +
+    'Please open the following link and enter your access code:\n' +
+    'Link: https://stockman21international.github.io/sign.html\n' +
+    'Code: ' + S.currentCode + '\n\n' +
+    'Steps: go to the Sign tab → enter your code → sign → download your copy.\n\n' +
+    'Best regards,\nStockman 21';
+  document.getElementById('send-msg').value = msg;
+}
+
+function sendWhatsApp() {
+  var d   = S.leaseData || collectLeaseData();
+  var tel = d.whatsapp ? d.whatsapp.replace(/\D/g,'') : '';
+  var msg = document.getElementById('send-msg').value;
+  var url = tel
+    ? 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg)
+    : 'https://wa.me/?text='            + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+
+function sendEmail() {
+  var d       = S.leaseData || collectLeaseData();
+  var unit    = d.unit || '';
+  var subject = 'Lease Agreement — Stockman 21' + (unit ? ' — ' + unit : '');
+  var email   = d.tenantEmail || '';
+  var msg     = document.getElementById('send-msg').value;
+  window.location.href = 'mailto:' + email +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body='    + encodeURIComponent(msg);
+}
+
+// ══════════════════════════════════════════════
+//  TAB 2 — SIGN
+// ══════════════════════════════════════════════
+function loadDocument() {
+  var code = document.getElementById('access-code-input').value.trim().toUpperCase();
+  var raw  = localStorage.getItem('stk:doc:' + code);
+  var errEl = document.getElementById('access-error');
+
+  if (!raw) {
+    errEl.textContent = 'Code not found. Make sure you are using the same browser and device where the document was prepared, or ask Stockman 21 to resend.';
+    errEl.style.display = 'block';
+    document.getElementById('sign-content').style.display = 'none';
+    return;
+  }
+  errEl.style.display = 'none';
+  S.loadedCode  = code;
+  S.loadedLease = JSON.parse(raw);
+
+  // Render contract
+  document.getElementById('contract-preview').innerHTML = buildContractHtml(S.loadedLease, true);
+  document.getElementById('sign-content').style.display = '';
+  document.getElementById('sign-result').style.display  = 'none';
+
+  // Set today's date
+  var today = new Date().toISOString().slice(0,10);
+  document.getElementById('signing-date').value = today;
+
+  // Init signature pad
+  initSigPad();
+}
+
+function initSigPad() {
+  // CRITICAL BUG FIX: replace canvas with cloneNode(false) to avoid listener accumulation
+  var oldCanvas = document.getElementById('sigCanvas');
+  var newCanvas = oldCanvas.cloneNode(false);
+  oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+
+  var containerW = newCanvas.parentElement.clientWidth || 680;
+  newCanvas.width  = Math.min(700, containerW);
+  newCanvas.height = 200;
+
+  var ctx     = newCanvas.getContext('2d');
+  var drawing = false;
+  var lastX = 0, lastY = 0;
+
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  function getPos(e) {
+    var r = newCanvas.getBoundingClientRect();
+    if (e.touches) {
+      return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    }
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  newCanvas.addEventListener('mousedown', function(e) {
+    drawing = true;
+    var p = getPos(e); lastX = p.x; lastY = p.y;
+    ctx.beginPath(); ctx.moveTo(lastX, lastY);
+  });
+  newCanvas.addEventListener('mousemove', function(e) {
+    if (!drawing) return;
+    var p = getPos(e);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    lastX = p.x; lastY = p.y;
+  });
+  newCanvas.addEventListener('mouseup',    function() { drawing = false; });
+  newCanvas.addEventListener('mouseleave', function() { drawing = false; });
+
+  newCanvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    drawing = true;
+    var p = getPos(e); lastX = p.x; lastY = p.y;
+    ctx.beginPath(); ctx.moveTo(lastX, lastY);
+  }, { passive: false });
+  newCanvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (!drawing) return;
+    var p = getPos(e);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    lastX = p.x; lastY = p.y;
+  }, { passive: false });
+  newCanvas.addEventListener('touchend', function() { drawing = false; });
+}
+
+function clearSig() {
+  var c = document.getElementById('sigCanvas');
+  c.getContext('2d').clearRect(0, 0, c.width, c.height);
+}
+
+function isBlankSig() {
+  var c = document.getElementById('sigCanvas');
+  var tmp = document.createElement('canvas');
+  tmp.width = c.width; tmp.height = c.height;
+  tmp.getContext('2d').fillStyle = '#ffffff';
+  tmp.getContext('2d').fillRect(0, 0, tmp.width, tmp.height);
+  return c.toDataURL() === tmp.toDataURL();
+}
+
+function submitSignature() {
+  var name = document.getElementById('signer-name').value.trim();
+  var date = document.getElementById('signing-date').value;
+  if (!name) { alert('Please enter your full name.'); return; }
+  if (!date) { alert('Please select a signing date.'); return; }
+  if (isBlankSig()) { alert('Please draw your signature first.'); return; }
+
+  var sig    = document.getElementById('sigCanvas').toDataURL();
+  S.sigDataUrl  = sig;
+  S.signerName  = name;
+  S.signerDate  = date;
+
+  var payload = JSON.stringify({
+    nombre: name, fecha: date, codigo: S.loadedCode,
+    ts: new Date().toISOString(), preview: sig.slice(0,100)
+  });
+
+  crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload)).then(function(buf) {
+    var hash = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+    S.signedHash = hash;
+
+    localStorage.setItem('stk:signed:' + hash, JSON.stringify({
+      nombre: name, fecha: date, code: S.loadedCode, ts: new Date().toISOString()
+    }));
+
+    // Add to session log
+    S.signedLog.push({ nombre: name, fecha: date, code: S.loadedCode, hash: hash });
+
+    document.getElementById('sign-hash').textContent = hash;
+    var resultEl = document.getElementById('sign-result');
+    resultEl.style.display = 'block';
+    resultEl.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+function copyHash() {
+  navigator.clipboard.writeText(S.signedHash || '').then(function() {
+    var btn = document.getElementById('copy-hash-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() { btn.textContent = 'Copy code'; }, 1800);
+  });
+}
+
+function downloadSigned() {
+  var d    = S.loadedLease || {};
+  var sig  = S.sigDataUrl  || '';
+  var hash = S.signedHash  || '';
+  var name = S.signerName  || '';
+  var date = S.signerDate  || '';
+  var code = S.loadedCode  || '';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<title>Signed Lease — Stockman 21</title>' +
+    '<style>' +
+    'body{font-family:Georgia,serif;max-width:720px;margin:40px auto;padding:0 24px;color:#222;font-size:14px;line-height:1.8;}' +
+    'h1{font-size:24px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#111;margin-bottom:4px;}' +
+    '.brand{font-family:Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#b8955a;margin-bottom:2px;}' +
+    '.sub{font-size:11px;color:#777;margin-bottom:32px;}' +
+    'table{width:100%;border-collapse:collapse;margin:16px 0;}' +
+    'td{padding:6px 8px;border-bottom:1px solid #e8e6e1;font-size:13px;}' +
+    'td:first-child{font-weight:700;color:#555;width:38%;}' +
+    '.sig-block{margin-top:40px;border-top:2px solid #e8e6e1;padding-top:24px;}' +
+    '.sig-img{border:1px solid #e8e6e1;border-radius:4px;max-width:360px;height:120px;object-fit:contain;}' +
+    '.hash-box{background:#f0f8f3;border:1px solid #2d7a4f;border-radius:4px;padding:10px 14px;font-family:monospace;font-size:11px;word-break:break-all;color:#2d7a4f;margin:12px 0;}' +
+    '.print-btn{background:#111;color:#b8955a;border:none;padding:10px 22px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:3px;margin-top:20px;}' +
+    '@media print{.print-btn{display:none;}}' +
+    '</style></head><body>' +
+    '<div class="brand">STOCKMAN 21</div>' +
+    '<h1>Lease Agreement</h1>' +
+    '<div class="sub">' + typeLabel(d.contractType) + ' · ' + jurisLabel(d.jurisdiction) + '</div>' +
+    '<table>' +
+    '<tr><td>Landlord</td><td>Stockman 21</td></tr>' +
+    '<tr><td>Tenant</td><td>' + esc(d.tenantName) + '</td></tr>' +
+    '<tr><td>Email</td><td>' + esc(d.tenantEmail) + '</td></tr>' +
+    '<tr><td>Property / Unit</td><td>' + esc(d.unit) + '</td></tr>' +
+    '<tr><td>Address</td><td>' + esc(d.address) + '</td></tr>' +
+    '<tr><td>Lease Term</td><td>' + esc(d.startDate) + ' — ' + esc(d.endDate) + '</td></tr>' +
+    '<tr><td>Monthly Rent</td><td>' + esc(d.rent) + '</td></tr>' +
+    '<tr><td>Deposit</td><td>' + esc(d.deposit) + '</td></tr>' +
+    '<tr><td>Minimum Stay</td><td>' + esc(d.minStay) + '</td></tr>' +
+    '</table>' +
+    (d.clauses ? '<p><strong>Additional Clauses:</strong><br>' + esc(d.clauses).replace(/\n/g,'<br>') + '</p>' : '') +
+    '<div class="sig-block">' +
+    '<p><strong>Signature</strong></p>' +
+    '<img class="sig-img" src="' + sig + '" alt="Signature">' +
+    '<p style="margin-top:12px;font-size:13px;"><strong>Signed by:</strong> ' + esc(name) + '<br>' +
+    '<strong>Date:</strong> ' + esc(date) + '<br>' +
+    '<strong>Session code:</strong> ' + esc(code) + '</p>' +
+    '<p style="margin-top:16px;font-size:12px;color:#555;font-family:Arial,sans-serif;">SHA-256 Validation Code:</p>' +
+    '<div class="hash-box">' + hash + '</div>' +
+    '</div>' +
+    '<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>' +
+    '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+// ══════════════════════════════════════════════
+//  TAB 3 — VALIDATE
+// ══════════════════════════════════════════════
+function validateSig() {
+  var hash  = document.getElementById('val-hash').value.trim().toLowerCase();
+  var name  = document.getElementById('val-name').value.trim();
+  var date  = document.getElementById('val-date').value;
+  var res   = document.getElementById('val-result');
+
+  var raw = localStorage.getItem('stk:signed:' + hash);
+  if (!raw) {
+    res.innerHTML = '<div class="val-err">✗ Code not found in this session. In production this would query a central database.</div>';
+    return;
+  }
+  var rec = JSON.parse(raw);
+  if (rec.nombre.toLowerCase() === name.toLowerCase() && rec.fecha === date) {
+    res.innerHTML = '<div class="val-ok">✓ VALID SIGNATURE — Signed by ' + esc(rec.nombre) + ' on ' + esc(rec.fecha) + '. Code: ' + esc(rec.code) + '</div>';
+  } else {
+    res.innerHTML = '<div class="val-warn">⚠ Hash found but details do not match. Verify name and date exactly.</div>';
+  }
+  renderSessionLog();
+}
+
+function renderSessionLog() {
+  var el = document.getElementById('session-log-list');
+  if (!S.signedLog.length) {
+    el.innerHTML = '<div class="log-empty">No documents signed yet.</div>';
+    return;
+  }
+  el.innerHTML = S.signedLog.map(function(r) {
+    return '<div class="log-row">' +
+      '<strong>' + esc(r.nombre) + '</strong> · ' + esc(r.fecha) + ' · ' +
+      'Code: ' + esc(r.code) + ' · ' +
+      '<span style="font-family:monospace;">' + r.hash.slice(0,20) + '…</span>' +
+      '</div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+//  CONTRACT HTML BUILDER
+// ══════════════════════════════════════════════
+function buildContractHtml(d, forSign) {
+  d = d || {};
+  return '<div style="font-family:Georgia,serif;font-size:14px;line-height:1.9;color:#222;">' +
+    '<h2 style="text-align:center;font-size:18px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Stockman 21</h2>' +
+    '<h3 style="text-align:center;font-size:15px;font-weight:400;margin-bottom:20px;">' + typeLabel(d.contractType) + '</h3>' +
+    '<p><strong>Tenant:</strong> ' + esc(d.tenantName || '_______________') + '</p>' +
+    '<p><strong>Email:</strong> ' + esc(d.tenantEmail || '_______________') + '</p>' +
+    '<p><strong>Unit / Property:</strong> ' + esc(d.unit || '_______________') + '</p>' +
+    '<p><strong>Address:</strong> ' + esc(d.address || '_______________') + '</p>' +
+    '<p><strong>Lease Term:</strong> ' + esc(d.startDate || '___') + ' — ' + esc(d.endDate || '___') + '</p>' +
+    '<p><strong>Monthly Rent:</strong> ' + esc(d.rent || '_______________') + '</p>' +
+    '<p><strong>Deposit:</strong> ' + esc(d.deposit || '_______________') + '</p>' +
+    '<p><strong>Minimum Stay:</strong> ' + esc(d.minStay || '_______________') + '</p>' +
+    (d.clauses ? '<p><strong>Additional Clauses:</strong><br>' + esc(d.clauses).replace(/\n/g,'<br>') + '</p>' : '') +
+    '<hr style="border:none;border-top:1px solid #ccc;margin:20px 0;">' +
+    '<p>This lease agreement is entered into between <strong>Stockman 21</strong> (Landlord) and the Tenant named above. Both parties agree to the terms stated herein and that this document constitutes a binding agreement.</p>' +
+    '<div style="margin-top:32px;border-top:2px solid #ccc;padding-top:16px;">' +
+    '<p><strong>Tenant Signature:</strong></p>' +
+    '<div style="border:1px dashed #b8955a;height:60px;margin:12px 0;display:flex;align-items:center;justify-content:center;color:#b8955a;font-style:italic;">' +
+    (forSign ? 'Sign in the field below' : 'Signature placeholder') + '</div>' +
+    '<p><strong>Date:</strong> _______________</p>' +
+    '</div></div>';
+}
+
+function typeLabel(t) {
+  var m = { residential:'Residential Lease', commercial:'Commercial Lease', vacation:'Vacation Rental Agreement', parking:'Parking Agreement', custom:'Custom Agreement' };
+  return m[t] || 'Lease Agreement';
+}
+function jurisLabel(j) {
+  var m = { 'mx-oaxaca':'Mexico — Oaxaca', 'mx-other':'Mexico', 'ca-qc':'Quebec, Canada', 'ca-on':'Ontario, Canada', 'us':'United States', 'other':'', '':'', undefined:'' };
+  return m[j] || j || '';
+}
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
