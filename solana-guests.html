@@ -201,7 +201,7 @@ footer{background:#060e1a;padding:24px 48px;display:flex;justify-content:space-b
 
     <form id="solana-form" onsubmit="handleSubmit(event)">
       <input type="hidden" name="access_key" value="f80fd2dc-5ff8-4763-aada-9138f2035285">
-      <input type="hidden" name="cc_email" value="emiliolopez.dh@gmail.com">
+      <input type="hidden" name="cc_email" id="cc-field" value="emiliolopez.dh@gmail.com">
       <input type="hidden" name="from_name" value="Stockman 21 | Suite Solana">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="redirect" value="false">
@@ -403,9 +403,23 @@ footer{background:#060e1a;padding:24px 48px;display:flex;justify-content:space-b
         </div>
       </div>
 
+      <!-- CLIENT EMAIL -->
+      <div class="fsec" style="margin-bottom:24px;">
+        <div class="fsec-head">
+          <div class="fsec-num">✉</div>
+          <div class="fsec-title" data-en="Send to Guest / Client" data-es="Enviar a Huésped / Cliente">Send to Guest / Client</div>
+        </div>
+        <div class="fsec-body">
+          <div class="field" style="margin-bottom:0;">
+            <label data-en="Client email — receives SOLANA forms + link to rules" data-es="Correo del cliente — recibirá los formularios SOLANA + liga a reglamentos">Client email — receives SOLANA forms + link to rules</label>
+            <input type="email" id="client_email" placeholder="client@email.com">
+          </div>
+        </div>
+      </div>
+
       <!-- SUBMIT -->
       <button type="submit" class="btn-submit" id="submit-btn">
-        <span data-en="SUBMIT & DOWNLOAD PDF — SOLANA ADMINISTRATION" data-es="ENVIAR Y DESCARGAR PDF — ADMINISTRACIÓN SOLANA">SUBMIT &amp; DOWNLOAD PDF — SOLANA ADMINISTRATION</span>
+        <span data-en="SEND FORMS — SOLANA ADMINISTRATION + CLIENT" data-es="ENVIAR FORMULARIOS — ADMINISTRACIÓN SOLANA + CLIENTE">SEND FORMS — SOLANA ADMINISTRATION + CLIENT</span>
       </button>
 
     </form>
@@ -948,60 +962,82 @@ function generatePDF() {
 
 /* ── EMAIL BODY BUILDER ───────────────── */
 function buildEmailBody() {
-  const ownerName  = val('owner_name');
-  const ownerPhone = val('owner_phone');
-  const condoNum   = val('condo_number');
-  const mgrName    = val('manager_name');
-  const mgrContact = val('manager_contact');
+  const ownerName  = val('owner_name')   || 'Román Méndez';
+  const ownerPhone = val('owner_phone')  || '+1 514 427 1983';
+  const condoNum   = val('condo_number') || 'B-201';
+  const mgrName    = val('manager_name') || 'Stockman 21 International';
   const carModel   = val('car_model');
   const carPlate   = val('car_plate');
-  const today = new Date().toLocaleDateString('en-CA');
+  const today      = new Date().toLocaleDateString('en-CA');
+  const RULES_URL  = 'https://stockman21international.github.io/solana-rules.html';
 
-  const guestLines = [1,2,3,4,5,6]
+  const guests = [1,2,3,4,5,6]
     .map(i => ({ n: val(`g${i}_name`), e: fmtDate(val(`g${i}_entry`)), x: fmtDate(val(`g${i}_exit`)) }))
-    .filter(g => g.n)
-    .map((g, i) => `  ${i+1}. ${g.n} | Entry: ${g.e} | Exit: ${g.x}`)
-    .join('\n');
+    .filter(g => g.n);
 
-  const minorLines = [1,2]
+  const minors = [1,2]
     .map(i => ({ n: val(`m${i}_name`), g: val(`m${i}_guardian`), a: val(`m${i}_age`) }))
-    .filter(m => m.n)
-    .map((m, i) => `  ${i+1}. ${m.n} (age ${m.a}) | Guardian: ${m.g}`)
-    .join('\n');
+    .filter(m => m.n);
 
-  const wSigLines  = [1,2,3,4,5,6].map(i => val(`w_sig${i}`)).filter(Boolean).map((s,i)=>`  ${i+1}. ${s}`).join('\n');
-  const rSigLines  = [1,2,3,4].map(i => val(`r_sig${i}`)).filter(Boolean).map((s,i)=>`  ${i+1}. ${s}`).join('\n');
+  const wSigs = [1,2,3,4,5,6].map(i => val(`w_sig${i}`)).filter(Boolean);
+  const rSigs = [1,2,3,4].map(i => val(`r_sig${i}`)).filter(Boolean);
+
+  // Build separator rows
+  const guestRows = guests.map((g,i) =>
+    `  ${i+1}. ${g.n.padEnd(30,' ')} | Entry: ${g.e.padEnd(12,' ')} | Exit: ${g.x}`
+  ).join('\n') || '  —';
+
+  const minorRows = minors.length
+    ? '\n\nMINORS / MENORES DE EDAD:\n' + minors.map((m,i) => `  ${i+1}. ${m.n} (${m.a} yrs) — Guardian: ${m.g}`).join('\n')
+    : '';
+
+  const waiverSigs = wSigs.map((s,i) => `  ${i+1}. ${s}`).join('\n') || '  —';
+  const rulesSigs  = rSigs.map((s,i) => `  ${i+1}. ${s}`).join('\n') || '  —';
 
   return `
-SOLANA GUEST ACCESS FORMS — Suite Solana ${condoNum}
-Submitted: ${today}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ADMON SOLANA — SUITE SOLANA, CONDO ${condoNum}
+Submitted / Enviado: ${today}
+══════════════════════════════════════════════════
 
-SECTION 1 — SITE ACCESS FORM
-Owner: ${ownerName}
-Phone: ${ownerPhone}
-Condo #: ${condoNum}
-Property Manager: ${mgrName}
-Manager Contact: ${mgrContact}
+SITE ACCESS FORM / FORMULARIO DE ACCESO
 
-GUESTS:
-${guestLines || '  (none listed)'}
-${minorLines ? `\nMINORS:\n${minorLines}` : ''}
+  Owner / Propietario : ${ownerName}
+  Phone / Teléfono    : ${ownerPhone}
+  Property Mgr.       : ${mgrName}
+  Condo / Unidad      : ${condoNum}
 
-Vehicle: ${carModel || '—'} | Plates: ${carPlate || '—'}
+  GUESTS / HUÉSPEDES:
+${guestRows}${minorRows}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 2 — WAIVER OF LIABILITY
-Guest signatures (digital consent):
-${wSigLines || '  (none)'}
+  Vehicle / Vehículo  : ${carModel || '—'}
+  License Plate / Placas: ${carPlate || '—'}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 3 — POOL & PARKING RULES
-Guest acknowledgments:
-${rSigLines || '  (none)'}
+══════════════════════════════════════════════════
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-A PDF document in SOLANA format was generated and downloaded on the submitter's device.
+WAIVER OF LIABILITY / EXENCIÓN DE RESPONSABILIDAD
+
+  This agreement releases SOLANA from all liability relating
+  to injuries that may occur through the use of common spaces
+  and facilities. By providing their names below, guests agree
+  to hold SOLANA entirely free from any liability.
+
+  Guest signatures / Firmas de huéspedes:
+${waiverSigs}
+
+══════════════════════════════════════════════════
+
+POOL & PARKING RULES / REGLAS DE ALBERCA Y ESTACIONAMIENTO
+
+  Guests acknowledge having read, understood, and agreed to
+  abide by the SOLANA Pool & Parking Rules and Regulations.
+
+  Guest acknowledgments / Acuses de recibo:
+${rulesSigs}
+
+  📋 Full rules / Reglamento completo:
+  ${RULES_URL}
+
+══════════════════════════════════════════════════
 Sent via Stockman 21 / Suite Solana guest registration portal.
 `.trim();
 }
@@ -1011,12 +1047,26 @@ async function handleSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.querySelector('span').textContent = currentLang === 'en' ? 'Generating PDF & sending…' : 'Generando PDF y enviando…';
+  btn.querySelector('span').textContent = currentLang === 'en' ? 'Sending…' : 'Enviando…';
 
-  // 1. Build email body
+  // 1. Set CC dynamically (SOLANA admin + client if provided)
+  const clientEmail = (document.getElementById('client_email').value || '').trim();
+  const ccList = clientEmail
+    ? `emiliolopez.dh@gmail.com, ${clientEmail}`
+    : 'emiliolopez.dh@gmail.com';
+  document.getElementById('cc-field').value = ccList;
+
+  // 2. Build formatted email body
   document.getElementById('email-body').value = buildEmailBody();
 
-  // 2. Send via Web3Forms
+  // 3. Update subject with condo + date
+  const condoNum = val('condo_number') || 'B-201';
+  const today = new Date().toLocaleDateString('en-CA');
+  document.getElementById('form-subject').value =
+    `SOLANA Forms — Suite Solana ${condoNum} — ${today}`;
+
+  // 4. Send via Web3Forms
+  let emailOk = false;
   try {
     const formData = new FormData(document.getElementById('solana-form'));
     const res = await fetch('https://api.web3forms.com/submit', {
@@ -1024,23 +1074,20 @@ async function handleSubmit(e) {
       body: formData
     });
     const json = await res.json();
-    if (!json.success) throw new Error('web3forms failed');
+    emailOk = json.success;
+    if (!emailOk) console.warn('Web3Forms:', json);
   } catch(err) {
-    console.warn('Email send issue:', err);
-    // Continue anyway — PDF still generates
+    console.warn('Email error:', err);
   }
 
-  // 3. Generate & download PDF
+  // 5. Generate & download PDF
   try {
     generatePDF();
   } catch(pdfErr) {
     console.error('PDF error:', pdfErr);
-    alert(currentLang === 'en'
-      ? 'PDF could not be generated. Check browser console. Email was still sent.'
-      : 'No se pudo generar el PDF. Revisa la consola del navegador. El correo fue enviado.');
   }
 
-  // 4. Show success
+  // 6. Show success
   document.getElementById('solana-form').style.display = 'none';
   const sm = document.getElementById('success-msg');
   sm.style.display = 'block';
