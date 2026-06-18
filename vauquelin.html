@@ -32,31 +32,41 @@ body {
 /* ── NAV ── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  background: var(--black);
-  border-bottom: 1px solid rgba(192,154,91,.2);
-  height: 58px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 40px;
+  background: rgba(11,18,30,.94); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(192,154,91,.18);
+  height: 60px;
 }
-.nav-brand-text {
-  font-size: .75rem; font-weight: 800; letter-spacing: .12em;
-  text-transform: uppercase; color: #fff;
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 40px;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
 }
-.nav-brand-text span { color: var(--gold); }
-.nav-links { display: flex; align-items: center; gap: 6px; }
-.nav-links a {
-  font-size: .65rem; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: rgba(255,255,255,.7);
-  text-decoration: none; padding: 5px 10px; border-radius: 3px;
-  transition: color .2s;
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: #fff; line-height: 1;
 }
-.nav-links a:hover { color: var(--gold); }
+.nav-brand-name span { color: var(--gold); }
+.nav-brand-tag {
+  font-size: .45rem; font-weight: 600; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(192,154,91,.7); margin-top: 2px;
+}
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-back {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gold); text-decoration: none;
+  border: 1px solid rgba(192,154,91,.4); padding: 6px 14px; border-radius: 3px;
+  transition: background .2s, color .2s;
+}
+.nav-back:hover { background: var(--gold); color: var(--black); }
 .nav-cta {
-  background: var(--gold); color: var(--black) !important;
-  padding: 7px 18px !important; border-radius: 3px;
-  font-weight: 700 !important;
+  background: var(--gold); color: var(--black);
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none;
+  padding: 7px 16px; border-radius: 3px; border: none; cursor: pointer;
+  transition: background .2s;
 }
-.nav-cta:hover { background: var(--gold2) !important; }
+.nav-cta:hover { background: var(--gold2); }
 
 /* ── HERO ── */
 .hero {
@@ -313,17 +323,28 @@ body {
 
 <!-- NAV -->
 <nav class="nav" id="accueil">
-  <div class="nav-brand-text">STOCKMAN <span>21</span></div>
-  <div class="nav-links">
-    <a href="#accueil">Accueil</a>
-    <a href="#unite">Unité</a>
-    <a href="#photos">Photos</a>
-    <a href="#commodites">Commodités</a>
-    <a href="#localisation">Localisation</a>
-    <a href="#contact">Contact</a>
-    <a href="montreal.html">Montréal</a>
-    <a href="huatulco.html">Huatulco</a>
-    <a href="#" class="nav-cta" onclick="openModal(); return false;">Demander une visite</a>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 18 C46 30 44 44 43 62" stroke="#C09A5B" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C36 12 22 13 16 22" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C42 8 46 0 55 4" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C56 10 66 10 70 18" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <polygon points="22,58 36,44 50,58" fill="#C09A5B"/>
+        <rect x="25" y="57" width="22" height="16" fill="#C09A5B"/>
+        <rect x="32" y="61" width="8" height="8" fill="#0b121e" rx="1"/>
+        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#C09A5B" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div>
+        <div class="nav-brand-name">STOCKMAN <span>21</span></div>
+        <div class="nav-brand-tag">YOUR BETTER LIFE.</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="montreal.html" class="nav-back">← Montréal</a>
+      <a href="huatulco.html" class="nav-back">← Huatulco</a>
+      <button class="nav-cta" onclick="openModal()">Demander une visite</button>
+    </div>
   </div>
 </nav>
 
