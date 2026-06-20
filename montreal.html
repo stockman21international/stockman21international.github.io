@@ -18,13 +18,15 @@
   --cream:  #f7f5f0;
   --gray:   #888888;
   --green:  #2d7a4f;
+  --ink:    #2a2620;
+  --card-border: #e6e0d3;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Montserrat', sans-serif;
-  background: var(--black);
-  color: var(--cream);
+  background: var(--cream);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -77,7 +79,7 @@ body {
 }
 .hero-ov {
   position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,.65) 60%, rgba(17,17,17,1) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,.55) 55%, rgba(247,245,240,1) 100%);
 }
 .hero-content {
   position: relative; z-index: 1; text-align: center; max-width: 700px;
@@ -119,11 +121,12 @@ body {
   gap: 16px; margin-bottom: 56px;
 }
 .amenity-card {
-  background: var(--dark); border: 1px solid var(--border);
+  background: #fff; border: 1px solid var(--card-border);
   border-radius: 6px; padding: 24px 20px; text-align: center;
-  transition: border-color .2s;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  transition: border-color .2s, box-shadow .2s;
 }
-.amenity-card:hover { border-color: var(--gold); }
+.amenity-card:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(184,149,90,.15); }
 .amenity-icon { font-size: 28px; margin-bottom: 10px; }
 .amenity-label {
   font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
@@ -146,7 +149,7 @@ body {
 .contact-section { max-width: 540px; margin: 0 auto; }
 .contact-title {
   text-align: center; font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem; font-weight: 300; color: #fff; margin-bottom: 6px;
+  font-size: 2rem; font-weight: 300; color: var(--ink); margin-bottom: 6px;
 }
 .contact-sub {
   text-align: center; color: var(--gray); font-size: 13px; margin-bottom: 32px;
@@ -160,13 +163,22 @@ body {
 .field-row input, .field-row textarea {
   width: 100%; padding: 11px 14px;
   font-family: inherit; font-size: 13px;
-  background: var(--dark); border: 1px solid var(--border);
-  border-radius: 4px; color: var(--cream);
+  background: #fff; border: 1px solid var(--card-border);
+  border-radius: 4px; color: var(--ink);
   outline: none; transition: border-color .2s;
 }
 .field-row input:focus, .field-row textarea:focus { border-color: var(--gold); }
-.field-row input::placeholder, .field-row textarea::placeholder { color: #555; }
+.field-row input::placeholder, .field-row textarea::placeholder { color: #a8a195; }
 .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.stay-toggle { display: flex; gap: 8px; }
+.stay-btn {
+  flex: 1; padding: 11px 14px; font-family: inherit; font-size: 11px; font-weight: 700;
+  letter-spacing: .8px; text-transform: uppercase; cursor: pointer;
+  background: #fff; border: 1px solid var(--card-border); border-radius: 4px;
+  color: var(--gray); transition: background .2s, color .2s, border-color .2s;
+}
+.stay-btn.active { background: var(--gold); border-color: var(--gold); color: var(--black); }
+.stay-btn:hover:not(.active) { border-color: var(--gold); color: var(--ink); }
 .submit-btn {
   width: 100%; background: var(--gold); color: var(--black);
   border: none; border-radius: 4px; padding: 14px;
@@ -322,6 +334,25 @@ footer {
           <input id="mtl-phone" type="tel" placeholder="+1 514 000 0000">
         </div>
       </div>
+
+      <div class="field-row">
+        <label class="field-label" data-en="Type of Stay *" data-fr="Type de séjour *">Type of Stay *</label>
+        <div class="stay-toggle">
+          <button type="button" class="stay-btn active" data-stay="long" onclick="setStay('long')" data-en="Long-term lease" data-fr="Longue durée">Long-term lease</button>
+          <button type="button" class="stay-btn" data-stay="short" onclick="setStay('short')" data-en="Short-term stay" data-fr="Court séjour">Short-term stay</button>
+        </div>
+      </div>
+      <div class="field-grid-2">
+        <div class="field-row">
+          <label class="field-label" data-en="Approx. Move-in Date" data-fr="Date d'arrivée approx.">Approx. Move-in Date</label>
+          <input id="mtl-date-from" type="date">
+        </div>
+        <div class="field-row">
+          <label class="field-label" data-en="Approx. Move-out Date (if short stay)" data-fr="Date de départ approx. (si court séjour)">Approx. Move-out Date (if short stay)</label>
+          <input id="mtl-date-to" type="date">
+        </div>
+      </div>
+
       <div class="field-row">
         <label class="field-label" data-en="Message" data-fr="Message">Message</label>
         <textarea id="mtl-msg" rows="4" placeholder="Tell us about your interest in Floor 45..."></textarea>
@@ -398,12 +429,23 @@ function setLang(lang){
   document.documentElement.lang = lang;
 }
 
+/* ── Stay type toggle ── */
+var mtlStayType = 'long';
+function setStay(type) {
+  mtlStayType = type;
+  document.querySelectorAll('.stay-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.stay === type);
+  });
+}
+
 /* ── Contact form → Web3Forms ── */
 function submitMtlForm() {
-  var name  = document.getElementById('mtl-name').value.trim();
-  var email = document.getElementById('mtl-email').value.trim();
-  var phone = document.getElementById('mtl-phone').value.trim();
-  var msg   = document.getElementById('mtl-msg').value.trim();
+  var name     = document.getElementById('mtl-name').value.trim();
+  var email    = document.getElementById('mtl-email').value.trim();
+  var phone    = document.getElementById('mtl-phone').value.trim();
+  var msg      = document.getElementById('mtl-msg').value.trim();
+  var dateFrom = document.getElementById('mtl-date-from').value;
+  var dateTo   = document.getElementById('mtl-date-to').value;
   if(!name)  { alert('Please enter your full name.');  return; }
   if(!email) { alert('Please enter your email address.'); return; }
 
@@ -416,11 +458,14 @@ function submitMtlForm() {
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
       access_key: 'f80fd2dc-5ff8-4763-aada-9138f2035285',
-      subject:    'Pre-Reservation — Tour des Canadiens 2, Floor 45',
+      subject:    'Pre-Reservation — Tour des Canadiens 2, Floor 45 [' + mtlStayType.toUpperCase() + ' STAY]',
       name:       name,
       email:      email,
       phone:      phone || 'Not provided',
       property:   'Tour des Canadiens 2 — Floor 45, Montréal',
+      stay_type:  mtlStayType === 'short' ? 'Short-term stay' : 'Long-term lease',
+      move_in:    dateFrom || 'Not specified',
+      move_out:   dateTo   || 'Not specified',
       message:    msg || 'No message provided'
     })
   })
