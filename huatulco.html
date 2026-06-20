@@ -78,32 +78,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
   .hero-c{padding:0 32px 60px;}
   footer{padding:32px;flex-direction:column;text-align:center;}
 }
-#sign-float-btn {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 9999;
-  background: #111111;
-  color: #b8955a;
-  text-decoration: none;
-  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.22);
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-#sign-float-btn:hover { background: #222; color: #d4a96a; }
-#sign-float-btn .btn-short { display: none; }
-@media (max-width: 480px) {
-  #sign-float-btn .btn-full  { display: none; }
-  #sign-float-btn .btn-short { display: inline; }
-  #sign-float-btn { bottom: 1.5rem; right: 1rem; padding: 9px 13px; }
-}
 .tamarindos-gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -126,16 +100,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
 @media (max-width: 480px) {
   .tamarindos-gallery { grid-template-columns: 1fr; }
 }
-@media (max-width: 768px) {
-  .montreal-gallery { grid-template-columns: repeat(2,1fr) !important; }
-  #montreal > div > div[style*="grid-template-columns:repeat(4"] { grid-template-columns: repeat(2,1fr) !important; }
-}
-@media (max-width: 480px) {
-  .montreal-gallery { grid-template-columns: 1fr !important; }
-  #montreal > div > div[style*="grid-template-columns:repeat(4"] { grid-template-columns: 1fr !important; }
-  #mtl-form > div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-}
-.montreal-gallery img:hover { transform: scale(1.02); }
 </style>
 </head>
 <body>
@@ -296,100 +260,13 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
   </div>
 </section>
 
-<section id="montreal" style="background:#111;color:#f7f5f0;padding:80px 24px;">
-  <div style="max-width:960px;margin:0 auto;">
-
-    <div style="text-align:center;margin-bottom:48px;">
-      <span style="background:#b8955a;color:#111;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:2px;">Now in Montréal</span>
-      <h2 style="font-size:clamp(26px,4vw,42px);font-weight:700;letter-spacing:1px;margin:16px 0 8px;color:#fff;">Tour des Canadiens 2</h2>
-      <p style="color:#b8955a;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Downtown · Floor 45 · Available May 2027</p>
-      <p style="color:#aaa;font-size:15px;max-width:620px;margin:0 auto;line-height:1.8;">A landmark residence steps from Centre Bell and the heart of downtown Montréal. Floor 45 — panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
-    </div>
-
-    <div style="text-align:center;margin-bottom:40px;">
-      <span style="border:1px solid #b8955a;color:#b8955a;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 20px;border-radius:20px;">Available May 2027</span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;">
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🏊</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Indoor Pool</div>
-      </div>
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">♨️</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Rooftop Jacuzzi</div>
-      </div>
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🏋️</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Fully Equipped Gym</div>
-      </div>
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🛎️</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Concierge Service</div>
-      </div>
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🌆</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Panoramic City Views</div>
-      </div>
-      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:20px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🏒</div>
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#b8955a;">Steps from Centre Bell</div>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:48px;" class="montreal-gallery">
-      <img src="img/montreal/tdc2-exterior.jpg"  alt="Tour des Canadiens 2 exterior" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-gym.jpg"       alt="Fully equipped gym" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-tower.jpg"     alt="Glass tower" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-jacuzzi.jpg"   alt="Rooftop jacuzzi" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-lounge.jpg"    alt="Lobby lounge" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-lounge2.jpg"   alt="Upper lounge at night" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-pool.jpg"      alt="Indoor lap pool" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-      <img src="img/montreal/tdc2-unit1.jpg"     alt="Unit with city view" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;cursor:pointer;transition:transform .3s;">
-    </div>
-
-    <div style="max-width:560px;margin:0 auto;">
-      <h3 style="text-align:center;font-size:18px;font-weight:700;margin-bottom:6px;color:#fff;letter-spacing:1px;">Reserve Your Spot</h3>
-      <p style="text-align:center;color:#888;font-size:13px;margin-bottom:28px;">Floor 45 · Tour des Canadiens 2 · Available May 2027</p>
-
-      <div id="mtl-form">
-        <div style="margin-bottom:14px;">
-          <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px;">Full Name *</label>
-          <input id="mtl-name" type="text" placeholder="Your full name" required
-            style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#f7f5f0;padding:11px 14px;font-size:13px;outline:none;transition:border .2s;font-family:inherit;"
-            onfocus="this.style.borderColor='#b8955a'" onblur="this.style.borderColor='#2a2a2a'">
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-          <div>
-            <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px;">Email *</label>
-            <input id="mtl-email" type="email" placeholder="your@email.com" required
-              style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#f7f5f0;padding:11px 14px;font-size:13px;outline:none;transition:border .2s;font-family:inherit;"
-              onfocus="this.style.borderColor='#b8955a'" onblur="this.style.borderColor='#2a2a2a'">
-          </div>
-          <div>
-            <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px;">Phone / WhatsApp</label>
-            <input id="mtl-phone" type="tel" placeholder="+1 514 000 0000"
-              style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#f7f5f0;padding:11px 14px;font-size:13px;outline:none;transition:border .2s;font-family:inherit;"
-              onfocus="this.style.borderColor='#b8955a'" onblur="this.style.borderColor='#2a2a2a'">
-          </div>
-        </div>
-        <div style="margin-bottom:20px;">
-          <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px;">Message</label>
-          <textarea id="mtl-msg" rows="4" placeholder="Tell us about your interest in Floor 45 — move-in timeline, unit type preference, any questions..."
-            style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#f7f5f0;padding:11px 14px;font-size:13px;outline:none;transition:border .2s;font-family:inherit;resize:vertical;"
-            onfocus="this.style.borderColor='#b8955a'" onblur="this.style.borderColor='#2a2a2a'"></textarea>
-        </div>
-        <button onclick="submitMtlForm()"
-          style="width:100%;background:#b8955a;color:#111;border:none;border-radius:4px;padding:14px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .2s;">
-          Request Pre-Reservation →
-        </button>
-        <div id="mtl-confirm" style="display:none;margin-top:16px;background:#1a2a1a;border:1px solid #2d7a4f;border-radius:4px;padding:14px;text-align:center;color:#6abf8a;font-size:13px;">
-          ✓ Thank you. We will be in touch shortly.
-        </div>
-      </div>
-
-    </div>
-
+<section id="montreal" style="background:var(--cream);padding:80px 24px;border-top:1px solid var(--border);">
+  <div style="max-width:900px;margin:0 auto;text-align:center;">
+    <p class="s-eye" data-en="Now in Montréal" data-fr="Maintenant à Montréal">Now in Montréal</p>
+    <h2 class="s-title" style="margin-bottom:14px;">Tour des Canadiens 2</h2>
+    <p style="color:var(--gold);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;" data-en="Downtown · Floor 45 · Available May 2027" data-fr="Centre-ville · Étage 45 · Disponible mai 2027">Downtown · Floor 45 · Available May 2027</p>
+    <p style="color:var(--muted);font-size:14px;max-width:600px;margin:0 auto 32px;line-height:1.8;" data-en="A landmark residence steps from Centre Bell and the heart of downtown Montréal. Panoramic city views, world-class amenities, and the Stockman 21 standard of living." data-fr="Une résidence emblématique à deux pas du Centre Bell et du cœur du centre-ville de Montréal. Vues panoramiques, équipements de classe mondiale et le standard de vie Stockman 21.">A landmark residence steps from Centre Bell and the heart of downtown Montréal. Panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
+    <a href="montreal.html" class="c-cta" style="display:inline-block;max-width:340px;text-decoration:none;" data-en="DISCOVER TOUR DES CANADIENS 2 →" data-fr="DÉCOUVRIR TOUR DES CANADIENS 2 →">DISCOVER TOUR DES CANADIENS 2 →</a>
   </div>
 </section>
 
@@ -413,10 +290,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
     var tamImgs = Array.from(document.querySelectorAll('.tamarindos-gallery img'));
     tamImgs.forEach(function(img, i){
       img.addEventListener('click', function(){ stkLbOpen(i, tamImgs); });
-    });
-    var mtlImgs = Array.from(document.querySelectorAll('.montreal-gallery img'));
-    mtlImgs.forEach(function(img, i){
-      img.addEventListener('click', function(){ stkLbOpen(i, mtlImgs); });
     });
     lb.addEventListener('click', function(e){ if(e.target===lb) stkLbClose(); });
     document.addEventListener('keydown', function(e){
@@ -449,43 +322,6 @@ footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-b
     document.addEventListener('DOMContentLoaded', init);
   } else { init(); }
 })();
-
-function submitMtlForm() {
-  var name  = document.getElementById('mtl-name').value.trim();
-  var email = document.getElementById('mtl-email').value.trim();
-  var phone = document.getElementById('mtl-phone').value.trim();
-  var msg   = document.getElementById('mtl-msg').value.trim();
-  if(!name)  { alert('Please enter your full name.');  return; }
-  if(!email) { alert('Please enter your email address.'); return; }
-
-  var btn = document.querySelector('#mtl-form button') || document.querySelector('[onclick="submitMtlForm()"]');
-  if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
-
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      access_key: 'f80fd2dc-5ff8-4763-aada-9138f2035285',
-      subject:    'Pre-Reservation — Tour des Canadiens 2, Floor 45',
-      name:       name,
-      email:      email,
-      phone:      phone || 'Not provided',
-      property:   'Tour des Canadiens 2 — Floor 45, Montréal',
-      message:    msg || 'No message provided'
-    })
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(data){
-    if(data.success){
-      document.getElementById('mtl-confirm').style.display = 'block';
-      if(btn){ btn.textContent = '✓ Sent'; }
-    } else { throw new Error('failed'); }
-  })
-  .catch(function(){
-    alert('Could not send. Please email us at stockman21ceo@gmail.com');
-    if(btn){ btn.disabled = false; btn.textContent = 'Request Pre-Reservation →'; }
-  });
-}
 </script>
 
 <script>

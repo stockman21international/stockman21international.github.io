@@ -611,7 +611,7 @@ body {
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Date de visite <span>*</span></label>
-            <input type="date" class="form-input" id="visitDate" min="2025-08-01" max="2027-06-30">
+            <input type="date" class="form-input" id="visitDate" max="2027-06-30">
             <div class="form-note">Samedis et dimanches · Disponible dès août 2025</div>
           </div>
           <div class="form-group">
@@ -659,6 +659,12 @@ function closeModal() {
 }
 document.getElementById('visitModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  const today = new Date();
+  const minStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  document.getElementById('visitDate').min = minStr;
+})();
 
 document.getElementById('visitDate').addEventListener('change', function() {
   const d = new Date(this.value + 'T12:00:00');
