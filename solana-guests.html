@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root{
   --cream:#f5f0e8;--navy:#0b1b30;--gold:#c9963a;
@@ -16,440 +18,1084 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Montserrat',sans-serif;background:var(--navy);color:var(--white);-webkit-font-smoothing:antialiased;min-height:100vh;}
 
+/* ── PASSWORD OVERLAY ─────────────────── */
+#pw-overlay{position:fixed;inset:0;background:#060e1a;z-index:9999;display:flex;align-items:center;justify-content:center;}
+#pw-box{width:340px;padding:44px 36px;border:1px solid rgba(201,150,58,.3);text-align:center;}
+.pw-logo{width:54px;height:54px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:#fff;font-weight:400;}
+.pw-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--white);margin-bottom:6px;}
+.pw-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;margin-bottom:28px;}
+#pw-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.3);color:var(--white);font-family:'Montserrat',sans-serif;font-size:14px;padding:12px 16px;outline:none;text-align:center;letter-spacing:.2em;margin-bottom:14px;}
+#pw-input::placeholder{color:rgba(255,255,255,.2);letter-spacing:.08em;}
+#pw-input:focus{border-color:var(--gold);}
+#pw-btn{width:100%;background:var(--gold);color:var(--white);border:none;padding:13px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+#pw-btn:hover{background:var(--gold-d);}
+#pw-err{font-size:11px;color:#e57373;margin-top:12px;opacity:0;transition:opacity .2s;}
+#pw-err.show{opacity:1;}
+
+/* ── MAIN CONTENT ─────────────────────── */
+#main-content{display:none;}
+
 /* TOP BAR */
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-bottom:1px solid rgba(201,150,58,.18);background:rgba(6,14,26,.6);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
-.topbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--gold);letter-spacing:.08em;text-decoration:none;}
-.lang-row{display:flex;align-items:center;gap:8px;}
-.lang-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:5px 14px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.15em;cursor:pointer;transition:all .2s;}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 48px;border-bottom:1px solid rgba(201,150,58,.18);background:rgba(6,14,26,.6);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.topbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;color:var(--gold);letter-spacing:.06em;text-decoration:none;}
+.lang-row{display:flex;gap:6px;}
+.lang-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:5px 13px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.15em;cursor:pointer;transition:all .2s;}
 .lang-btn.active,.lang-btn:hover{background:var(--gold);color:var(--white);}
 
-/* HERO */
-.page-hero{padding:64px 48px 48px;text-align:center;border-bottom:1px solid rgba(201,150,58,.12);}
-.page-eye{font-size:10px;font-weight:700;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
-.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:300;color:var(--white);margin-bottom:14px;}
-.page-sub{font-size:13px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto;line-height:1.8;}
+/* PAGE HERO */
+.page-hero{padding:56px 48px 44px;text-align:center;border-bottom:1px solid rgba(201,150,58,.1);}
+.page-eye{font-size:10px;font-weight:700;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:300;color:var(--white);margin-bottom:12px;}
+.page-sub{font-size:12px;color:rgba(255,255,255,.5);max-width:500px;margin:0 auto;line-height:1.85;}
 
 /* FORM WRAPPER */
-.form-wrap{max-width:780px;margin:0 auto;padding:48px 32px 80px;}
-
-/* SECTION */
-.fsec{background:rgba(255,255,255,.04);border:1px solid rgba(201,150,58,.18);margin-bottom:36px;}
-.fsec-head{padding:22px 28px;border-bottom:1px solid rgba(201,150,58,.12);display:flex;align-items:center;gap:14px;}
-.fsec-num{width:28px;height:28px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;}
-.fsec-title{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
-.fsec-body{padding:28px;}
-
-/* FIELD */
-.field{margin-bottom:20px;}
-.field label{display:block;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:7px;}
-.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;padding:11px 14px;outline:none;transition:border-color .2s;}
-.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.25);}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
-.field select option{background:#0b1b30;color:var(--white);}
-.field textarea{resize:vertical;min-height:80px;}
-
-/* 2-col grid */
-.f2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.f3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;}
-
-/* GUESTS TABLE */
-.guests-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
-.guests-table th{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:0 0 10px;text-align:left;}
-.guests-table th:first-child{width:50%;}
-.guests-table td{padding:5px 6px 5px 0;}
-.guests-table td:first-child{padding-left:0;}
-.guest-num{font-size:11px;color:rgba(255,255,255,.3);padding:0 10px 0 0;vertical-align:middle;}
-.guests-table input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.18);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:9px 10px;outline:none;transition:border-color .2s;}
-.guests-table input:focus{border-color:var(--gold);}
-.guests-table input::placeholder{color:rgba(255,255,255,.2);}
-
-/* NOTE BOX */
-.note-box{background:rgba(201,150,58,.08);border-left:3px solid var(--gold);padding:16px 18px;font-size:12px;line-height:1.7;color:rgba(255,255,255,.65);margin-bottom:20px;}
-.note-box strong{color:var(--gold);}
-
-/* WAIVER TEXT */
-.doc-text{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);padding:20px 22px;font-size:12px;line-height:1.85;color:rgba(255,255,255,.6);margin-bottom:22px;max-height:200px;overflow-y:auto;}
-.doc-text p{margin-bottom:12px;}
-.doc-text p:last-child{margin-bottom:0;}
-
-/* RULES LIST */
-.rules-list{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);padding:20px 22px;margin-bottom:22px;max-height:220px;overflow-y:auto;}
-.rules-list li{font-size:12px;line-height:1.75;color:rgba(255,255,255,.6);margin-bottom:10px;padding-left:6px;}
-.rules-list li strong{color:rgba(255,255,255,.85);}
-.rules-list li.red-rule{color:#e57373;}
-.rules-list .penalty{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);}
-.rules-list .penalty li{color:rgba(255,200,100,.75);}
-
-/* ACKNOWLEDGMENT ROW */
-.ack-row{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06);}
-.ack-row:last-child{border-bottom:none;}
-.ack-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;}
-.ack-row .ack-label{font-size:12px;color:rgba(255,255,255,.65);line-height:1.65;}
-.ack-row .ack-label strong{color:var(--white);}
-
-/* SIGNATURE GRID */
-.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;}
-
-/* MINORS */
-.minors-toggle{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:.1em;display:flex;align-items:center;gap:6px;margin:16px 0 0;user-select:none;}
-.minors-toggle::before{content:'▸';transition:transform .2s;}
-.minors-toggle.open::before{transform:rotate(90deg);}
-#minors-section{display:none;margin-top:14px;}
-#minors-section.open{display:block;}
-
-/* SUBMIT */
-.submit-area{text-align:center;padding-top:8px;}
-.btn-submit{background:var(--gold);color:var(--white);border:none;padding:18px 60px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;width:100%;}
-.btn-submit:hover{background:var(--gold-d);}
-.btn-submit:disabled{opacity:.5;cursor:not-allowed;}
-
-/* SUCCESS */
-#success-msg{display:none;background:rgba(201,150,58,.12);border:1px solid rgba(201,150,58,.4);padding:32px;text-align:center;margin-top:24px;}
-#success-msg .s-icon{font-size:2.5rem;margin-bottom:14px;}
-#success-msg h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--gold);margin-bottom:10px;}
-#success-msg p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;}
-
-/* BACK LINK */
-.back-link{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none;margin-bottom:32px;transition:color .2s;}
+.form-wrap{max-width:800px;margin:0 auto;padding:44px 32px 80px;}
+.back-link{display:inline-flex;align-items:center;gap:7px;font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);text-decoration:none;margin-bottom:28px;transition:color .2s;}
 .back-link:hover{color:var(--gold);}
 
-footer{background:#060e1a;padding:28px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,150,58,.1);}
-.f-brand{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;color:var(--gold);}
-.f-txt{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.08em;}
+/* SECTION */
+.fsec{background:rgba(255,255,255,.035);border:1px solid rgba(201,150,58,.18);margin-bottom:30px;}
+.fsec-head{padding:18px 26px;border-bottom:1px solid rgba(201,150,58,.1);display:flex;align-items:center;gap:12px;}
+.fsec-num{width:26px;height:26px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.fsec-title{font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.fsec-body{padding:26px;}
+
+/* FIELDS */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.055);border:1px solid rgba(201,150,58,.2);color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s;}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.22);}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.f3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:13px;}
+
+/* ── GUEST ROWS ───────────────────────── */
+.guest-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.guest-row{display:grid;grid-template-columns:24px 1fr 130px 130px;gap:8px;align-items:center;}
+.guest-row-idx{font-size:11px;color:rgba(255,255,255,.3);text-align:center;font-weight:600;}
+.guest-row input{width:100%;background:rgba(255,255,255,.055);border:1px solid rgba(201,150,58,.18);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:9px 10px;outline:none;transition:border-color .2s;}
+.guest-row input:focus{border-color:var(--gold);}
+.guest-row input::placeholder{color:rgba(255,255,255,.2);}
+.guest-row input[type="date"]{color-scheme:dark;}
+.guest-row-header{display:grid;grid-template-columns:24px 1fr 130px 130px;gap:8px;margin-bottom:4px;}
+.guest-row-header span{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+
+/* MINOR SECTION */
+.minors-toggle{font-size:10.5px;font-weight:600;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:14px;user-select:none;}
+.minors-toggle .arr{transition:transform .2s;display:inline-block;}
+.minors-toggle.open .arr{transform:rotate(90deg);}
+#minors-section{display:none;margin-top:12px;}
+#minors-section.open{display:block;}
+.minor-row{display:grid;grid-template-columns:24px 1fr 1fr 60px;gap:8px;align-items:center;margin-bottom:8px;}
+.minor-row input{width:100%;background:rgba(255,255,255,.055);border:1px solid rgba(201,150,58,.18);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:9px 10px;outline:none;}
+.minor-row input:focus{border-color:var(--gold);}
+.minor-row input::placeholder{color:rgba(255,255,255,.2);}
+.minor-row-header{display:grid;grid-template-columns:24px 1fr 1fr 60px;gap:8px;margin-bottom:4px;}
+.minor-row-header span{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+
+/* NOTE BOX */
+.note-box{background:rgba(201,150,58,.07);border-left:3px solid var(--gold);padding:14px 16px;font-size:11.5px;line-height:1.75;color:rgba(255,255,255,.6);margin-bottom:18px;}
+.note-box strong{color:var(--gold);display:block;margin-bottom:5px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;}
+
+/* DOC TEXT */
+.doc-text{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.07);padding:18px 20px;font-size:11.5px;line-height:1.82;color:rgba(255,255,255,.58);margin-bottom:18px;max-height:190px;overflow-y:auto;}
+.doc-text p{margin-bottom:10px;}
+.doc-text p:last-child{margin-bottom:0;}
+
+/* RULES */
+.rules-box{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.07);padding:18px 20px;margin-bottom:18px;max-height:220px;overflow-y:auto;}
+.rules-box li{font-size:11.5px;line-height:1.72;color:rgba(255,255,255,.58);margin-bottom:9px;padding-left:4px;list-style:none;}
+.rules-box li strong{color:rgba(255,255,255,.82);}
+.rules-box li.red{color:#e57373;}
+.rules-box .penalties{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);}
+.rules-box .penalties li{color:rgba(255,200,90,.7);}
+
+/* ACKNOWLEDGMENT */
+.ack-row{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.ack-row:last-child{border-bottom:none;}
+.ack-row input[type=checkbox]{width:15px;height:15px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;cursor:pointer;}
+.ack-label{font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.65;cursor:pointer;}
+.ack-label strong{color:var(--white);}
+
+/* SIG GRID */
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.sig-input{background:rgba(255,255,255,.055);border:1px solid rgba(201,150,58,.2);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;transition:border-color .2s;}
+.sig-input:focus{border-color:var(--gold);}
+.sig-input::placeholder{color:rgba(255,255,255,.2);}
+.sig-label{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:6px;}
+
+/* SUBMIT */
+.btn-submit{width:100%;background:var(--gold);color:var(--white);border:none;padding:17px;font-family:'Montserrat',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:4px;}
+.btn-submit:hover{background:var(--gold-d);}
+.btn-submit:disabled{opacity:.45;cursor:not-allowed;}
+
+/* SUCCESS */
+#success-msg{display:none;background:rgba(201,150,58,.1);border:1px solid rgba(201,150,58,.38);padding:36px;text-align:center;margin-top:20px;}
+.s-icon{font-size:2.8rem;margin-bottom:12px;}
+#success-msg h3{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--gold);margin-bottom:10px;}
+#success-msg p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.75;}
+#success-msg .pdf-note{margin-top:14px;padding:12px 16px;background:rgba(255,255,255,.05);font-size:11px;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);}
+
+footer{background:#060e1a;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,150,58,.1);}
+.f-brand{font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:300;color:var(--gold);}
+.f-txt{font-size:9.5px;color:rgba(255,255,255,.22);letter-spacing:.07em;}
 
 @media(max-width:680px){
-  .topbar{padding:14px 20px;}
-  .page-hero{padding:44px 20px 36px;}
-  .form-wrap{padding:32px 16px 60px;}
-  .f2,.f3,.sig-grid{grid-template-columns:1fr;}
-  footer{padding:20px;flex-direction:column;gap:8px;text-align:center;}
-  .fsec-body{padding:18px 16px;}
+  .topbar{padding:13px 18px;}
+  .page-hero{padding:40px 18px 32px;}
+  .form-wrap{padding:28px 14px 60px;}
+  .f2,.f3{grid-template-columns:1fr;}
+  .guest-row{grid-template-columns:20px 1fr 110px 110px;}
+  .guest-row-header{grid-template-columns:20px 1fr 110px 110px;}
+  .minor-row,.minor-row-header{grid-template-columns:20px 1fr 1fr 50px;}
+  .sig-grid{grid-template-columns:1fr;}
+  footer{padding:18px;flex-direction:column;gap:6px;text-align:center;}
+}
+@media(max-width:480px){
+  .guest-row{grid-template-columns:1fr;gap:5px;}
+  .guest-row-idx{display:none;}
+  .guest-row-header{display:none;}
+  .minor-row{grid-template-columns:1fr 1fr;gap:6px;}
 }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <a href="huatulco.html" class="topbar-brand">Stockman 21</a>
-  <div class="lang-row">
-    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+<!-- ═══════════════════════════════════════════
+     PASSWORD OVERLAY
+════════════════════════════════════════════ -->
+<div id="pw-overlay">
+  <div id="pw-box">
+    <div class="pw-logo">S</div>
+    <h2 class="pw-title">Suite Solana</h2>
+    <p class="pw-sub" data-en="Access code required" data-es="Código de acceso requerido">Access code required</p>
+    <input type="password" id="pw-input" placeholder="Enter access code" autocomplete="off">
+    <button id="pw-btn" onclick="checkPw()">
+      <span data-en="ENTER" data-es="ENTRAR">ENTER</span>
+    </button>
+    <p id="pw-err" data-en="Incorrect code. Try again." data-es="Código incorrecto. Intenta de nuevo.">Incorrect code. Try again.</p>
   </div>
 </div>
 
-<!-- HERO -->
-<div class="page-hero">
-  <div class="page-eye" data-en="SOLANA Condo Association" data-es="Asociación de Condóminos SOLANA">SOLANA Condo Association</div>
-  <h1 class="page-title" data-en="Guest Registration Forms" data-es="Formularios de Registro de Huéspedes">Guest Registration Forms</h1>
-  <p class="page-sub" data-en="Complete all three sections and submit before your guests arrive. Forms are sent automatically to SOLANA administration." data-es="Completa las tres secciones y envía antes de que lleguen tus huéspedes. Los formularios se envían automáticamente a la administración de SOLANA.">Complete all three sections and submit before your guests arrive. Forms are sent automatically to SOLANA administration.</p>
-</div>
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<div id="main-content">
 
-<div class="form-wrap">
-  <a href="huatulco.html" class="back-link">← <span data-en="Back to Huatulco" data-es="Regresar a Huatulco">Back to Huatulco</span></a>
-
-  <form id="solana-form" action="https://api.web3forms.com/submit" method="POST">
-    <input type="hidden" name="access_key" value="f80fd2dc-5ff8-4763-aada-9138f2035285">
-    <input type="hidden" name="subject" id="form-subject" value="SOLANA Guest Access Form — Suite Solana">
-    <input type="hidden" name="cc_email" value="emiliolopez.dh@gmail.com">
-    <input type="hidden" name="from_name" value="Stockman 21 | Suite Solana">
-    <input type="hidden" name="redirect" value="false">
-    <input type="hidden" name="botcheck" value="">
-    <input type="hidden" name="_captcha" value="false">
-
-    <!-- ─── SECTION 1: ACCESS FORM ─── -->
-    <div class="fsec">
-      <div class="fsec-head">
-        <div class="fsec-num">1</div>
-        <div class="fsec-title" data-en="SOLANA Site Access Form" data-es="Formulario de Acceso al Complejo">SOLANA Site Access Form</div>
-      </div>
-      <div class="fsec-body">
-
-        <div class="f3">
-          <div class="field">
-            <label data-en="Condo Owner Name" data-es="Nombre del Propietario">Condo Owner Name</label>
-            <input type="text" name="owner_name" value="Román Méndez" required>
-          </div>
-          <div class="field">
-            <label data-en="Phone" data-es="Teléfono">Phone</label>
-            <input type="tel" name="owner_phone" placeholder="+1 514 …">
-          </div>
-          <div class="field">
-            <label data-en="Condo #" data-es="No. de Condominio">Condo #</label>
-            <input type="text" name="condo_number" placeholder="e.g. A-301" required>
-          </div>
-        </div>
-
-        <div class="f2">
-          <div class="field">
-            <label data-en="Property Manager / Company" data-es="Administrador / Empresa">Property Manager / Company</label>
-            <input type="text" name="manager_name" value="Stockman 21 International">
-          </div>
-          <div class="field">
-            <label data-en="Manager Email" data-es="Correo del Administrador">Manager Email</label>
-            <input type="email" name="manager_email" value="stockman21ceo@gmail.com">
-          </div>
-        </div>
-
-        <!-- GUESTS TABLE -->
-        <div class="field" style="margin-bottom:8px;">
-          <label data-en="Guest Names — Entry & Exit Dates" data-es="Nombres de Huéspedes — Fechas de Entrada y Salida">Guest Names — Entry & Exit Dates</label>
-        </div>
-        <table class="guests-table">
-          <thead>
-            <tr>
-              <th data-en="Guest Name (print)" data-es="Nombre del Huésped">Guest Name (print)</th>
-              <th data-en="Entry Date" data-es="Fecha de Entrada">Entry Date</th>
-              <th data-en="Exit Date" data-es="Fecha de Salida">Exit Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="guest-num">1</td><td><input type="text" name="guest1_name" placeholder="Full name"></td><td><input type="date" name="guest1_entry"></td><td><input type="date" name="guest1_exit"></td></tr>
-            <tr><td class="guest-num">2</td><td><input type="text" name="guest2_name" placeholder="Full name"></td><td><input type="date" name="guest2_entry"></td><td><input type="date" name="guest2_exit"></td></tr>
-            <tr><td class="guest-num">3</td><td><input type="text" name="guest3_name" placeholder="Full name"></td><td><input type="date" name="guest3_entry"></td><td><input type="date" name="guest3_exit"></td></tr>
-            <tr><td class="guest-num">4</td><td><input type="text" name="guest4_name" placeholder="Full name"></td><td><input type="date" name="guest4_entry"></td><td><input type="date" name="guest4_exit"></td></tr>
-            <tr><td class="guest-num">5</td><td><input type="text" name="guest5_name" placeholder="Full name"></td><td><input type="date" name="guest5_entry"></td><td><input type="date" name="guest5_exit"></td></tr>
-            <tr><td class="guest-num">6</td><td><input type="text" name="guest6_name" placeholder="Full name"></td><td><input type="date" name="guest6_entry"></td><td><input type="date" name="guest6_exit"></td></tr>
-          </tbody>
-        </table>
-
-        <!-- MINORS -->
-        <div class="minors-toggle" id="minors-toggle" onclick="toggleMinors()">
-          <span data-en="Add guests under 18" data-es="Agregar menores de edad">Add guests under 18</span>
-        </div>
-        <div id="minors-section">
-          <table class="guests-table" style="margin-top:12px;">
-            <thead>
-              <tr>
-                <th data-en="Minor Name (under 18)" data-es="Nombre del Menor (menor de 18)">Minor Name (under 18)</th>
-                <th data-en="Guardian Name" data-es="Nombre del Tutor">Guardian Name</th>
-                <th data-en="Age" data-es="Edad">Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="guest-num">1</td><td><input type="text" name="minor1_name" placeholder="Full name"></td><td><input type="text" name="minor1_guardian" placeholder="Guardian name"></td><td><input type="number" name="minor1_age" placeholder="Age" min="0" max="17" style="width:70px;"></td></tr>
-              <tr><td class="guest-num">2</td><td><input type="text" name="minor2_name" placeholder="Full name"></td><td><input type="text" name="minor2_guardian" placeholder="Guardian name"></td><td><input type="number" name="minor2_age" placeholder="Age" min="0" max="17" style="width:70px;"></td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- CAR -->
-        <div class="f2" style="margin-top:24px;">
-          <div class="field">
-            <label data-en="Vehicle Model" data-es="Modelo del Vehículo">Vehicle Model</label>
-            <input type="text" name="car_model" placeholder="e.g. Toyota RAV4">
-          </div>
-          <div class="field">
-            <label data-en="License Plate" data-es="Número de Placas">License Plate</label>
-            <input type="text" name="car_plate" placeholder="e.g. ABC-1234">
-          </div>
-        </div>
-
-        <!-- OWNER ACKNOWLEDGMENT -->
-        <div class="note-box">
-          <strong data-en="Owner Responsibility" data-es="Responsabilidad del Propietario" style="display:block;margin-bottom:6px;">Owner Responsibility</strong>
-          <span data-en="By submitting this form, I confirm that I have authorized my guests' stay at Suite Solana (SOLANA complex). I acknowledge that: (1) no more than 6 persons will reside in the unit; (2) my property manager will orient guests upon arrival; (3) guests have been informed of all SOLANA rules; (4) guests have agreed to the waiver below; and (5) I am responsible for any damage caused by my guests to common areas." data-es="Al enviar este formulario, confirmo que he autorizado la estancia de mis huéspedes en Suite Solana (complejo SOLANA). Reconozco que: (1) no más de 6 personas habitarán la unidad; (2) mi administrador recibirá y orientará a los huéspedes a su llegada; (3) los huéspedes han sido informados de todas las reglas de SOLANA; (4) los huéspedes han aceptado la exención de responsabilidad; y (5) soy responsable por cualquier daño que mis huéspedes causen en las áreas comunes.">By submitting this form, I confirm that I have authorized my guests' stay at Suite Solana (SOLANA complex). I acknowledge that: (1) no more than 6 persons will reside in the unit; (2) my property manager will orient guests upon arrival; (3) guests have been informed of all SOLANA rules; (4) guests have agreed to the waiver below; and (5) I am responsible for any damage caused by my guests to common areas.</span>
-        </div>
-        <div class="ack-row">
-          <input type="checkbox" name="owner_ack" id="owner_ack" required>
-          <label for="owner_ack" class="ack-label" data-en="<strong>I, Román Méndez, confirm and accept the above responsibility as condo owner.</strong>" data-es="<strong>Yo, Román Méndez, confirmo y acepto la responsabilidad anterior como propietario del condominio.</strong>"><strong>I, Román Méndez, confirm and accept the above responsibility as condo owner.</strong></label>
-        </div>
-      </div>
+  <div class="topbar">
+    <a href="huatulco.html" class="topbar-brand">Stockman 21</a>
+    <div class="lang-row">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
     </div>
+  </div>
 
-    <!-- ─── SECTION 2: WAIVER ─── -->
-    <div class="fsec">
-      <div class="fsec-head">
-        <div class="fsec-num">2</div>
-        <div class="fsec-title" data-en="Guest Waiver of Liability" data-es="Exención de Responsabilidad para Huéspedes">Guest Waiver of Liability</div>
-      </div>
-      <div class="fsec-body">
+  <div class="page-hero">
+    <div class="page-eye" data-en="SOLANA Condo Association" data-es="Asociación de Condóminos SOLANA">SOLANA Condo Association</div>
+    <h1 class="page-title" data-en="Guest Registration Forms" data-es="Formularios de Registro de Huéspedes">Guest Registration Forms</h1>
+    <p class="page-sub" data-en="Fill all three sections and submit. A PDF matching SOLANA's format downloads automatically and is sent to administration." data-es="Completa las tres secciones y envía. Un PDF con el formato de SOLANA se descarga automáticamente y se envía a la administración.">Fill all three sections and submit. A PDF matching SOLANA's format downloads automatically and is sent to administration.</p>
+  </div>
 
-        <div class="doc-text" id="waiver-text-en">
-          <p>This agreement releases SOLANA from all liability relating to injuries that may occur through my use, or the use by those under my guardianship, of the common spaces and facilities, during my stay in one of the condos in the SOLANA condominium complex. By signing this Agreement, I agree to hold SOLANA entirely free from any liability, including financial responsibility for injuries incurred.</p>
-          <p>I also acknowledge the risks involved in the use of the complex swimming pools and other activity areas in the complex. I swear that I am, and those under my guardianship are using the complex common spaces and facilities, and participating in activities in the complex voluntarily, and that all risks are clear to me.</p>
-          <p>By signing below, I forfeit all right to bring a suit against SOLANA for any reason. In return, I will be allowed access to and the full benefit of all common areas and facilities and to participate in all activities authorized by SOLANA. I will obey the rules and regulations as set out by SOLANA as listed in writing and as explained to me verbally.</p>
-          <p>For guests regularly returning to stay in the complex, this waiver is required to be signed on their initial visit and will be considered valid for all subsequent visits. SOLANA reserves the right to require guests to sign a new waiver at any time.</p>
+  <div class="form-wrap">
+    <a href="huatulco.html" class="back-link">← <span data-en="Back to Huatulco" data-es="Regresar a Huatulco">Back to Huatulco</span></a>
+
+    <form id="solana-form" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="access_key" value="f80fd2dc-5ff8-4763-aada-9138f2035285">
+      <input type="hidden" name="cc_email" id="cc-field" value="emiliolopez.dh@gmail.com">
+      <input type="hidden" name="from_name" value="Stockman 21 | Suite Solana">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="redirect" value="false">
+      <textarea name="message" id="email-body" style="display:none;"></textarea>
+      <input type="hidden" name="subject" id="form-subject" value="SOLANA Guest Access Form — Suite Solana B-201">
+
+      <!-- ═══════════════════════════
+           SECTION 1 — ACCESS FORM
+      ════════════════════════════ -->
+      <div class="fsec">
+        <div class="fsec-head">
+          <div class="fsec-num">1</div>
+          <div class="fsec-title" data-en="SOLANA Site Access Form (rev. Sept. 1, 2025)" data-es="Formulario de Acceso SOLANA (rev. 1 sept. 2025)">SOLANA Site Access Form (rev. Sept. 1, 2025)</div>
         </div>
-        <div class="doc-text" id="waiver-text-es" style="display:none;">
-          <p>Este acuerdo libera a SOLANA de toda responsabilidad relacionada con lesiones que puedan ocurrir durante mi uso, o el uso por parte de personas bajo mi tutela, de los espacios y áreas comunes del complejo durante mi estancia en uno de los condominios del complejo SOLANA.</p>
-          <p>Al firmar este documento, acepto eximir por completo a SOLANA de cualquier responsabilidad, incluyendo la responsabilidad financiera por lesiones sufridas.</p>
-          <p>Asimismo, reconozco los riesgos asociados con el uso de las albercas del complejo y otras áreas de actividades dentro del mismo. Declaro que tanto yo como las personas bajo mi tutela usamos voluntariamente las áreas comunes e instalaciones del complejo, y que conozco y acepto todos los riesgos involucrados.</p>
-          <p>Al firmar a continuación, renuncio a todo derecho de iniciar acciones legales contra SOLANA por cualquier motivo. A cambio, se me permitirá el acceso y uso pleno de las áreas e instalaciones comunes. Me comprometo a respetar el reglamento establecido por SOLANA.</p>
-        </div>
+        <div class="fsec-body">
 
-        <div class="field" style="margin-bottom:6px;">
-          <label data-en="Adult Guests — Type full name to sign waiver" data-es="Huéspedes Adultos — Escribe nombre completo para firmar la exención">Adult Guests — Type full name to sign waiver</label>
-        </div>
-        <div class="sig-grid">
-          <input type="text" name="waiver_sig1" placeholder="1. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="waiver_sig2" placeholder="2. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="waiver_sig3" placeholder="3. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="waiver_sig4" placeholder="4. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="waiver_sig5" placeholder="5. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="waiver_sig6" placeholder="6. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-        </div>
-
-        <div class="ack-row" style="margin-top:16px;">
-          <input type="checkbox" name="waiver_ack" id="waiver_ack" required>
-          <label for="waiver_ack" class="ack-label" data-en="<strong>All listed guests have read and agree to this waiver.</strong> By typing their names above, they release SOLANA from all liability as stated." data-es="<strong>Todos los huéspedes listados han leído y aceptan esta exención.</strong> Al escribir sus nombres arriba, liberan a SOLANA de toda responsabilidad conforme a lo establecido."><strong>All listed guests have read and agree to this waiver.</strong> By typing their names above, they release SOLANA from all liability as stated.</label>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── SECTION 3: POOL & PARKING RULES ─── -->
-    <div class="fsec">
-      <div class="fsec-head">
-        <div class="fsec-num">3</div>
-        <div class="fsec-title" data-en="Pool & Parking Rules" data-es="Reglamento de Alberca y Estacionamiento">Pool &amp; Parking Rules</div>
-      </div>
-      <div class="fsec-body">
-
-        <div id="rules-en">
-          <ul class="rules-list" style="list-style:none;padding:0;">
-            <li><strong>Pool Hours:</strong> 7:00 AM – 11:00 PM</li>
-            <li class="red-rule"><strong>No Lifeguard on Duty.</strong> All persons use pool and gym at their own risk. Children under 16 are strictly prohibited without adult supervision. Ages 16–18 require written parental permission.</li>
-            <li>All persons must shower before entering the pool.</li>
-            <li>Smoking/vaping is NOT permitted in any common area.</li>
-            <li><strong>No glass</strong> in pool or deck area under any circumstance.</li>
-            <li>Food only in sealed plastic containers, consumed at covered table areas only. <strong>No food at poolside or loungers.</strong> Drinks in plastic or aluminum containers only.</li>
-            <li><strong>No diving, jumping, running or pushing</strong> in pool areas. Keep noise to a minimum.</li>
-            <li>Remove towels/personal items when leaving. <strong>Chairs cannot be reserved for the day.</strong></li>
-            <li>Pool use restricted to condo owners/authorized renters and registered guests only.</li>
-            <li>The Association assumes no responsibility for lost/stolen items or accidents in pool or gym.</li>
-            <li><strong>Parking:</strong> Unoccupied units may not occupy a stall. One stall per unit. Gate must be closed after use. Only working vehicles may park. No parking outside designated stalls.</li>
-            <div class="penalty">
-              <li><strong>Violations:</strong> 1st notice ignored → $2,000 MXN fine | 2nd notice → $5,000 MXN fine | 3rd notice → legal action.</li>
+          <div class="f3">
+            <div class="field">
+              <label data-en="Condo Owner Name" data-es="Nombre del Propietario">Condo Owner Name</label>
+              <input type="text" name="owner_name" id="owner_name" value="Román Méndez" required>
             </div>
-          </ul>
-        </div>
-
-        <div id="rules-es" style="display:none;">
-          <ul class="rules-list" style="list-style:none;padding:0;">
-            <li><strong>Horario de alberca:</strong> 7:00 AM – 11:00 PM</li>
-            <li class="red-rule"><strong>No hay salvavidas en servicio.</strong> Todas las personas usan la alberca y el gimnasio bajo su propio riesgo. Menores de 16 años tienen prohibido el acceso sin supervisión de adulto. Personas de 16–18 años deben contar con permiso escrito de sus padres.</li>
-            <li>Todas las personas deben ducharse antes de entrar a la alberca.</li>
-            <li>Está prohibido fumar/vapear en cualquier área común.</li>
-            <li><strong>Prohibido el uso de vidrio</strong> en el área de la alberca bajo cualquier circunstancia.</li>
-            <li>Alimentos solo en recipientes plásticos sellados, consumidos únicamente en las áreas techadas. <strong>No se permite comida cerca de la alberca o en los camastros.</strong> Bebidas solo en envases de plástico o aluminio.</li>
-            <li><strong>Prohibido clavados, saltos, correr o empujar</strong> en el área de la alberca. Mantener niveles de ruido bajos.</li>
-            <li>Retire su toalla/objetos personales al retirarse. <strong>No está permitido reservar camastros/sillas por todo el día.</strong></li>
-            <li>El uso de la alberca está restringido a propietarios/inquilinos autorizados y huéspedes registrados.</li>
-            <li>La Asociación no se hace responsable por objetos perdidos/robados ni por accidentes en la alberca o gimnasio.</li>
-            <li><strong>Estacionamiento:</strong> Unidades no ocupadas no pueden usar cajones. 1 cajón por unidad. La reja debe cerrarse después de cada uso. Solo vehículos en buen estado. Prohibido estacionarse fuera de los cajones asignados.</li>
-            <div class="penalty">
-              <li><strong>Infracciones:</strong> 1er aviso ignorado → multa $2,000 MXN | 2do aviso → $5,000 MXN | 3er aviso → acción legal.</li>
+            <div class="field">
+              <label data-en="Phone" data-es="Teléfono">Phone</label>
+              <input type="tel" name="owner_phone" id="owner_phone" value="+1 514 427 1983">
             </div>
-          </ul>
-        </div>
+            <div class="field">
+              <label data-en="Condo #" data-es="No. de Condominio">Condo #</label>
+              <input type="text" name="condo_number" id="condo_number" value="B-201" required>
+            </div>
+          </div>
 
-        <div class="field" style="margin-bottom:6px;">
-          <label data-en="Adult Guests — Type full name to acknowledge rules" data-es="Huéspedes Adultos — Escribe nombre completo para acusar recibo del reglamento">Adult Guests — Type full name to acknowledge rules</label>
-        </div>
-        <div class="sig-grid">
-          <input type="text" name="rules_sig1" placeholder="1. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="rules_sig2" placeholder="2. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="rules_sig3" placeholder="3. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-          <input type="text" name="rules_sig4" placeholder="4. Full name / Nombre completo" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,150,58,.22);color:var(--white);font-family:'Montserrat',sans-serif;font-size:12px;padding:10px 12px;outline:none;width:100%;">
-        </div>
+          <div class="f2">
+            <div class="field">
+              <label data-en="Property Manager / Company" data-es="Administrador / Empresa">Property Manager / Company</label>
+              <input type="text" name="manager_name" id="manager_name" value="Stockman 21 International">
+            </div>
+            <div class="field">
+              <label data-en="Manager Phone / Email" data-es="Tel / Correo del Administrador">Manager Phone / Email</label>
+              <input type="text" name="manager_contact" id="manager_contact" value="+1 514 427 1983 | stockman21ceo@gmail.com">
+            </div>
+          </div>
 
-        <div class="ack-row" style="margin-top:16px;">
-          <input type="checkbox" name="rules_ack" id="rules_ack" required>
-          <label for="rules_ack" class="ack-label" data-en="<strong>All listed guests have read, understood, and agree to abide by the SOLANA Pool & Parking Rules.</strong>" data-es="<strong>Todos los huéspedes listados han leído, entendido y se comprometen a respetar el Reglamento de Alberca y Estacionamiento de SOLANA.</strong>"><strong>All listed guests have read, understood, and agree to abide by the SOLANA Pool & Parking Rules.</strong></label>
+          <!-- GUEST ROWS -->
+          <div class="field" style="margin-bottom:8px;">
+            <label data-en="All Non-Owner Guests — Name, Entry & Exit Dates" data-es="Todos los Huéspedes No Propietarios — Nombre, Entrada y Salida">All Non-Owner Guests — Name, Entry &amp; Exit Dates</label>
+          </div>
+          <div class="guest-row-header">
+            <span></span>
+            <span data-en="Guest Name (print)" data-es="Nombre del Huésped">Guest Name (print)</span>
+            <span data-en="Entry Date" data-es="Fecha Entrada">Entry Date</span>
+            <span data-en="Exit Date" data-es="Fecha Salida">Exit Date</span>
+          </div>
+          <div class="guest-rows" id="guest-rows">
+            <div class="guest-row"><span class="guest-row-idx">1</span><input type="text" name="g1_name" id="g1_name" placeholder="Full name"><input type="date" name="g1_entry" id="g1_entry"><input type="date" name="g1_exit" id="g1_exit"></div>
+            <div class="guest-row"><span class="guest-row-idx">2</span><input type="text" name="g2_name" id="g2_name" placeholder="Full name"><input type="date" name="g2_entry" id="g2_entry"><input type="date" name="g2_exit" id="g2_exit"></div>
+            <div class="guest-row"><span class="guest-row-idx">3</span><input type="text" name="g3_name" id="g3_name" placeholder="Full name"><input type="date" name="g3_entry" id="g3_entry"><input type="date" name="g3_exit" id="g3_exit"></div>
+            <div class="guest-row"><span class="guest-row-idx">4</span><input type="text" name="g4_name" id="g4_name" placeholder="Full name"><input type="date" name="g4_entry" id="g4_entry"><input type="date" name="g4_exit" id="g4_exit"></div>
+            <div class="guest-row"><span class="guest-row-idx">5</span><input type="text" name="g5_name" id="g5_name" placeholder="Full name"><input type="date" name="g5_entry" id="g5_entry"><input type="date" name="g5_exit" id="g5_exit"></div>
+            <div class="guest-row"><span class="guest-row-idx">6</span><input type="text" name="g6_name" id="g6_name" placeholder="Full name"><input type="date" name="g6_entry" id="g6_entry"><input type="date" name="g6_exit" id="g6_exit"></div>
+          </div>
+
+          <!-- MINORS -->
+          <div class="minors-toggle" id="minors-toggle" onclick="toggleMinors()">
+            <span class="arr">▸</span>
+            <span data-en="Add minor guests (under 18)" data-es="Agregar huéspedes menores de 18 años">Add minor guests (under 18)</span>
+          </div>
+          <div id="minors-section">
+            <div class="minor-row-header" style="margin-top:12px;">
+              <span></span>
+              <span data-en="Minor Name" data-es="Nombre del Menor">Minor Name</span>
+              <span data-en="Guardian Name" data-es="Nombre del Tutor">Guardian Name</span>
+              <span data-en="Age" data-es="Edad">Age</span>
+            </div>
+            <div class="minor-row"><span class="guest-row-idx">1</span><input type="text" name="m1_name" id="m1_name" placeholder="Minor's name"><input type="text" name="m1_guardian" id="m1_guardian" placeholder="Guardian"><input type="number" name="m1_age" id="m1_age" min="0" max="17" placeholder="Age"></div>
+            <div class="minor-row"><span class="guest-row-idx">2</span><input type="text" name="m2_name" id="m2_name" placeholder="Minor's name"><input type="text" name="m2_guardian" id="m2_guardian" placeholder="Guardian"><input type="number" name="m2_age" id="m2_age" min="0" max="17" placeholder="Age"></div>
+          </div>
+
+          <!-- CAR -->
+          <div class="f2" style="margin-top:22px;">
+            <div class="field">
+              <label data-en="Vehicle Model" data-es="Modelo del Vehículo">Vehicle Model</label>
+              <input type="text" name="car_model" id="car_model" placeholder="e.g. Toyota RAV4">
+            </div>
+            <div class="field">
+              <label data-en="License Plate #" data-es="Número de Placas">License Plate #</label>
+              <input type="text" name="car_plate" id="car_plate" placeholder="e.g. ABC-1234">
+            </div>
+          </div>
+
+          <!-- OWNER RESPONSIBILITY -->
+          <div class="note-box">
+            <strong data-en="Owner's Responsibility" data-es="Responsabilidad del Propietario">Owner's Responsibility</strong>
+            <span data-en="By submitting, I confirm: (1) no more than 6 persons in the unit; (2) property manager will orient guests on arrival; (3) guests have been informed of all SOLANA rules; (4) guests have signed the waiver of liability; (5) I am responsible for any damage caused by my guests to common areas." data-es="Al enviar, confirmo: (1) no más de 6 personas en la unidad; (2) el administrador recibirá y orientará a los huéspedes; (3) los huéspedes conocen el reglamento de SOLANA; (4) los huéspedes firmaron la exención de responsabilidad; (5) soy responsable por daños que mis huéspedes causen en áreas comunes.">By submitting, I confirm: (1) no more than 6 persons in the unit; (2) property manager will orient guests on arrival; (3) guests have been informed of all SOLANA rules; (4) guests have signed the waiver of liability; (5) I am responsible for any damage caused by my guests to common areas.</span>
+          </div>
+          <div class="ack-row">
+            <input type="checkbox" id="owner_ack" required>
+            <label for="owner_ack" class="ack-label" data-en="<strong>I, Román Méndez (condo B-201), confirm and accept the above as owner.</strong>" data-es="<strong>Yo, Román Méndez (condominio B-201), confirmo y acepto la responsabilidad anterior como propietario.</strong>"><strong>I, Román Méndez (condo B-201), confirm and accept the above as owner.</strong></label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- SUBMIT -->
-    <div class="submit-area">
+      <!-- ═══════════════════════════
+           SECTION 2 — WAIVER
+      ════════════════════════════ -->
+      <div class="fsec">
+        <div class="fsec-head">
+          <div class="fsec-num">2</div>
+          <div class="fsec-title" data-en="Guest Waiver of Liability" data-es="Exención de Responsabilidad para Huéspedes">Guest Waiver of Liability</div>
+        </div>
+        <div class="fsec-body">
+          <div class="doc-text" id="waiver-en">
+            <p>This agreement releases SOLANA from all liability relating to injuries that may occur through my use, or the use by those under my guardianship, of the common spaces and facilities, during my stay in one of the condos in the SOLANA condominium complex. By signing this Agreement, I agree to hold SOLANA entirely free from any liability, including financial responsibility for injuries incurred.</p>
+            <p>I also acknowledge the risks involved in the use of the complex swimming pools and other activity areas in the complex. I swear that I am, and those under my guardianship are using the complex common spaces and facilities, and participating in activities in the complex voluntarily, and that all risks are clear to me.</p>
+            <p>By signing below, I forfeit all right to bring a suit against SOLANA for any reason. In return, I will be allowed access to and the full benefit of all common areas and facilities and to participate in all activities authorized by SOLANA. I will obey the rules and regulations as set out by SOLANA as listed in writing and as explained to me verbally.</p>
+            <p>For guests regularly returning to stay in the complex, this waiver is required to be signed on their initial visit and will be considered valid for all subsequent visits. SOLANA reserves the right to require guests to sign a new waiver at any time.</p>
+          </div>
+          <div class="doc-text" id="waiver-es" style="display:none;">
+            <p>Este acuerdo libera a SOLANA de toda responsabilidad relacionada con lesiones que puedan ocurrir durante mi uso, o el uso por parte de personas bajo mi tutela, de los espacios y áreas comunes del complejo durante mi estancia en uno de los condominios del complejo SOLANA.</p>
+            <p>Al firmar este documento, acepto eximir por completo a SOLANA de cualquier responsabilidad, incluyendo la responsabilidad financiera por lesiones sufridas. Asimismo, reconozco los riesgos asociados con el uso de las albercas del complejo y otras áreas de actividades dentro del mismo.</p>
+            <p>Al firmar a continuación, renuncio a todo derecho de iniciar acciones legales contra SOLANA por cualquier motivo. A cambio, se me permitirá el acceso y uso pleno de las áreas e instalaciones comunes. Me comprometo a respetar el reglamento establecido por SOLANA, tanto el que se me proporcione por escrito como el que se me comunique verbalmente.</p>
+            <p>Para los huéspedes que visitan el complejo con regularidad, esta exención deberá ser firmada en su primera visita y se considerará válida para todas las visitas posteriores. SOLANA se reserva el derecho de solicitar la firma de una nueva exención en cualquier momento.</p>
+          </div>
+
+          <div class="sig-label" data-en="Adult Guests — Type full name as signature" data-es="Huéspedes Adultos — Escribe nombre completo como firma">Adult Guests — Type full name as signature</div>
+          <div class="sig-grid">
+            <input class="sig-input" type="text" name="w_sig1" id="w_sig1" placeholder="1. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="w_sig2" id="w_sig2" placeholder="2. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="w_sig3" id="w_sig3" placeholder="3. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="w_sig4" id="w_sig4" placeholder="4. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="w_sig5" id="w_sig5" placeholder="5. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="w_sig6" id="w_sig6" placeholder="6. Full name / Nombre completo">
+          </div>
+          <div class="ack-row" style="margin-top:14px;">
+            <input type="checkbox" id="waiver_ack" required>
+            <label for="waiver_ack" class="ack-label" data-en="<strong>All listed guests have read and agree to this waiver.</strong> Typing their names above constitutes their signature and release of SOLANA from all liability as stated." data-es="<strong>Todos los huéspedes han leído y aceptan esta exención.</strong> Al escribir sus nombres arriba, firman y liberan a SOLANA de toda responsabilidad conforme a lo establecido."><strong>All listed guests have read and agree to this waiver.</strong> Typing their names above constitutes their signature and release of SOLANA from all liability as stated.</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════
+           SECTION 3 — POOL RULES
+      ════════════════════════════ -->
+      <div class="fsec">
+        <div class="fsec-head">
+          <div class="fsec-num">3</div>
+          <div class="fsec-title" data-en="Pool & Parking Rules and Regulations" data-es="Reglamento de Alberca y Estacionamiento">Pool &amp; Parking Rules and Regulations</div>
+        </div>
+        <div class="fsec-body">
+          <div id="rules-en" class="rules-box">
+            <ul>
+              <li><strong>Pool Hours:</strong> 7:00 AM – 11:00 PM</li>
+              <li class="red"><strong>No Lifeguard on Duty.</strong> All persons use pool and gym at their own risk. Children under 16 are strictly prohibited without adult supervision. Ages 16–18 require written parental permission.</li>
+              <li>All persons must shower before entering the pool.</li>
+              <li>Smoking/vaping is <strong>NOT permitted</strong> in any public common area.</li>
+              <li><strong>No glass</strong> in the pool and/or deck area under any circumstance.</li>
+              <li>Food in small portions in sealed plastic containers allowed only at covered table areas. <strong>No food at poolside or loungers.</strong> Drinks in plastic or aluminum containers only.</li>
+              <li><strong>No diving, jumping, running or pushing</strong> in pool areas. Keep noise to a minimum.</li>
+              <li>Remove towels/personal items when leaving. <strong>Chairs may not be reserved for the day.</strong></li>
+              <li>Pool use restricted to condo owners (or authorized renters) and registered guests only.</li>
+              <li>The Association assumes no responsibility for lost/stolen items or accidents in pool or gym.</li>
+              <li><strong>Parking:</strong> Unoccupied units may not use a stall. One stall per unit. Gate must be closed after each use. Only working-condition cars. No parking outside designated stalls.</li>
+              <div class="penalties">
+                <li><strong>Violations — By-Law Penalties:</strong> 1st notice ignored → $2,000 MXN fine | 2nd notice → $5,000 MXN fine | 3rd notice → legal action. Notification posted on condo door and emailed to owner.</li>
+                <li>It is the <strong>homeowner's responsibility</strong> to address fine violations with renters/guests and/or property management.</li>
+              </div>
+            </ul>
+          </div>
+          <div id="rules-es" class="rules-box" style="display:none;">
+            <ul>
+              <li><strong>Horario de alberca:</strong> 7:00 AM – 11:00 PM</li>
+              <li class="red"><strong>No hay salvavidas en servicio.</strong> Todas las personas usan alberca y gimnasio bajo su propio riesgo. Menores de 16 años: prohibido sin supervisión de adulto. Personas de 16–18 años deben contar con permiso escrito de sus padres.</li>
+              <li>Todas las personas deben ducharse antes de entrar a la alberca.</li>
+              <li>Está <strong>prohibido fumar/vapear</strong> en cualquier área común.</li>
+              <li><strong>Prohibido el uso de vidrio</strong> en el área de alberca bajo cualquier circunstancia.</li>
+              <li>Alimentos en porciones pequeñas en recipientes plásticos sellados, sólo en áreas techadas. <strong>No se permite comida cerca de la alberca ni en los camastros.</strong> Bebidas sólo en envases plásticos o de aluminio.</li>
+              <li><strong>Prohibido clavados, saltos, correr o empujar</strong> en el área de la alberca. Mantener niveles de ruido bajos.</li>
+              <li>Retire su toalla/objetos personales al retirarse. <strong>No está permitido reservar camastros por todo el día.</strong></li>
+              <li>Uso restringido a propietarios/inquilinos autorizados y huéspedes registrados.</li>
+              <li>La Asociación no se hace responsable por objetos perdidos/robados ni accidentes en alberca o gimnasio.</li>
+              <li><strong>Estacionamiento:</strong> Unidades desocupadas no pueden usar cajones. 1 cajón por unidad. La reja debe cerrarse después de cada uso. Solo vehículos en buen estado. Prohibido estacionarse fuera de los cajones asignados.</li>
+              <div class="penalties">
+                <li><strong>Infracciones — Sanciones:</strong> 1er aviso ignorado → multa $2,000 MXN | 2do aviso → $5,000 MXN | 3er aviso → acción legal. Notificación en puerta del condominio y por correo al propietario.</li>
+                <li>Es <strong>responsabilidad del propietario</strong> resolver las multas con sus inquilinos/huéspedes y/o empresa de administración.</li>
+              </div>
+            </ul>
+          </div>
+
+          <div class="sig-label" data-en="All Adult Guests — Type full name to acknowledge rules" data-es="Todos los Huéspedes Adultos — Escribe nombre completo para acusar recibo">All Adult Guests — Type full name to acknowledge rules</div>
+          <div class="sig-grid">
+            <input class="sig-input" type="text" name="r_sig1" id="r_sig1" placeholder="1. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="r_sig2" id="r_sig2" placeholder="2. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="r_sig3" id="r_sig3" placeholder="3. Full name / Nombre completo">
+            <input class="sig-input" type="text" name="r_sig4" id="r_sig4" placeholder="4. Full name / Nombre completo">
+          </div>
+          <div class="ack-row" style="margin-top:14px;">
+            <input type="checkbox" id="rules_ack" required>
+            <label for="rules_ack" class="ack-label" data-en="<strong>All listed guests have read, understood, and agree to abide by the SOLANA Pool & Parking Rules.</strong>" data-es="<strong>Todos los huéspedes han leído, entendido y se comprometen a respetar el Reglamento de Alberca y Estacionamiento de SOLANA.</strong>"><strong>All listed guests have read, understood, and agree to abide by the SOLANA Pool & Parking Rules.</strong></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENT EMAIL -->
+      <div class="fsec" style="margin-bottom:24px;">
+        <div class="fsec-head">
+          <div class="fsec-num">✉</div>
+          <div class="fsec-title" data-en="Send to Guest / Client" data-es="Enviar a Huésped / Cliente">Send to Guest / Client</div>
+        </div>
+        <div class="fsec-body">
+          <div class="field" style="margin-bottom:0;">
+            <label data-en="Client email — receives SOLANA forms + link to rules" data-es="Correo del cliente — recibirá los formularios SOLANA + liga a reglamentos">Client email — receives SOLANA forms + link to rules</label>
+            <input type="email" id="client_email" placeholder="client@email.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
       <button type="submit" class="btn-submit" id="submit-btn">
-        <span data-en="Submit to SOLANA Administration" data-es="Enviar a la Administración de SOLANA">Submit to SOLANA Administration</span>
+        <span data-en="SEND FORMS — SOLANA ADMINISTRATION + CLIENT" data-es="ENVIAR FORMULARIOS — ADMINISTRACIÓN SOLANA + CLIENTE">SEND FORMS — SOLANA ADMINISTRATION + CLIENT</span>
       </button>
+
+    </form>
+
+    <!-- SUCCESS -->
+    <div id="success-msg">
+      <div class="s-icon">✓</div>
+      <h3 data-en="Forms Submitted Successfully" data-es="Formularios Enviados Exitosamente">Forms Submitted Successfully</h3>
+      <p data-en="A copy has been sent to stockman21ceo@gmail.com and to SOLANA administration (emiliolopez.dh@gmail.com)." data-es="Se envió una copia a stockman21ceo@gmail.com y a la administración de SOLANA (emiliolopez.dh@gmail.com).">A copy has been sent to stockman21ceo@gmail.com and to SOLANA administration (emiliolopez.dh@gmail.com).</p>
+      <div class="pdf-note" data-en="The PDF document (3 pages, SOLANA format) was downloaded automatically to your device. Check your Downloads folder." data-es="El documento PDF (3 páginas, formato SOLANA) se descargó automáticamente en tu dispositivo. Revisa tu carpeta de Descargas.">The PDF document (3 pages, SOLANA format) was downloaded automatically to your device. Check your Downloads folder.</div>
     </div>
 
-  </form>
-
-  <!-- SUCCESS -->
-  <div id="success-msg">
-    <div class="s-icon">✓</div>
-    <h3 data-en="Forms Submitted Successfully" data-es="Formularios Enviados Exitosamente">Forms Submitted Successfully</h3>
-    <p data-en="A copy has been sent to stockman21ceo@gmail.com and to SOLANA administration (emiliolopez.dh@gmail.com)." data-es="Se ha enviado una copia a stockman21ceo@gmail.com y a la administración de SOLANA (emiliolopez.dh@gmail.com).">A copy has been sent to stockman21ceo@gmail.com and to SOLANA administration (emiliolopez.dh@gmail.com).</p>
-  </div>
-
-</div>
+  </div><!-- /form-wrap -->
+</div><!-- /main-content -->
 
 <footer>
   <div class="f-brand">Stockman 21 International</div>
-  <div class="f-txt">Suite Solana · Huatulco · Mexico</div>
+  <div class="f-txt">Suite Solana · B-201 · Huatulco · Mexico</div>
 </footer>
 
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════ -->
 <script>
+/* ── PASSWORD ─────────────────────────── */
+const PW_KEY = 'solana_auth';
+const CORRECT = 'solana2025';
+
+function checkPw() {
+  const v = document.getElementById('pw-input').value;
+  const err = document.getElementById('pw-err');
+  if (v === CORRECT) {
+    sessionStorage.setItem(PW_KEY, '1');
+    document.getElementById('pw-overlay').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    err.classList.remove('show');
+  } else {
+    err.classList.add('show');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPw();
+});
+
+// Auto-unlock if already authenticated this session
+if (sessionStorage.getItem(PW_KEY) === '1') {
+  document.getElementById('pw-overlay').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+}
+
+/* ── LANGUAGE TOGGLE ──────────────────── */
 let currentLang = 'en';
 
 function setLang(lang) {
   currentLang = lang;
   document.getElementById('btn-en').classList.toggle('active', lang === 'en');
   document.getElementById('btn-es').classList.toggle('active', lang === 'es');
-
   document.querySelectorAll('[data-en][data-es]').forEach(el => {
-    const val = el.getAttribute('data-' + lang);
-    if (val) el.innerHTML = val;
+    const v = el.getAttribute('data-' + lang);
+    if (v !== null) el.innerHTML = v;
+  });
+  document.getElementById('waiver-en').style.display  = lang === 'en' ? 'block' : 'none';
+  document.getElementById('waiver-es').style.display  = lang === 'es' ? 'block' : 'none';
+  document.getElementById('rules-en').style.display   = lang === 'en' ? 'block' : 'none';
+  document.getElementById('rules-es').style.display   = lang === 'es' ? 'block' : 'none';
+  document.getElementById('form-subject').value = lang === 'en'
+    ? 'SOLANA Guest Access Form — Suite Solana B-201'
+    : 'Formulario de Acceso SOLANA — Suite Solana B-201';
+  // Placeholders
+  document.querySelectorAll('[data-ph-en]').forEach(el => {
+    el.placeholder = el.getAttribute('data-ph-' + lang);
+  });
+}
+
+/* ── MINORS TOGGLE ───────────────────── */
+function toggleMinors() {
+  const s = document.getElementById('minors-section');
+  const b = document.getElementById('minors-toggle');
+  const open = s.classList.toggle('open');
+  b.classList.toggle('open', open);
+}
+
+/* ── HELPERS ──────────────────────────── */
+function fmtDate(d) {
+  if (!d) return '—';
+  const parts = d.split('-');
+  if (parts.length !== 3) return d;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+function val(id) { const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
+
+/* ── PDF GENERATION ───────────────────── */
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+  const ML = 18, MR = 18, PW = 216;
+  const CW = PW - ML - MR;
+  const NAVY = [11, 27, 48], GOLD = [201, 150, 58], WHITE = [255, 255, 255];
+  const TEXT = [44, 44, 44], LIGHT = [80, 80, 80], MUTED = [130, 130, 130];
+  const RED  = [180, 50, 50];
+  let y = 0;
+
+  // ─── HEADER FUNCTION ────────────────
+  function drawHeader(line1, line2, subtitle) {
+    y = 16;
+    // Gold circle
+    doc.setFillColor(...GOLD);
+    doc.circle(ML + 8, y + 5, 7.5, 'F');
+    doc.setTextColor(...WHITE);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('S', ML + 8, y + 7.5, { align: 'center' });
+    // "OLANA" text next to circle
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(...GOLD);
+    doc.text('OLANA', ML + 17.5, y + 5.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...MUTED);
+    doc.text('SANTA CRUZ', ML + 17.5, y + 10);
+
+    // Title block (right side)
+    doc.setTextColor(...TEXT);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text('ADMON SOLANA Condo Association', ML + 42, y + 3);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...TEXT);
+    doc.text(line1, ML + 42, y + 10);
+    if (line2) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(line2, ML + 42, y + 16);
+    }
+    y += 24;
+    // Gold separator
+    doc.setDrawColor(...GOLD);
+    doc.setLineWidth(0.6);
+    doc.line(ML, y, PW - MR, y);
+    y += 7;
+  }
+
+  // ─── FIELD LINE FUNCTION ─────────────
+  function drawFieldLine(labelText, valueText, x, w) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...MUTED);
+    doc.text(labelText, x, y);
+    const ly = y + 5.5;
+    doc.setDrawColor(180, 180, 180);
+    doc.setLineWidth(0.25);
+    doc.line(x, ly, x + w, ly);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...TEXT);
+    if (valueText) doc.text(valueText, x, ly - 0.5);
+  }
+
+  // ─── BODY TEXT FUNCTION ──────────────
+  function drawText(text, color, size, indent) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(size || 9);
+    doc.setTextColor(...(color || TEXT));
+    const lines = doc.splitTextToSize(text, CW - (indent || 0));
+    doc.text(lines, ML + (indent || 0), y);
+    y += lines.length * ((size || 9) * 0.37) + 1.5;
+  }
+
+  function drawBullet(text, color, size) {
+    const sz = size || 8.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(sz);
+    doc.setTextColor(...(color || LIGHT));
+    doc.text('•', ML + 2, y);
+    const lines = doc.splitTextToSize(text, CW - 7);
+    doc.text(lines, ML + 7, y);
+    y += lines.length * (sz * 0.37) + 1.8;
+  }
+
+  function sectionTitle(text) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...TEXT);
+    doc.text(text, ML, y);
+    y += 6;
+  }
+
+  function hLine(color) {
+    doc.setDrawColor(...(color || [200, 200, 200]));
+    doc.setLineWidth(0.25);
+    doc.line(ML, y, PW - MR, y);
+    y += 4;
+  }
+
+  // Collect data
+  const ownerName  = val('owner_name')  || 'Román Méndez';
+  const ownerPhone = val('owner_phone') || '+1 514 427 1983';
+  const condoNum   = val('condo_number')|| 'B-201';
+  const mgrName    = val('manager_name')|| 'Stockman 21 International';
+  const mgrContact = val('manager_contact')|| 'stockman21ceo@gmail.com';
+  const carModel   = val('car_model')   || '';
+  const carPlate   = val('car_plate')   || '';
+  const submittedOn = new Date().toLocaleDateString('en-CA');
+
+  const guests = [1,2,3,4,5,6].map(i => ({
+    name:  val(`g${i}_name`),
+    entry: fmtDate(val(`g${i}_entry`)),
+    exit:  fmtDate(val(`g${i}_exit`))
+  })).filter(g => g.name);
+
+  const minors = [1,2].map(i => ({
+    name:     val(`m${i}_name`),
+    guardian: val(`m${i}_guardian`),
+    age:      val(`m${i}_age`)
+  })).filter(m => m.name);
+
+  const wSigs = [1,2,3,4,5,6].map(i => val(`w_sig${i}`)).filter(Boolean);
+  const rSigs = [1,2,3,4].map(i => val(`r_sig${i}`)).filter(Boolean);
+
+  // ═══════════════════════════════════
+  // PAGE 1 — SITE ACCESS FORM
+  // ═══════════════════════════════════
+  drawHeader('SOLANA SITE ACCESS FORM', '(rev Sept. 1, 2025)');
+
+  // Owner row
+  drawFieldLine('NAME OF CONDO OWNER', ownerName, ML, CW * 0.48);
+  drawFieldLine('TELEPHONE #', ownerPhone, ML + CW * 0.5, CW * 0.24);
+  drawFieldLine('CONDO #', condoNum, ML + CW * 0.76, CW * 0.24);
+  y += 10;
+
+  // Manager row
+  drawFieldLine('COMPANY / PERSON RESPONSIBLE FOR PROPERTY MANAGEMENT', mgrName, ML, CW);
+  y += 10;
+
+  // Manager contact
+  drawFieldLine('TELEPHONE / E-MAIL ADDRESS', mgrContact, ML, CW);
+  y += 14;
+  hLine(GOLD);
+
+  // Guest table
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...TEXT);
+  doc.text('NAMES OF ALL NON-OWNER GUESTS (renters, family or friends) — DATE OF ENTRY AND EXIT', ML, y);
+  y += 6;
+
+  const guestBody = guests.length > 0
+    ? guests.map((g, i) => [`${i+1}`, g.name, g.entry, g.exit])
+    : [[1,'','-','-'],[2,'','-','-'],[3,'','-','-'],[4,'','-','-'],[5,'','-','-'],[6,'','-','-']];
+
+  // Pad to 6 rows
+  while (guestBody.length < 6) {
+    guestBody.push([guestBody.length + 1, '', '—', '—']);
+  }
+
+  doc.autoTable({
+    startY: y,
+    head: [['#', 'NAME OF GUEST (PLEASE PRINT)', 'DATE OF ENTRY', 'DATE OF EXIT']],
+    body: guestBody,
+    margin: { left: ML, right: MR },
+    styles: { fontSize: 9, cellPadding: 3.5, textColor: TEXT },
+    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+    columnStyles: {
+      0: { cellWidth: 10, halign: 'center' },
+      1: { cellWidth: CW * 0.5 },
+      2: { cellWidth: CW * 0.24 },
+      3: { cellWidth: CW * 0.24 }
+    },
+    alternateRowStyles: { fillColor: [248, 246, 241] }
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // Minors table (if any)
+  if (minors.length > 0) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...TEXT);
+    doc.text('GUESTS UNDER 18 YEARS OF AGE', ML, y);
+    y += 5;
+    doc.autoTable({
+      startY: y,
+      head: [['#', 'MINOR NAME', 'GUARDIAN NAME', 'AGE']],
+      body: minors.map((m, i) => [i+1, m.name, m.guardian, m.age]),
+      margin: { left: ML, right: MR },
+      styles: { fontSize: 9, cellPadding: 3.5, textColor: TEXT },
+      headStyles: { fillColor: [70, 50, 20], textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 3: { cellWidth: 18, halign: 'center' } }
+    });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
+  // Car section
+  sectionTitle('AUTOMOBILE SITE ACCESS');
+  drawFieldLine('MODEL & LICENSE PLATE NUMBER (may be filled in later for automobile rentals)', '', ML, CW);
+  y += 2;
+  drawFieldLine('AUTO MODEL', carModel, ML, CW * 0.55);
+  drawFieldLine('LICENSE PLATE #', carPlate, ML + CW * 0.57, CW * 0.43);
+  y += 12;
+  hLine();
+
+  // Owner Responsibility
+  sectionTitle('OWNER\'S RESPONSIBILITY');
+  const respText = `As the owner of the condo identified in this form, I acknowledge through my signature below, that I have agreed to the temporary occupancy of my condo in the SOLANA condominium complex by the above named renters, family and/or guests. To protect SOLANA and its members, I agree to the following conditions:`;
+  drawText(respText, LIGHT, 8.5);
+  y += 2;
+
+  const points = [
+    'I acknowledge that I am to have no more than 6 people resident in 1 bedroom.',
+    'In the case that I am absent, I will ensure that my property manager will meet and orient my guests upon their arrival or shortly after.',
+    'I will ensure that my guests have been informed of the rules and regulations set by SOLANA for use of the complex common spaces, including the risks in using the pool(s) and in participating in other activities in the complex.',
+    'I take responsibility to ensure that my guests (including parents or guardians of guests under the age of 18), have signed a waiver of liability releasing SOLANA from all liability. Such waiver will be executed by my guests in advance of their arrival. (WAIVER FORM and POOL/GYM RULES FORM TO BE SIGNED AND ATTACHED)',
+    'I acknowledge that I am responsible for any damage to the complex common spaces caused by my guests and will ensure that SOLANA is reimbursed in full for costs incurred in repairing such damage.'
+  ];
+  points.forEach((p, i) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...LIGHT);
+    doc.text(`${i+1}.`, ML + 2, y);
+    const lines = doc.splitTextToSize(p, CW - 9);
+    doc.text(lines, ML + 9, y);
+    y += lines.length * 3.2 + 2;
   });
 
-  // Waiver text
-  document.getElementById('waiver-text-en').style.display = lang === 'en' ? 'block' : 'none';
-  document.getElementById('waiver-text-es').style.display = lang === 'es' ? 'block' : 'none';
+  y += 6;
+  hLine();
+  // Signature line
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(...TEXT);
+  doc.text('Signature of Condo Owner:', ML, y);
+  doc.setDrawColor(...MUTED);
+  doc.setLineWidth(0.3);
+  doc.line(ML + 55, y, ML + 120, y);
+  doc.text('Date:', ML + 124, y);
+  doc.line(ML + 136, y, PW - MR, y);
+  // Pre-fill name + date
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...GOLD);
+  doc.text(ownerName, ML + 57, y - 1);
+  doc.text(submittedOn, ML + 138, y - 1);
+
+  // ═══════════════════════════════════
+  // PAGE 2 — WAIVER OF LIABILITY
+  // ═══════════════════════════════════
+  doc.addPage();
+  drawHeader('GUEST WAIVER OF LIABILITY', '(revised September 1, 2025)');
+
+  // Owner + condo
+  drawFieldLine('NAME OF CONDO OWNER', ownerName, ML, CW * 0.6);
+  drawFieldLine('CONDO ADDRESS #', condoNum, ML + CW * 0.62, CW * 0.38);
+  y += 12;
+
+  const waiverParas = [
+    'This agreement releases SOLANA from all liability relating to injuries that may occur through my use, or the use by those under my guardianship, of the common spaces and facilities, during my stay in one of the condos in the SOLANA condominium complex. By signing this Agreement, I agree to hold SOLANA entirely free from any liability, including financial responsibility for injuries incurred.',
+    'I also acknowledge the risks involved in the use of the complex swimming pools and other activity areas in the complex. I swear that I am, and those under my guardianship are using the complex common spaces and facilities, and participating in activities in the complex voluntarily, and that all risks are clear to me.',
+    'By signing below, I forfeit all right to bring a suit against SOLANA for any reason. In return, I will be allowed access to and the full benefit of all common areas and facilities and to participate in all activities authorized by SOLANA. I will obey the rules and regulations as set out by SOLANA as listed in writing and as explained to me verbally.',
+    'For guests regularly returning to stay in the complex, this waiver is required to be signed on their initial visit and will be considered valid for all subsequent visits. SOLANA reserves the right to require guests to sign a new waiver at any time.'
+  ];
+  waiverParas.forEach(p => { drawText(p, LIGHT, 9); y += 2; });
+  y += 4;
+
+  // Adult guest signatures table
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...TEXT);
+  doc.text('NAME OF GUEST (PLEASE PRINT) — SIGNATURE', ML, y);
+  y += 5;
+
+  const waiverSigBody = Array.from({length: 6}, (_, i) => [i+1, wSigs[i] || '', '']);
+  doc.autoTable({
+    startY: y,
+    head: [['#', 'NAME (PRINT)', 'SIGNATURE / DIGITAL CONSENT']],
+    body: waiverSigBody,
+    margin: { left: ML, right: MR },
+    styles: { fontSize: 9, cellPadding: 5, textColor: TEXT },
+    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+    columnStyles: {
+      0: { cellWidth: 10, halign: 'center' },
+      1: { cellWidth: CW * 0.45 },
+      2: { cellWidth: CW * 0.53 }
+    },
+    alternateRowStyles: { fillColor: [248, 246, 241] },
+    didDrawCell: (d) => {
+      // Draw typed name in gold
+      if (d.column.index === 1 && d.row.index >= 0 && d.row.section === 'body') {
+        const txt = wSigs[d.row.index] || '';
+        if (txt) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9);
+          doc.setTextColor(...GOLD);
+          doc.text(txt, d.cell.x + 2, d.cell.y + d.cell.height / 2 + 2);
+        }
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // Minor guest signatures
+  if (minors.length > 0) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...TEXT);
+    doc.text('NAME OF GUEST UNDER AGE 18 — GUARDIAN\'S SIGNATURE', ML, y);
+    y += 5;
+    doc.autoTable({
+      startY: y,
+      head: [['#', 'MINOR NAME', 'GUARDIAN NAME / SIGNATURE']],
+      body: minors.map((m, i) => [i+1, m.name, m.guardian]),
+      margin: { left: ML, right: MR },
+      styles: { fontSize: 9, cellPadding: 5, textColor: TEXT },
+      headStyles: { fillColor: [70, 50, 20], textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 10, halign: 'center' } }
+    });
+    y = doc.lastAutoTable.finalY + 8;
+  } else {
+    // Empty minor section placeholder
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...TEXT);
+    doc.text('NAME OF GUEST UNDER AGE 18 — GUARDIAN\'S SIGNATURE', ML, y);
+    y += 5;
+    doc.autoTable({
+      startY: y,
+      head: [['#', 'MINOR NAME', 'GUARDIAN NAME / SIGNATURE']],
+      body: [[1,'',''],[2,'','']],
+      margin: { left: ML, right: MR },
+      styles: { fontSize: 9, cellPadding: 5, textColor: TEXT },
+      headStyles: { fillColor: [70, 50, 20], textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 10, halign: 'center' } }
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  }
+
+  // Submission note
+  y += 4;
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
+  doc.text(`Submitted digitally on ${submittedOn} via Stockman 21 / Suite Solana guest registration portal.`, ML, y);
+
+  // ═══════════════════════════════════
+  // PAGE 3 — POOL & PARKING RULES
+  // ═══════════════════════════════════
+  doc.addPage();
+  drawHeader('SOLANA POOL & PARKING REGULATIONS', 'Pool Hours of Operation: 7:00 AM – 11:00 PM');
 
   // Rules
-  document.getElementById('rules-en').style.display = lang === 'en' ? 'block' : 'none';
-  document.getElementById('rules-es').style.display = lang === 'es' ? 'block' : 'none';
+  const rules = [
+    { text: 'There is No Lifeguard on Duty. All Persons using the pool and gym do so at their own risk. Children under the age of 16 are strictly prohibited in the pool and gym area without adult supervision. Ages 16 to 18 must have written permission from their parents.', red: true },
+    { text: 'All persons must shower before entering the pool using those showers installed for this purpose close to the pools.' },
+    { text: 'Smoking/vaping is NOT permitted in ANY public common areas of the complex.' },
+    { text: 'Glass — Under no circumstance may there be glass items at the pool and/or deck area.' },
+    { text: 'Food — Food in small portions stored in plastic sealed containers can be brought to the pool area but can only be consumed at the tables and chairs that are under the dedicated covered areas. No food is allowed near or at the poolside or at the loungers under the covered umbrellas. Drinks are permitted in plastic or aluminum containers only.' },
+    { text: 'No diving, jumping, running or pushing in pool areas. Please be mindful and keep noise levels to a minimum so as to not interfere with the peaceful enjoyment of other users.' },
+    { text: 'Chairs — please remove your towel/personal items whenever you leave the pool area. The chairs are not there to be reserved for the day.' },
+    { text: 'Pool use is restricted to Condo Owners (this may be the person(s) you have authorized to rent your condo) and your guests staying in your condo.' },
+    { text: 'The Condominium Association/owners assume no responsibility for lost or stolen items nor for any accident or injuries in connection with use of the pool or gym.' },
+  ];
+  const parkingRules = [
+    'Unoccupied UNITS are not allowed to occupy a parking stall.',
+    'Only one parking stall per unit can be used at a time.',
+    'Parking gate must be closed after it is used.',
+    'Parking stalls can only be used by working condition cars.',
+    'It is prohibited to park outside a parking stall.'
+  ];
 
-  // Form subject
-  document.getElementById('form-subject').value = lang === 'en'
-    ? 'SOLANA Guest Access Form — Suite Solana'
-    : 'Formulario de Acceso SOLANA — Suite Solana';
+  rules.forEach(r => drawBullet(r.text, r.red ? RED : LIGHT, 8.5));
+  y += 2;
+  sectionTitle('PARKING');
+  parkingRules.forEach(r => drawBullet(r, LIGHT, 8.5));
+  y += 4;
+  hLine();
+
+  // Penalties
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...TEXT);
+  doc.text('NOTE: SOLANA By-laws identify the following monetary penalties for violating the rules:', ML, y);
+  y += 5;
+  const penalties = [
+    'If the 1st notice of violation is ignored, a $2,000 pesos fine will be applied to the Homeowner.',
+    'If a 2nd notice of violation is ignored, a $5,000 pesos fine will be applied to the Homeowner.',
+    'If a 3rd notice of violation is ignored, the HOA shall proceed to legally sue the Homeowner.'
+  ];
+  penalties.forEach(p => drawBullet(p, [160, 120, 30], 8.5));
+  y += 2;
+
+  const noteText = 'Notification of the violations will be posted on the door of the condo unit and a copy emailed to the Homeowner. It is the Homeowners\' responsibility to address the fine violations and associated costs with their renters/guests and/or their property management/vacation rental company.';
+  drawText(noteText, LIGHT, 8.5);
+  y += 5;
+
+  // Signature affirmation
+  drawText('By signing below, renters/guests acknowledge that they have read and understood the SOLANA Rules and agree to abide by these rules.', LIGHT, 9);
+  y += 5;
+
+  // Rules signature table
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...TEXT);
+  doc.text('GUEST NAME AND SIGNATURE OF ALL ADULT RENTERS/GUESTS', ML, y);
+  y += 5;
+
+  const rulesSigBody = Array.from({length: Math.max(rSigs.length, 4)}, (_, i) => [i+1, rSigs[i] || '', '']);
+  while (rulesSigBody.length < 4) rulesSigBody.push([rulesSigBody.length + 1, '', '']);
+
+  doc.autoTable({
+    startY: y,
+    head: [['#', 'NAME (PRINT)', 'SIGNATURE / DIGITAL CONSENT']],
+    body: rulesSigBody,
+    margin: { left: ML, right: MR },
+    styles: { fontSize: 9, cellPadding: 5, textColor: TEXT },
+    headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold', fontSize: 8 },
+    columnStyles: {
+      0: { cellWidth: 10, halign: 'center' },
+      1: { cellWidth: CW * 0.45 },
+      2: { cellWidth: CW * 0.53 }
+    },
+    alternateRowStyles: { fillColor: [248, 246, 241] }
+  });
+  y = doc.lastAutoTable.finalY + 6;
+
+  // Footer note
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
+  doc.text(`Submitted digitally on ${submittedOn} via Stockman 21 / Suite Solana guest registration portal.`, ML, y);
+
+  // ─── SAVE ───────────────────────────
+  const fileName = `SOLANA_${condoNum.replace('-','')}_${submittedOn.replace(/-/g,'')}.pdf`;
+  doc.save(fileName);
+  return fileName;
 }
 
-function toggleMinors() {
-  const sec = document.getElementById('minors-section');
-  const btn = document.getElementById('minors-toggle');
-  const isOpen = sec.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
+/* ── EMAIL BODY BUILDER ───────────────── */
+function buildEmailBody() {
+  const ownerName  = val('owner_name')   || 'Román Méndez';
+  const ownerPhone = val('owner_phone')  || '+1 514 427 1983';
+  const condoNum   = val('condo_number') || 'B-201';
+  const mgrName    = val('manager_name') || 'Stockman 21 International';
+  const carModel   = val('car_model');
+  const carPlate   = val('car_plate');
+  const today      = new Date().toLocaleDateString('en-CA');
+  const RULES_URL  = 'https://stockman21international.github.io/solana-rules.html';
+
+  const guests = [1,2,3,4,5,6]
+    .map(i => ({ n: val(`g${i}_name`), e: fmtDate(val(`g${i}_entry`)), x: fmtDate(val(`g${i}_exit`)) }))
+    .filter(g => g.n);
+
+  const minors = [1,2]
+    .map(i => ({ n: val(`m${i}_name`), g: val(`m${i}_guardian`), a: val(`m${i}_age`) }))
+    .filter(m => m.n);
+
+  const wSigs = [1,2,3,4,5,6].map(i => val(`w_sig${i}`)).filter(Boolean);
+  const rSigs = [1,2,3,4].map(i => val(`r_sig${i}`)).filter(Boolean);
+
+  // Build separator rows
+  const guestRows = guests.map((g,i) =>
+    `  ${i+1}. ${g.n.padEnd(30,' ')} | Entry: ${g.e.padEnd(12,' ')} | Exit: ${g.x}`
+  ).join('\n') || '  —';
+
+  const minorRows = minors.length
+    ? '\n\nMINORS / MENORES DE EDAD:\n' + minors.map((m,i) => `  ${i+1}. ${m.n} (${m.a} yrs) — Guardian: ${m.g}`).join('\n')
+    : '';
+
+  const waiverSigs = wSigs.map((s,i) => `  ${i+1}. ${s}`).join('\n') || '  —';
+  const rulesSigs  = rSigs.map((s,i) => `  ${i+1}. ${s}`).join('\n') || '  —';
+
+  return `
+ADMON SOLANA — SUITE SOLANA, CONDO ${condoNum}
+Submitted / Enviado: ${today}
+══════════════════════════════════════════════════
+
+SITE ACCESS FORM / FORMULARIO DE ACCESO
+
+  Owner / Propietario : ${ownerName}
+  Phone / Teléfono    : ${ownerPhone}
+  Property Mgr.       : ${mgrName}
+  Condo / Unidad      : ${condoNum}
+
+  GUESTS / HUÉSPEDES:
+${guestRows}${minorRows}
+
+  Vehicle / Vehículo  : ${carModel || '—'}
+  License Plate / Placas: ${carPlate || '—'}
+
+══════════════════════════════════════════════════
+
+WAIVER OF LIABILITY / EXENCIÓN DE RESPONSABILIDAD
+
+  This agreement releases SOLANA from all liability relating
+  to injuries that may occur through the use of common spaces
+  and facilities. By providing their names below, guests agree
+  to hold SOLANA entirely free from any liability.
+
+  Guest signatures / Firmas de huéspedes:
+${waiverSigs}
+
+══════════════════════════════════════════════════
+
+POOL & PARKING RULES / REGLAS DE ALBERCA Y ESTACIONAMIENTO
+
+  Guests acknowledge having read, understood, and agreed to
+  abide by the SOLANA Pool & Parking Rules and Regulations.
+
+  Guest acknowledgments / Acuses de recibo:
+${rulesSigs}
+
+  📋 Full rules / Reglamento completo:
+  ${RULES_URL}
+
+══════════════════════════════════════════════════
+Sent via Stockman 21 / Suite Solana guest registration portal.
+`.trim();
 }
 
-// Form submit
-document.getElementById('solana-form').addEventListener('submit', async function(e) {
+/* ── FORM SUBMIT ──────────────────────── */
+async function handleSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.textContent = currentLang === 'en' ? 'Sending…' : 'Enviando…';
+  btn.querySelector('span').textContent = currentLang === 'en' ? 'Sending…' : 'Enviando…';
 
+  // 1. Set CC dynamically (SOLANA admin + client if provided)
+  const clientEmail = (document.getElementById('client_email').value || '').trim();
+  const ccList = clientEmail
+    ? `emiliolopez.dh@gmail.com, ${clientEmail}`
+    : 'emiliolopez.dh@gmail.com';
+  document.getElementById('cc-field').value = ccList;
+
+  // 2. Build formatted email body
+  document.getElementById('email-body').value = buildEmailBody();
+
+  // 3. Update subject with condo + date
+  const condoNum = val('condo_number') || 'B-201';
+  const today = new Date().toLocaleDateString('en-CA');
+  document.getElementById('form-subject').value =
+    `SOLANA Forms — Suite Solana ${condoNum} — ${today}`;
+
+  // 4. Send via Web3Forms
+  let emailOk = false;
   try {
-    const data = new FormData(this);
+    const formData = new FormData(document.getElementById('solana-form'));
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      body: data
+      body: formData
     });
     const json = await res.json();
-    if (json.success) {
-      this.style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
-      // Apply lang to success msg
-      document.querySelectorAll('#success-msg [data-en][data-es]').forEach(el => {
-        const val = el.getAttribute('data-' + currentLang);
-        if (val) el.innerHTML = val;
-      });
-    } else {
-      throw new Error('submit failed');
-    }
+    emailOk = json.success;
+    if (!emailOk) console.warn('Web3Forms:', json);
   } catch(err) {
-    btn.disabled = false;
-    btn.textContent = currentLang === 'en' ? 'Submit to SOLANA Administration' : 'Enviar a la Administración de SOLANA';
-    alert(currentLang === 'en'
-      ? 'There was an error. Please try again or contact stockman21ceo@gmail.com'
-      : 'Hubo un error. Intenta de nuevo o contacta a stockman21ceo@gmail.com');
+    console.warn('Email error:', err);
   }
-});
+
+  // 5. Generate & download PDF
+  try {
+    generatePDF();
+  } catch(pdfErr) {
+    console.error('PDF error:', pdfErr);
+  }
+
+  // 6. Show success
+  document.getElementById('solana-form').style.display = 'none';
+  const sm = document.getElementById('success-msg');
+  sm.style.display = 'block';
+  document.querySelectorAll('#success-msg [data-en][data-es]').forEach(el => {
+    const v = el.getAttribute('data-' + currentLang);
+    if (v) el.innerHTML = v;
+  });
+}
 </script>
 </body>
 </html>
