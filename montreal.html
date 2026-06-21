@@ -1,230 +1,211 @@
 <!DOCTYPE html>
-<html lang="en" data-v="2">
+<html lang="en" data-v="3">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stockman 21 · Montréal — Tour des Canadiens 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root {
-  --black:  #111111;
-  --gold:   #b8955a;
-  --gold2:  #d4a96a;
-  --dark:   #1a1a1a;
-  --border: #2a2a2a;
-  --cream:  #f7f5f0;
-  --gray:   #888888;
-  --green:  #2d7a4f;
-  --ink:    #2a2620;
-  --card-border: #e6e0d3;
+  --black: #0a0a0a;
+  --rich: #111418;
+  --card: #161b22;
+  --gold: #c9a84c;
+  --gold2: #a07830;
+  --gold-light: #f0d98a;
+  --border: #2a2420;
+  --border2: #3a3020;
+  --text: #e8e2d8;
+  --text2: #a09880;
+  --white: #faf8f4;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Montserrat', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
-  -webkit-font-smoothing: antialiased;
+  font-family: "Montserrat", sans-serif;
+  background: var(--black);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
 }
-
-/* ── Header ── */
-.site-header {
-  position: fixed; top:0; left:0; right:0; z-index:100;
-  background: rgba(11,18,30,.94); backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(184,149,90,.18);
-}
-.site-header .inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 40px;
-  height: 60px; display: flex; align-items: center; justify-content: space-between;
-}
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-name {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem; font-weight: 800; letter-spacing: .08em;
-  text-transform: uppercase; color: #fff; line-height: 1;
-}
-.brand-name span { color: var(--gold); }
-.brand-tag {
-  font-size: .45rem; font-weight: 600; letter-spacing: .22em;
-  text-transform: uppercase; color: rgba(184,149,90,.7); margin-top: 2px;
-}
-.nav-right { display: flex; align-items: center; gap: 10px; }
-.nav-back {
-  font-size: 11px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--gold); text-decoration: none;
-  border: 1px solid rgba(184,149,90,.4); padding: 6px 14px; border-radius: 3px;
-  transition: background .2s, color .2s;
-}
-.nav-back:hover { background: var(--gold); color: var(--black); }
-.lang-btn {
-  font-size: 11px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--gold); text-decoration: none;
-  border: 1px solid rgba(184,149,90,.4); padding: 6px 12px; border-radius: 3px;
-  cursor: pointer; transition: background .2s, color .2s; background: none;
-}
-.lang-btn:hover, .lang-btn.active { background: var(--gold); color: var(--black); }
-
-/* ── Hero ── */
-.hero {
-  position: relative; min-height: 72vh;
-  display: flex; align-items: center; justify-content: center;
-  padding: 100px 24px 80px;
-}
-.hero-bg {
-  position: absolute; inset: 0;
-  background: url('img/montreal/tdc2-exterior.jpg') center/cover no-repeat;
-}
-.hero-ov {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,.55) 55%, rgba(247,245,240,1) 100%);
-}
-.hero-content {
-  position: relative; z-index: 1; text-align: center; max-width: 700px;
-}
-.hero-badge {
-  display: inline-block;
-  background: var(--gold); color: var(--black);
-  font-size: 11px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; padding: 6px 18px; border-radius: 20px;
-  margin-bottom: 24px;
-}
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  font-weight: 300; color: #fff; line-height: 1.1; margin-bottom: 14px;
-}
-.hero-sub {
-  font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 20px;
-}
-.hero-desc {
-  font-size: 15px; color: rgba(255,255,255,.7);
-  line-height: 1.8; margin-bottom: 36px; max-width: 560px; margin-left: auto; margin-right: auto;
-}
-.hero-avail {
-  display: inline-block;
-  border: 1px solid var(--gold); color: var(--gold);
-  font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 7px 22px; border-radius: 20px;
-}
-
-/* ── Main content ── */
-.content { padding: 80px 24px; }
-.content-inner { max-width: 960px; margin: 0 auto; }
-
-/* ── Amenities ── */
-.amenity-grid {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 16px; margin-bottom: 56px;
-}
-.amenity-card {
-  background: #fff; border: 1px solid var(--card-border);
-  border-radius: 6px; padding: 24px 20px; text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
-  transition: border-color .2s, box-shadow .2s;
-}
-.amenity-card:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(184,149,90,.15); }
-.amenity-icon { font-size: 28px; margin-bottom: 10px; }
-.amenity-label {
-  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--gold); font-weight: 600;
-}
-
-/* ── Gallery ── */
-.montreal-gallery {
-  display: grid; grid-template-columns: repeat(4,1fr);
-  gap: 8px; margin-bottom: 72px;
-}
-.montreal-gallery img {
-  width: 100%; aspect-ratio: 4/3; object-fit: cover;
-  border-radius: 4px; cursor: pointer;
-  transition: transform .3s ease, opacity .2s;
-}
-.montreal-gallery img:hover { transform: scale(1.03); }
-
-/* ── Contact form ── */
-.contact-section { max-width: 540px; margin: 0 auto; }
-.contact-title {
-  text-align: center; font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem; font-weight: 300; color: var(--ink); margin-bottom: 6px;
-}
-.contact-sub {
-  text-align: center; color: var(--gray); font-size: 13px; margin-bottom: 32px;
-}
-.field-label {
-  display: block; font-size: 11px; font-weight: 600;
-  letter-spacing: .5px; text-transform: uppercase;
-  color: var(--gray); margin-bottom: 6px;
-}
-.field-row { margin-bottom: 14px; }
-.field-row input, .field-row textarea {
-  width: 100%; padding: 11px 14px;
-  font-family: inherit; font-size: 13px;
-  background: #fff; border: 1px solid var(--card-border);
-  border-radius: 4px; color: var(--ink);
-  outline: none; transition: border-color .2s;
-}
-.field-row input:focus, .field-row textarea:focus { border-color: var(--gold); }
-.field-row input::placeholder, .field-row textarea::placeholder { color: #a8a195; }
-.field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-.stay-toggle { display: flex; gap: 8px; }
-.stay-btn {
-  flex: 1; padding: 11px 14px; font-family: inherit; font-size: 11px; font-weight: 700;
-  letter-spacing: .8px; text-transform: uppercase; cursor: pointer;
-  background: #fff; border: 1px solid var(--card-border); border-radius: 4px;
-  color: var(--gray); transition: background .2s, color .2s, border-color .2s;
-}
-.stay-btn.active { background: var(--gold); border-color: var(--gold); color: var(--black); }
-.stay-btn:hover:not(.active) { border-color: var(--gold); color: var(--ink); }
-.submit-btn {
-  width: 100%; background: var(--gold); color: var(--black);
-  border: none; border-radius: 4px; padding: 14px;
-  font-family: inherit; font-size: 13px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; transition: background .2s;
-}
-.submit-btn:hover { background: var(--gold2); }
-.form-confirm {
-  display: none; margin-top: 16px;
-  background: #1a2a1a; border: 1px solid var(--green);
-  border-radius: 4px; padding: 14px; text-align: center;
-  color: #6abf8a; font-size: 13px;
-}
-
-/* ── Footer ── */
-footer {
-  background: #060e1a; padding: 40px 72px;
-  display: flex; justify-content: space-between;
-  align-items: center; flex-wrap: wrap; gap: 16px;
-  border-top: 1px solid rgba(184,149,90,.12);
-}
-.f-brand {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem; font-weight: 300; color: var(--gold);
-}
-.f-txt { font-size: 11px; color: rgba(255,255,255,.28); letter-spacing: .08em; }
-
-/* ── Lightbox ── */
-#stk-lightbox {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.93); z-index: 99999;
-  align-items: center; justify-content: center; flex-direction: column;
-}
-
-/* ── Responsive ── */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,10,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2); }
+.site-header .inner { max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-name { font-family: "Cormorant Garamond", serif; font-size: 1.05rem;
+  font-weight: 400; letter-spacing: 0.25em; color: var(--white); text-transform: uppercase; }
+.brand-tag { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--gold);
+  text-transform: uppercase; }
+.nav-links { display: flex; align-items: center; gap: 12px; }
+.nav-link { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text2); text-decoration: none; border: 1px solid var(--border2);
+  padding: 6px 14px; border-radius: 2px; transition: all 0.2s; }
+.nav-link:hover { color: var(--gold); border-color: var(--gold); }
+.nav-cta { background: var(--gold); color: var(--black) !important;
+  border-color: var(--gold) !important; font-weight: 600; }
+.nav-cta:hover { background: var(--gold-light); }
+.lang-btn { background: none; border: none; cursor: pointer;
+  color: var(--text2); font-size: 0.68rem; letter-spacing: 0.1em;
+  padding: 4px 8px; font-family: "Montserrat", sans-serif; }
+.lang-btn.active, .lang-btn:hover { color: var(--gold); }
+.hero { position: relative; height: 100vh; min-height: 680px;
+  display: flex; align-items: flex-end; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; z-index: 0;
+  background: url("img/montreal/tdc2-exterior.jpg") center/cover no-repeat; }
+.hero-ov { position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.5) 50%, rgba(10,10,10,0.2) 100%); }
+.hero-content { position: relative; z-index: 2; max-width: 1100px;
+  margin: 0 auto; padding: 0 24px 80px; width: 100%; }
+.hero-eyebrow { font-size: 0.65rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px; }
+.hero-eyebrow::before { content: ""; display: block; width: 40px;
+  height: 1px; background: var(--gold); }
+.hero h1 { font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3.2rem, 7vw, 5.5rem); font-weight: 300;
+  color: var(--white); line-height: 1.05; margin-bottom: 20px;
+  letter-spacing: -0.01em; }
+.hero-sub { font-size: 0.72rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--text2); margin-bottom: 28px; }
+.hero-desc { font-size: 0.95rem; color: rgba(232,226,216,0.7);
+  max-width: 560px; margin-bottom: 36px; font-weight: 300; line-height: 1.8; }
+.hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.btn-primary { display: inline-block; padding: 14px 36px;
+  background: var(--gold); color: var(--black); font-size: 0.72rem;
+  letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  border-radius: 2px; transition: all 0.3s; font-family: "Montserrat", sans-serif; }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+.hero-avail { font-size: 0.68rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text2); }
+.content { background: var(--black); }
+.content-inner { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
+.section-eyebrow { font-size: 0.62rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px; }
+.section-eyebrow::before { content: ""; display: block;
+  width: 24px; height: 1px; background: var(--gold); }
+.section-title { font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; color: var(--white);
+  margin-bottom: 48px; letter-spacing: 0.02em; }
+.amenity-grid { display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border); margin-bottom: 80px; }
+.amenity-card { background: var(--card); padding: 36px 28px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 12px; transition: background 0.2s; }
+.amenity-card:hover { background: #1c2330; }
+.amenity-icon { font-size: 1.5rem; }
+.amenity-label { font-size: 0.7rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text2); font-weight: 500; }
+.amenity-line { display: block; width: 20px; height: 1px; background: var(--gold); }
+.gallery-grid { display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 240px 240px;
+  gap: 2px; margin-bottom: 80px; }
+.gallery-grid img { width: 100%; height: 100%; object-fit: cover;
+  cursor: pointer; transition: opacity 0.3s; filter: brightness(0.88); }
+.gallery-grid img:hover { opacity: 0.9; filter: brightness(1); }
+.gallery-grid img:first-child {
+  grid-column: 1 / 3; grid-row: 1 / 3; }
+.contact-section { background: var(--rich); border: 1px solid var(--border2);
+  padding: 64px; border-radius: 2px; margin-bottom: 80px; }
+.contact-title { font-family: "Cormorant Garamond", serif;
+  font-size: 2.2rem; font-weight: 300; color: var(--white);
+  margin-bottom: 8px; letter-spacing: 0.02em; }
+.contact-sub { font-size: 0.7rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 40px; }
+.field-row { margin-bottom: 20px; }
+.field-label { display: block; font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+.field-row input, .field-row textarea { width: 100%;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border2);
+  color: var(--white); padding: 12px 16px; font-size: 0.88rem;
+  font-family: "Montserrat", sans-serif; border-radius: 2px;
+  outline: none; transition: border-color 0.2s; }
+.field-row input:focus, .field-row textarea:focus {
+  border-color: var(--gold); }
+.field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.submit-btn { width: 100%; padding: 16px; background: var(--gold);
+  color: var(--black); border: none; cursor: pointer;
+  font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+  font-weight: 700; font-family: "Montserrat", sans-serif;
+  border-radius: 2px; transition: all 0.3s; margin-top: 8px; }
+.submit-btn:hover { background: var(--gold-light); }
+.form-confirm { display: none; text-align: center; padding: 16px;
+  color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; }
+.cal-wrapper { margin: 0 0 20px; }
+.cal-label { font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--text2); margin-bottom: 10px; }
+.cal-range-display { background: rgba(201,168,76,0.08);
+  border: 1px solid var(--border2); border-radius: 2px;
+  padding: 10px 14px; font-size: 0.88rem; color: var(--text2);
+  margin-bottom: 16px; min-height: 42px; display: flex;
+  align-items: center; gap: 8px; }
+.cal-range-display span { color: var(--gold); font-weight: 600; }
+.cal-container { display: flex; gap: 20px; flex-wrap: wrap; }
+.cal-month { flex: 1; min-width: 240px; }
+.cal-month-header { display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 12px; }
+.cal-month-title { font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--white); text-transform: uppercase; }
+.cal-nav { background: none; border: 1px solid var(--border2);
+  border-radius: 2px; cursor: pointer; padding: 4px 10px;
+  font-size: 0.9rem; color: var(--text2); transition: all 0.15s; }
+.cal-nav:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+.cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr);
+  text-align: center; margin-bottom: 4px; }
+.cal-weekdays span { font-size: 0.6rem; color: var(--text2);
+  text-transform: uppercase; font-weight: 600; padding: 3px 0;
+  letter-spacing: 0.05em; }
+.cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-day { text-align: center; padding: 7px 2px; font-size: 0.82rem;
+  cursor: pointer; border-radius: 2px; transition: all 0.1s;
+  border: 1px solid transparent; color: var(--text); }
+.cal-day:hover:not(.cal-empty):not(.cal-past) { background: rgba(201,168,76,0.15);
+  color: var(--gold); }
+.cal-day.cal-empty { cursor: default; }
+.cal-day.cal-past { color: #3a3830; cursor: not-allowed; }
+.cal-day.cal-start, .cal-day.cal-end { background: var(--gold) !important;
+  color: var(--black) !important; font-weight: 700; }
+.cal-day.cal-in-range { background: rgba(201,168,76,0.15); color: var(--gold-light); }
+.cal-day.cal-today { border-color: var(--gold2); }
+.cal-reset { font-size: 0.68rem; color: var(--text2); cursor: pointer;
+  text-decoration: underline; margin-top: 10px; display: inline-block; }
+.cal-reset:hover { color: var(--gold); }
+footer { background: var(--rich); border-top: 1px solid var(--border2);
+  padding: 48px 24px; text-align: center; }
+.f-brand { font-family: "Cormorant Garamond", serif; font-size: 1.3rem;
+  letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase;
+  margin-bottom: 8px; }
+.f-txt { font-size: 0.68rem; letter-spacing: 0.12em;
+  color: var(--text2); text-transform: uppercase; }
+#stk-lightbox { display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
+#stk-lightbox.open { display: flex; }
+#stk-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+.lb-close { position: absolute; top: 20px; right: 28px; background: none;
+  border: none; color: var(--white); font-size: 2rem; cursor: pointer;
+  line-height: 1; }
+.lb-nav { position: absolute; top: 50%; transform: translateY(-50%);
+  background: none; border: 1px solid var(--border2);
+  color: var(--white); font-size: 1.5rem; cursor: pointer;
+  padding: 12px 18px; border-radius: 2px; }
+.lb-nav.prev { left: 24px; } .lb-nav.next { right: 24px; }
 @media (max-width: 768px) {
-  .amenity-grid { grid-template-columns: repeat(2,1fr); }
-  .montreal-gallery { grid-template-columns: repeat(2,1fr); }
+  .amenity-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto; }
+  .gallery-grid img:first-child { grid-column: 1 / 3; grid-row: auto; }
   .field-grid-2 { grid-template-columns: 1fr; }
-  footer { padding: 32px; flex-direction: column; text-align: center; }
-  .site-header .inner { padding: 0 16px; }
-}
-@media (max-width: 480px) {
-  .amenity-grid { grid-template-columns: 1fr; }
-  .montreal-gallery { grid-template-columns: repeat(2,1fr); }
+  .contact-section { padding: 36px 24px; }
+  .nav-links { gap: 8px; }
+  .cal-container { flex-direction: column; }
 }
 </style>
 </head>
@@ -234,26 +215,26 @@ footer {
 <header class="site-header">
   <div class="inner">
     <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M48 18 C46 30 44 44 43 62" stroke="#b8955a" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C36 12 22 13 16 22" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C42 8 46 0 55 4" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C56 10 66 10 70 18" stroke="#b8955a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <polygon points="22,58 36,44 50,58" fill="#b8955a"/>
-        <rect x="25" y="57" width="22" height="16" fill="#b8955a"/>
-        <rect x="32" y="61" width="8" height="8" fill="#111" rx="1"/>
-        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#b8955a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 18 C46 30 44 44 43 62" stroke="#c9a84c" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C36 12 22 13 16 22" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C42 8 46 0 55 4" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C56 10 66 10 70 18" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <polygon points="22,58 36,44 50,58" fill="#c9a84c"/>
+        <rect x="25" y="57" width="22" height="16" fill="#c9a84c"/>
+        <rect x="32" y="61" width="8" height="8" fill="#0a0a0a" rx="1"/>
       </svg>
       <div>
-        <div class="brand-name">STOCKMAN <span>21</span></div>
-        <div class="brand-tag">YOUR BETTER LIFE.</div>
+        <div class="brand-name" data-en="STOCKMAN 21" data-fr="STOCKMAN 21">STOCKMAN 21</div>
+        <div class="brand-tag" data-en="YOUR BETTER LIFE." data-fr="VOTRE MEILLEURE VIE.">YOUR BETTER LIFE.</div>
       </div>
     </div>
-    <div class="nav-right">
-      <a href="huatulco.html" class="nav-back">← Huatulco</a>
-      <a href="vauquelin.html" class="nav-back">Vauquelin →</a>
-      <button id="btn-en" class="lang-btn active" onclick="setLang('en')">EN</button>
-      <button id="btn-fr" class="lang-btn" onclick="setLang('fr')">FR</button>
+    <div class="nav-links">
+      <a href="huatulco.html" class="nav-link" data-en="← Huatulco" data-fr="← Huatulco">← Huatulco</a>
+      <a href="vauquelin.html" class="nav-link" data-en="Vauquelin →" data-fr="Vauquelin →">Vauquelin →</a>
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <a href="#contact" class="nav-link nav-cta" data-en="Reserve →" data-fr="Réserver →">Reserve →</a>
     </div>
   </div>
 </header>
@@ -263,233 +244,264 @@ footer {
   <div class="hero-bg"></div>
   <div class="hero-ov"></div>
   <div class="hero-content">
-    <div class="hero-badge" data-en="Now in Montréal" data-fr="Maintenant à Montréal">Now in Montréal</div>
+    <div class="hero-eyebrow" data-en="Short-Term Luxury Residences · Montréal" data-fr="Résidences de Luxe Court Séjour · Montréal">Short-Term Luxury Residences &middot; Montr&eacute;al</div>
     <h1 data-en="Tour des Canadiens 2" data-fr="Tour des Canadiens 2">Tour des Canadiens 2</h1>
-    <p class="hero-sub" data-en="Downtown · Floor 45 · Available May 2027" data-fr="Centre-ville · Étage 45 · Disponible mai 2027">Downtown · Floor 45 · Available May 2027</p>
-    <p class="hero-desc" data-en="A landmark residence steps from Centre Bell and the heart of downtown Montréal. Floor 45 — panoramic city views, world-class amenities, and the Stockman 21 standard of living." data-fr="Une résidence emblématique à deux pas du Centre Bell et du cœur du centre-ville de Montréal. Étage 45 — vues panoramiques, équipements de classe mondiale et le standard de vie Stockman 21.">A landmark residence steps from Centre Bell and the heart of downtown Montréal. Floor 45 — panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
-    <span class="hero-avail" data-en="Available May 2027" data-fr="Disponible mai 2027">Available May 2027</span>
+    <p class="hero-sub" data-en="Downtown · Floor 45 · Available May 2027" data-fr="Centre-ville · Étage 45 · Disponible mai 2027">Downtown &middot; Floor 45 &middot; Available May 2027</p>
+    <p class="hero-desc" data-en="An iconic residence above the skyline of Montréal. Floor 45 &mdash; panoramic views, world-class amenities, and the Stockman 21 standard of living. Available for short-term stays." data-fr="Une résidence iconique au-dessus de la ligne d'horizon de Montréal. Étage 45 &mdash; vues panoramiques, équipements de classe mondiale et le standard de vie Stockman 21. Disponible en court séjour.">An iconic residence above the skyline of Montr&eacute;al. Floor 45 &mdash; panoramic views, world-class amenities, and the Stockman 21 standard of living. Available for short-term stays.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary" data-en="Request Your Stay →" data-fr="Demander votre séjour →">Request Your Stay &rarr;</a>
+      <span class="hero-avail" data-en="Available May 2027" data-fr="Disponible mai 2027">Available May 2027</span>
+    </div>
   </div>
 </section>
 
-<!-- Main content -->
+<!-- Content -->
 <div class="content">
-  <div class="content-inner">
+<div class="content-inner">
 
-    <!-- Amenities -->
-    <div class="amenity-grid">
-      <div class="amenity-card">
-        <div class="amenity-icon">🏊</div>
-        <div class="amenity-label" data-en="Indoor Pool" data-fr="Piscine intérieure">Indoor Pool</div>
-      </div>
-      <div class="amenity-card">
-        <div class="amenity-icon">♨️</div>
-        <div class="amenity-label" data-en="Rooftop Jacuzzi" data-fr="Jacuzzi sur le toit">Rooftop Jacuzzi</div>
-      </div>
-      <div class="amenity-card">
-        <div class="amenity-icon">🏋️</div>
-        <div class="amenity-label" data-en="Fully Equipped Gym" data-fr="Gym complet">Fully Equipped Gym</div>
-      </div>
-      <div class="amenity-card">
-        <div class="amenity-icon">🛎️</div>
-        <div class="amenity-label" data-en="Concierge Service" data-fr="Service de conciergerie">Concierge Service</div>
-      </div>
-      <div class="amenity-card">
-        <div class="amenity-icon">🌆</div>
-        <div class="amenity-label" data-en="Panoramic City Views" data-fr="Vues panoramiques">Panoramic City Views</div>
-      </div>
-      <div class="amenity-card">
-        <div class="amenity-icon">🏒</div>
-        <div class="amenity-label" data-en="Steps from Centre Bell" data-fr="À deux pas du Centre Bell">Steps from Centre Bell</div>
-      </div>
-    </div>
-
-    <!-- Gallery -->
-    <div class="montreal-gallery">
-      <img src="img/montreal/tdc2-exterior.jpg"  alt="Tour des Canadiens 2 exterior" loading="lazy">
-      <img src="img/montreal/tdc2-gym.jpg"       alt="Fully equipped gym" loading="lazy">
-      <img src="img/montreal/tdc2-tower.jpg"     alt="Glass tower" loading="lazy">
-      <img src="img/montreal/tdc2-jacuzzi.jpg"   alt="Rooftop jacuzzi" loading="lazy">
-      <img src="img/montreal/tdc2-lounge.jpg"    alt="Lobby lounge" loading="lazy">
-      <img src="img/montreal/tdc2-lounge2.jpg"   alt="Upper lounge at night" loading="lazy">
-      <img src="img/montreal/tdc2-pool.jpg"      alt="Indoor lap pool" loading="lazy">
-      <img src="img/montreal/tdc2-unit1.jpg"     alt="Unit with city view" loading="lazy">
-    </div>
-
-    <!-- Contact form -->
-    <div class="contact-section" id="mtl-contact">
-      <h3 class="contact-title" data-en="Reserve Your Spot" data-fr="Réservez votre place">Reserve Your Spot</h3>
-      <p class="contact-sub" data-en="Floor 45 · Tour des Canadiens 2 · Available May 2027" data-fr="Étage 45 · Tour des Canadiens 2 · Disponible mai 2027">Floor 45 · Tour des Canadiens 2 · Available May 2027</p>
-
-      <div class="field-row">
-        <label class="field-label" data-en="Full Name *" data-fr="Nom complet *">Full Name *</label>
-        <input id="mtl-name" type="text" placeholder="Your full name" required>
-      </div>
-      <div class="field-grid-2">
-        <div class="field-row">
-          <label class="field-label" data-en="Email *" data-fr="Courriel *">Email *</label>
-          <input id="mtl-email" type="email" placeholder="your@email.com" required>
-        </div>
-        <div class="field-row">
-          <label class="field-label" data-en="Phone / WhatsApp" data-fr="Téléphone / WhatsApp">Phone / WhatsApp</label>
-          <input id="mtl-phone" type="tel" placeholder="+1 514 000 0000">
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label class="field-label" data-en="Type of Stay *" data-fr="Type de séjour *">Type of Stay *</label>
-        <div class="stay-toggle">
-          <button type="button" class="stay-btn active" data-stay="long" onclick="setStay('long')" data-en="Long-term lease" data-fr="Longue durée">Long-term lease</button>
-          <button type="button" class="stay-btn" data-stay="short" onclick="setStay('short')" data-en="Short-term stay" data-fr="Court séjour">Short-term stay</button>
-        </div>
-      </div>
-      <div class="field-grid-2">
-        <div class="field-row">
-          <label class="field-label" data-en="Approx. Move-in Date" data-fr="Date d'arrivée approx.">Approx. Move-in Date</label>
-          <input id="mtl-date-from" type="date">
-        </div>
-        <div class="field-row">
-          <label class="field-label" data-en="Approx. Move-out Date (if short stay)" data-fr="Date de départ approx. (si court séjour)">Approx. Move-out Date (if short stay)</label>
-          <input id="mtl-date-to" type="date">
-        </div>
-      </div>
-
-      <div class="field-row">
-        <label class="field-label" data-en="Message" data-fr="Message">Message</label>
-        <textarea id="mtl-msg" rows="4" placeholder="Tell us about your interest in Floor 45..."></textarea>
-      </div>
-      <button class="submit-btn" onclick="submitMtlForm()" data-en="Request Pre-Reservation →" data-fr="Demander une pré-réservation →">Request Pre-Reservation →</button>
-      <div class="form-confirm" id="mtl-confirm" data-en="✓ Thank you. We will be in touch shortly." data-fr="✓ Merci. Nous vous contacterons sous peu.">✓ Thank you. We will be in touch shortly.</div>
-    </div>
-
+<!-- Amenities -->
+<div class="section-eyebrow" data-en="Amenities" data-fr="'Quipements">Amenities</div>
+<div class="section-title" data-en="World-Class Living" data-fr="Une Vie de Classe Mondiale">World-Class Living</div>
+<div class="amenity-grid">
+  <div class="amenity-card">
+    <div class="amenity-icon">🏊</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Indoor Pool" data-fr="Piscine intérieure">Indoor Pool</div>
+  </div>
+  <div class="amenity-card">
+    <div class="amenity-icon">♨️</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Rooftop Jacuzzi" data-fr="Jacuzzi sur le toit">Rooftop Jacuzzi</div>
+  </div>
+  <div class="amenity-card">
+    <div class="amenity-icon">🏋️</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Fully Equipped Gym" data-fr="Gym complet">Fully Equipped Gym</div>
+  </div>
+  <div class="amenity-card">
+    <div class="amenity-icon">🛎️</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Concierge Service" data-fr="Service de conciergerie">Concierge Service</div>
+  </div>
+  <div class="amenity-card">
+    <div class="amenity-icon">🌆</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Panoramic City Views" data-fr="Vues panoramiques">Panoramic City Views</div>
+  </div>
+  <div class="amenity-card">
+    <div class="amenity-icon">🏒</div>
+    <span class="amenity-line"></span>
+    <div class="amenity-label" data-en="Steps from Centre Bell" data-fr="À deux pas du Centre Bell">Steps from Centre Bell</div>
   </div>
 </div>
+
+<!-- Gallery -->
+<div class="section-eyebrow" data-en="Gallery" data-fr="Galerie">Gallery</div>
+<div class="section-title" data-en="The Residence" data-fr="La Résidence">The Residence</div>
+<div class="gallery-grid" id="montreal-gallery">
+  <img src="img/montreal/tdc2-exterior.jpg" alt="Tour des Canadiens 2 exterior" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-gym.jpg" alt="Fully equipped gym" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-tower.jpg" alt="Glass tower" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-jacuzzi.jpg" alt="Rooftop jacuzzi" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-lounge.jpg" alt="Lobby lounge" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-lounge2.jpg" alt="Upper lounge at night" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-pool.jpg" alt="Indoor lap pool" loading="lazy" onclick="openLb(this)">
+  <img src="img/montreal/tdc2-unit1.jpg" alt="Unit with city view" loading="lazy" onclick="openLb(this)">
+</div>
+
+<!-- Contact / Reservation -->
+<div class="contact-section" id="contact">
+  <div class="section-eyebrow" data-en="Reserve" data-fr="Réserver">Reserve</div>
+  <h3 class="contact-title" data-en="Request Your Stay" data-fr="Demandez votre séjour">Request Your Stay</h3>
+  <p class="contact-sub" data-en="Floor 45 · Tour des Canadiens 2 · Short-Term Stays Only · Available May 2027" data-fr="Étage 45 · Tour des Canadiens 2 · Court séjour uniquement · Disponible mai 2027">Floor 45 &middot; Tour des Canadiens 2 &middot; Short-Term Stays Only &middot; Available May 2027</p>
+
+  <div class="field-row">
+    <label class="field-label" data-en="Full Name *" data-fr="Nom complet *">Full Name *</label>
+    <input id="mtl-name" type="text" placeholder="Your full name" required>
+  </div>
+  <div class="field-grid-2">
+    <div class="field-row">
+      <label class="field-label" data-en="Email *" data-fr="Courriel *">Email *</label>
+      <input id="mtl-email" type="email" placeholder="your@email.com" required>
+    </div>
+    <div class="field-row">
+      <label class="field-label" data-en="Phone / WhatsApp" data-fr="Téléphone / WhatsApp">Phone / WhatsApp</label>
+      <input id="mtl-phone" type="tel" placeholder="+1 514 000 0000">
+    </div>
+  </div>
+
+  <!-- Visual range calendar -->
+  <div class="cal-wrapper" id="cal-wrapper">
+    <div class="cal-label" data-en="Select your approximate dates" data-fr="Sélectionnez vos dates approximatives">Select your approximate dates</div>
+    <div class="cal-range-display" id="cal-range-display" data-en="Click a check-in date on the calendar below" data-fr="Cliquez sur une date d'arrivée ci-dessous">Click a check-in date on the calendar below</div>
+    <div class="cal-container" id="cal-container"></div>
+    <input type="hidden" id="mtl-date-from" value="">
+    <input type="hidden" id="mtl-date-to" value="">
+  </div>
+
+  <div class="field-row">
+    <label class="field-label" data-en="Message" data-fr="Message">Message</label>
+    <textarea id="mtl-msg" rows="4" placeholder="Tell us about your stay..."></textarea>
+  </div>
+  <button class="submit-btn" onclick="submitMtlForm()" data-en="Request Pre-Reservation →" data-fr="Demander une pré-réservation →">Request Pre-Reservation →</button>
+  <div class="form-confirm" id="mtl-confirm" data-en="✓ Thank you. We will be in touch shortly." data-fr="✓ Merci. Nous vous contacterons sous peu.">✓ Thank you. We will be in touch shortly.</div>
+</div>
+
+</div><!-- /.content-inner -->
+</div><!-- /.content -->
 
 <!-- Footer -->
 <footer>
   <div class="f-brand">Stockman 21</div>
-  <p class="f-txt">© 2025 Stockman 21 · Montréal · Huatulco</p>
+  <p class="f-txt">&copy; 2025 Stockman 21 &middot; Montr&eacute;al &middot; Huatulco &middot; stockman21ceo@gmail.com &middot; 514 427-1983</p>
 </footer>
 
 <!-- Lightbox -->
 <div id="stk-lightbox">
-  <button onclick="stkLbClose()" style="position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;line-height:1;">×</button>
-  <button onclick="stkLbNav(-1)" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">‹</button>
-  <button onclick="stkLbNav(1)"  style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">›</button>
-  <img id="stk-lb-img" src="" alt="" style="max-width:90vw;max-height:88vh;object-fit:contain;border-radius:4px;">
+  <button class="lb-close" onclick="closeLb()">&times;</button>
+  <button class="lb-nav prev" onclick="navLb(-1)">&#8249;</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav next" onclick="navLb(1)">&#8250;</button>
 </div>
 
 <script>
-/* ── Lightbox ── */
-(function(){
-  var activeImgs = [], cur = 0;
-  function init(){
-    var lb = document.getElementById('stk-lightbox');
-    lb.style.display = 'none';
-    var imgs = Array.from(document.querySelectorAll('.montreal-gallery img'));
-    imgs.forEach(function(img, i){
-      img.addEventListener('click', function(){ stkLbOpen(i, imgs); });
-    });
-    lb.addEventListener('click', function(e){ if(e.target===lb) stkLbClose(); });
-    document.addEventListener('keydown', function(e){
-      if(document.getElementById('stk-lightbox').style.display==='flex'){
-        if(e.key==='Escape') stkLbClose();
-        if(e.key==='ArrowLeft') stkLbNav(-1);
-        if(e.key==='ArrowRight') stkLbNav(1);
-      }
-    });
-  }
-  window.stkLbOpen = function(i, imgs){
-    activeImgs = imgs || activeImgs; cur = i;
-    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
-    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
-    document.getElementById('stk-lightbox').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  };
-  window.stkLbClose = function(){
-    document.getElementById('stk-lightbox').style.display = 'none';
-    document.body.style.overflow = '';
-  };
-  window.stkLbNav = function(dir){
-    cur = (cur + dir + activeImgs.length) % activeImgs.length;
-    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
-    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
-  };
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else { init(); }
-})();
-
-/* ── Language toggle ── */
-function setLang(lang){
-  document.getElementById('btn-en').classList.toggle('active', lang==='en');
-  document.getElementById('btn-fr').classList.toggle('active', lang==='fr');
-  document.querySelectorAll('[data-en]').forEach(function(el){
-    el.innerHTML = el.getAttribute('data-' + lang);
+// Language
+function setLang(l) {
+  document.documentElement.lang = l;
+  document.querySelectorAll("[data-en]").forEach(el => {
+    el.innerHTML = el.getAttribute("data-" + l) || el.innerHTML;
   });
-  document.documentElement.lang = lang;
+  document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector(".lang-btn[onclick=\"setLang('" + l + "')\"]")?.classList.add("active");
+  if (window.__calRender) window.__calRender();
+  if (window.__calUpdate) window.__calUpdate();
 }
 
-/* ── Date fields: no past dates ── */
-(function() {
-  var today = new Date();
-  var minStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-  document.getElementById('mtl-date-from').min = minStr;
-  document.getElementById('mtl-date-to').min = minStr;
-})();
-
-/* ── Stay type toggle ── */
-var mtlStayType = 'long';
-function setStay(type) {
-  mtlStayType = type;
-  document.querySelectorAll('.stay-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.stay === type);
-  });
-}
-
-/* ── Contact form → Web3Forms ── */
+// Form
 function submitMtlForm() {
-  var name     = document.getElementById('mtl-name').value.trim();
-  var email    = document.getElementById('mtl-email').value.trim();
-  var phone    = document.getElementById('mtl-phone').value.trim();
-  var msg      = document.getElementById('mtl-msg').value.trim();
-  var dateFrom = document.getElementById('mtl-date-from').value;
-  var dateTo   = document.getElementById('mtl-date-to').value;
-  if(!name)  { alert('Please enter your full name.');  return; }
-  if(!email) { alert('Please enter your email address.'); return; }
-
-  var btn = document.querySelector('.submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending…';
-
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      access_key: 'f80fd2dc-5ff8-4763-aada-9138f2035285',
-      subject:    'Pre-Reservation — Tour des Canadiens 2, Floor 45 [' + mtlStayType.toUpperCase() + ' STAY]',
-      name:       name,
-      email:      email,
-      phone:      phone || 'Not provided',
-      property:   'Tour des Canadiens 2 — Floor 45, Montréal',
-      stay_type:  mtlStayType === 'short' ? 'Short-term stay' : 'Long-term lease',
-      move_in:    dateFrom || 'Not specified',
-      move_out:   dateTo   || 'Not specified',
-      message:    msg || 'No message provided'
-    })
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(data){
-    if(data.success){
-      document.getElementById('mtl-confirm').style.display = 'block';
-      btn.textContent = '✓ Sent';
-    } else { throw new Error('failed'); }
-  })
-  .catch(function(){
-    alert('Could not send. Please contact us at stockman21ceo@gmail.com');
-    btn.disabled = false;
-    btn.textContent = 'Request Pre-Reservation →';
-  });
+  const name = document.getElementById("mtl-name").value.trim();
+  const email = document.getElementById("mtl-email").value.trim();
+  const phone = document.getElementById("mtl-phone").value.trim();
+  const from = document.getElementById("mtl-date-from").value;
+  const to = document.getElementById("mtl-date-to").value;
+  const msg = document.getElementById("mtl-msg").value.trim();
+  if (!name || !email) { alert("Please fill in name and email."); return; }
+  const subject = encodeURIComponent("[SHORT STAY] Tour des Canadiens 2 - Pre-Reservation");
+  const body = encodeURIComponent(
+    "Name: " + name + "\n" +
+    "Email: " + email + "\n" +
+    "Phone: " + (phone || "N/A") + "\n" +
+    "Type: Short-term Stay\n" +
+    "Check-in: " + (from || "TBD") + "\n" +
+    "Check-out: " + (to || "TBD") + "\n" +
+    "Message: " + (msg || "None")
+  );
+  window.location.href = "mailto:stockman21ceo@gmail.com?subject=" + subject + "&body=" + body;
+  const conf = document.getElementById("mtl-confirm");
+  conf.style.display = "block";
+  setTimeout(() => { conf.style.display = "none"; }, 5000);
 }
+
+// Lightbox
+let lbImgs = [], lbIdx = 0;
+function openLb(el) {
+  lbImgs = [...document.querySelectorAll("#montreal-gallery img")];
+  lbIdx = lbImgs.indexOf(el);
+  document.getElementById("lb-img").src = lbImgs[lbIdx].src;
+  document.getElementById("stk-lightbox").classList.add("open");
+}
+function closeLb() { document.getElementById("stk-lightbox").classList.remove("open"); }
+function navLb(dir) {
+  lbIdx = (lbIdx + dir + lbImgs.length) % lbImgs.length;
+  document.getElementById("lb-img").src = lbImgs[lbIdx].src;
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeLb(); });
+
+// Calendar
+(function() {
+  const MF=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const MFR=["Janvier","F\u00e9vrier","Mars","Avril","Mai","Juin","Juillet","A\u00fbt","Septembre","Octobre","Novembre","D\u00e9cembre"];
+  const DF=["Mo","Tu","We","Th","Fr","Sa","Su"];
+  const DFR=["Lu","Ma","Me","Je","Ve","Sa","Di"];
+  let startDate=null,endDate=null,hoverDate=null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  let viewYear=2027, viewMonth=4;
+  function lang(){return document.documentElement.lang==="fr"?"fr":"en";}
+  function fmt(d){if(!d)return"";const m=lang()==="fr"?MFR:MF;return m[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
+  function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  function upd(){document.getElementById("mtl-date-from").value=startDate?iso(startDate):"";document.getElementById("mtl-date-to").value=endDate?iso(endDate):"";}
+  function updDisplay(){
+    const l=lang(),d=document.getElementById("cal-range-display");
+    if(!startDate){d.innerHTML=l==="fr"?"Cliquez sur une date d'arriv\u00e9e":"Click a check-in date on the calendar below";}
+    else if(!endDate){d.innerHTML=(l==="fr"?"\uD83D\uDCC5 Arriv\u00e9e : ":"\uD83D\uDCC5 Check-in: ")+"<span>"+fmt(startDate)+"</span> &nbsp;\u2192&nbsp; "+(l==="fr"?"S\u00e9lectionnez la date de d\u00e9part":"Select check-out date");}
+    else{const diff=Math.round((endDate-startDate)/86400000);d.innerHTML="\uD83D\uDCC5 <span>"+fmt(startDate)+"</span> \u2192 <span>"+fmt(endDate)+"</span>&nbsp;&middot;&nbsp;"+diff+(l==="fr"?" nuit"+(diff>1?"s":""):" night"+(diff>1?"s":""));}
+    upd();
+  }
+  function render(){
+    const c=document.getElementById("cal-container"),l=lang();
+    if(!c)return; c.innerHTML="";
+    for(let off=0;off<2;off++){
+      let m=viewMonth+off,y=viewYear;
+      if(m>11){m-=12;y++;}
+      const md=document.createElement("div"); md.className="cal-month";
+      const hd=document.createElement("div"); hd.className="cal-month-header";
+      if(off===0){
+        const pb=document.createElement("button"); pb.className="cal-nav"; pb.textContent="\u2039"; pb.type="button";
+        pb.onclick=()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--;}render();};
+        hd.appendChild(pb);
+      } else { hd.appendChild(document.createElement("span")); }
+      const tt=document.createElement("div"); tt.className="cal-month-title";
+      tt.textContent=(l==="fr"?MFR:MF)[m]+" "+y; hd.appendChild(tt);
+      if(off===1){
+        const nb=document.createElement("button"); nb.className="cal-nav"; nb.textContent="\u203a"; nb.type="button";
+        nb.onclick=()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++;}render();};
+        hd.appendChild(nb);
+      } else { hd.appendChild(document.createElement("span")); }
+      md.appendChild(hd);
+      const wd=document.createElement("div"); wd.className="cal-weekdays";
+      (l==="fr"?DFR:DF).forEach(d=>{const s=document.createElement("span");s.textContent=d;wd.appendChild(s);});
+      md.appendChild(wd);
+      const dd=document.createElement("div"); dd.className="cal-days";
+      const fd=new Date(y,m,1).getDay();
+      const so=(fd+6)%7;
+      const dim=new Date(y,m+1,0).getDate();
+      for(let i=0;i<so;i++){const e=document.createElement("div");e.className="cal-day cal-empty";dd.appendChild(e);}
+      for(let d=1;d<=dim;d++){
+        const dt=new Date(y,m,d);
+        const de=document.createElement("div"); de.className="cal-day"; de.textContent=d;
+        const ip=dt<today;
+        if(ip){de.classList.add("cal-past");}
+        else{
+          if(dt.toDateString()===today.toDateString())de.classList.add("cal-today");
+          const is=startDate&&dt.toDateString()===startDate.toDateString();
+          const ie=endDate&&dt.toDateString()===endDate.toDateString();
+          const ir=startDate&&endDate&&dt>startDate&&dt<endDate;
+          const ih=startDate&&!endDate&&hoverDate&&dt>startDate&&dt<=hoverDate;
+          if(is)de.classList.add("cal-start");
+          if(ie)de.classList.add("cal-end");
+          if(ir||ih)de.classList.add("cal-in-range");
+          de.onclick=()=>{
+            if(!startDate||(startDate&&endDate)){startDate=dt;endDate=null;}
+            else{if(dt<=startDate){startDate=dt;endDate=null;}else{endDate=dt;}}
+            hoverDate=null; updDisplay(); render();
+          };
+          de.onmouseenter=()=>{if(startDate&&!endDate){hoverDate=dt;render();}};
+          de.onmouseleave=()=>{if(startDate&&!endDate){hoverDate=null;render();}};
+        }
+        dd.appendChild(de);
+      }
+      md.appendChild(dd); c.appendChild(md);
+    }
+    if(startDate){
+      const r=document.createElement("div"); r.className="cal-reset";
+      r.textContent=lang()==="fr"?"\u2715 Effacer les dates":"\u2715 Clear dates";
+      r.onclick=()=>{startDate=null;endDate=null;hoverDate=null;updDisplay();render();};
+      c.appendChild(r);
+    }
+  }
+  render(); updDisplay();
+  window.__calRender=render; window.__calUpdate=updDisplay;
+})();
 </script>
 </body>
 </html>
