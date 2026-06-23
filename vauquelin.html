@@ -1,593 +1,266 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-v="1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stockman 21 · Condo Vauquelin — Longueuil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold:   #C09A5B;
-  --gold2:  #d4b07a;
-  --black:  #111111;
-  --dark:   #1a1a1a;
-  --cream:  #FAF8F4;
-  --gray:   #6b6b6b;
-  --light:  #f0ece4;
-  --border: #e0d8cc;
-  --green:  #2d7a4f;
-  --red:    #c0392b;
-}
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: #fff;
-  color: var(--black);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── NAV ── */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  background: rgba(11,18,30,.94); backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(192,154,91,.18);
-  height: 60px;
-}
-.nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 40px;
-  height: 60px; display: flex; align-items: center; justify-content: space-between;
-}
-.nav-brand { display: flex; align-items: center; gap: 10px; }
-.nav-brand-name {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem; font-weight: 800; letter-spacing: .08em;
-  text-transform: uppercase; color: #fff; line-height: 1;
-}
-.nav-brand-name span { color: var(--gold); }
-.nav-brand-tag {
-  font-size: .45rem; font-weight: 600; letter-spacing: .22em;
-  text-transform: uppercase; color: rgba(192,154,91,.7); margin-top: 2px;
-}
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-back {
-  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--gold); text-decoration: none;
-  border: 1px solid rgba(192,154,91,.4); padding: 6px 14px; border-radius: 3px;
-  transition: background .2s, color .2s;
-}
-.nav-back:hover { background: var(--gold); color: var(--black); }
-.nav-cta {
-  background: var(--gold); color: var(--black);
-  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; text-decoration: none;
-  padding: 7px 16px; border-radius: 3px; border: none; cursor: pointer;
-  transition: background .2s;
-}
-.nav-cta:hover { background: var(--gold2); }
-
-/* ── HERO ── */
-.hero {
-  margin-top: 58px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 78vh;
-  background: var(--cream);
-}
-.hero-info {
-  padding: 60px 50px 50px 60px;
-  display: flex; flex-direction: column; justify-content: center;
-}
-.hero-badge {
-  font-size: .6rem; font-weight: 800; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--gold);
-  margin-bottom: 18px;
-}
-.hero-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.2rem; font-weight: 600; line-height: 1.1;
-  color: var(--black); margin-bottom: 14px;
-}
-.hero-sub {
-  font-size: .75rem; font-weight: 400; color: var(--gray);
-  margin-bottom: 28px; line-height: 1.6;
-}
-.hero-specs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px; }
-.spec-item {
-  display: flex; align-items: center; gap: 10px;
-  font-size: .7rem; font-weight: 500; color: var(--black); letter-spacing: .04em;
-}
-.spec-item svg { color: var(--gold); flex-shrink: 0; }
-.price-box {
-  background: var(--black); color: #fff;
-  padding: 24px 28px; border-radius: 4px;
-  max-width: 280px; margin-bottom: 20px;
-}
-.price-label {
-  font-size: .55rem; font-weight: 800; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
-}
-.price-amount {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem; font-weight: 600; line-height: 1;
-}
-.price-amount sup { font-size: 1.2rem; vertical-align: top; margin-top: 6px; font-family: 'Montserrat', sans-serif; }
-.price-amount sub { font-size: .8rem; font-weight: 400; color: rgba(255,255,255,.7); margin-left: 2px; }
-.price-notes { font-size: .6rem; color: rgba(255,255,255,.6); margin-top: 8px; line-height: 1.6; }
-.btn-visit {
-  display: inline-block; background: var(--gold); color: var(--black);
-  font-size: .65rem; font-weight: 800; letter-spacing: .15em;
-  text-transform: uppercase; text-decoration: none;
-  padding: 14px 28px; border-radius: 3px; transition: background .2s;
-  cursor: pointer; border: none; max-width: 240px;
-}
-.btn-visit:hover { background: var(--gold2); }
-
-.hero-img { position: relative; overflow: hidden; }
-.hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-placeholder {
-  width: 100%; height: 100%; min-height: 400px;
-  background: #ddd8ce;
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 10px;
-}
-.photo-placeholder svg { color: #aaa; }
-.photo-placeholder-text { font-size: .55rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #aaa; }
-
-/* ── WORKS BANNER ── */
-.works-banner {
-  background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  padding: 18px 60px;
-  display: flex; align-items: center; justify-content: space-between; gap: 20px;
-}
-.works-inner { display: flex; align-items: center; gap: 18px; flex: 1; }
-.works-icon { color: var(--gold); flex-shrink: 0; }
-.works-title { font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--black); margin-bottom: 3px; }
-.works-text { font-size: .65rem; color: var(--gray); line-height: 1.6; }
-.works-link {
-  font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--gold); border: 1px solid var(--gold); padding: 6px 14px; border-radius: 3px;
-  text-decoration: none; white-space: nowrap; flex-shrink: 0; transition: background .2s, color .2s;
-}
-.works-link:hover { background: var(--gold); color: var(--black); }
-
-/* ── AMENITY ICONS ── */
-.amenities {
-  background: var(--cream); padding: 36px 60px;
-  display: flex; justify-content: center; gap: 0;
-  border-bottom: 1px solid var(--border);
-}
-.amenity {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding: 0 30px; border-right: 1px solid var(--border);
-}
-.amenity:last-child { border-right: none; }
-.amenity svg { color: var(--gold); }
-.amenity-label { font-size: .55rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--black); text-align: center; line-height: 1.4; }
-
-/* ── PHOTO GRID ── */
-#photos { padding: 0; }
-.photo-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 280px); gap: 4px;
-}
-.photo-cell { position: relative; overflow: hidden; background: #e8e4dc; }
-.photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
-.photo-cell:hover img { transform: scale(1.04); }
-.photo-cell .photo-placeholder { min-height: 0; height: 100%; }
-.photo-label {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 100%);
-  padding: 20px 16px 12px;
-  font-size: .55rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: #fff;
-}
-
-/* ── INFO SECTION ── */
-.info-section {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
-  padding: 60px; background: #fff; border-bottom: 1px solid var(--border);
-}
-.info-block { padding: 0 30px 0 0; border-right: 1px solid var(--border); }
-.info-block:last-child { border-right: none; padding-right: 0; padding-left: 30px; }
-.info-block:first-child { padding-left: 0; }
-.info-block-title {
-  font-size: .65rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--black); margin-bottom: 20px; padding-bottom: 12px;
-  border-bottom: 2px solid var(--gold); display: inline-block;
-}
-.advantage-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.advantage-list li { display: flex; align-items: flex-start; gap: 10px; font-size: .68rem; color: var(--black); line-height: 1.4; }
-.advantage-list li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 5px; }
-.location-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.location-list li { display: flex; align-items: flex-start; gap: 10px; font-size: .68rem; color: var(--black); line-height: 1.4; }
-.location-list li svg { color: var(--gold); flex-shrink: 0; margin-top: 1px; }
-.map-embed { width: 100%; height: 200px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-.map-embed iframe { width: 100%; height: 100%; border: none; }
-.map-address { font-size: .65rem; color: var(--gray); line-height: 1.5; font-weight: 500; margin-top: 14px; }
-
-/* ── PRICE SUMMARY ── */
-.price-summary {
-  background: var(--cream); padding: 40px 60px;
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; align-items: center;
-  border-bottom: 1px solid var(--border);
-}
-.ps-label { font-size: .55rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-.ps-price { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; color: var(--black); line-height: 1; margin-bottom: 6px; }
-.ps-sub { font-size: .62rem; color: var(--gray); line-height: 1.6; }
-.ps-note-text { font-size: .62rem; color: var(--gray); line-height: 1.7; }
-.ps-date-block { text-align: center; }
-.ps-date-label { font-size: .55rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; margin-top: 10px; }
-.ps-date-value { font-size: 1rem; font-weight: 800; color: var(--black); letter-spacing: .04em; text-transform: uppercase; }
-.ps-date-btn {
-  display: block; margin: 14px auto 0; background: var(--black); color: #fff;
-  font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  text-decoration: none; padding: 10px 20px; border-radius: 3px; border: none;
-  cursor: pointer; transition: background .2s; width: fit-content;
-}
-.ps-date-btn:hover { background: var(--gold); color: var(--black); }
-
-/* ── MODAL ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0; z-index: 500;
-  background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
-  align-items: center; justify-content: center; padding: 20px;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: #fff; border-radius: 6px; width: 100%; max-width: 520px;
-  max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3);
-}
-.modal-header { background: var(--black); padding: 24px 30px; display: flex; justify-content: space-between; align-items: flex-start; }
-.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: #fff; line-height: 1.2; }
-.modal-subtitle { font-size: .6rem; color: rgba(255,255,255,.6); margin-top: 4px; }
-.modal-close { background: none; border: none; cursor: pointer; color: rgba(255,255,255,.6); font-size: 1.4rem; line-height: 1; padding: 0; }
-.modal-close:hover { color: #fff; }
-.modal-body { padding: 30px; }
-.form-group { margin-bottom: 18px; }
-.form-label { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--black); margin-bottom: 6px; }
-.form-label span { color: var(--red); }
-.form-input, .form-select, .form-textarea {
-  width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 3px;
-  font-family: 'Montserrat', sans-serif; font-size: .72rem; color: var(--black);
-  background: var(--cream); transition: border-color .2s; outline: none;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); background: #fff; }
-.form-textarea { min-height: 80px; resize: vertical; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-note { font-size: .6rem; color: var(--gray); margin-top: 5px; line-height: 1.5; }
-.form-avail-note {
-  background: var(--cream); border: 1px solid var(--border); border-radius: 3px;
-  padding: 10px 14px; font-size: .62rem; color: var(--gray); line-height: 1.6; margin-bottom: 18px;
-}
-.form-avail-note strong { color: var(--black); }
-.btn-submit {
-  width: 100%; padding: 14px; background: var(--gold); color: var(--black);
-  border: none; border-radius: 3px; cursor: pointer; font-family: 'Montserrat', sans-serif;
-  font-size: .65rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase;
-  transition: background .2s;
-}
-.btn-submit:hover { background: var(--gold2); }
-.btn-submit:disabled { opacity: .6; cursor: not-allowed; }
-.form-success { display: none; text-align: center; padding: 30px 20px; }
-.form-success-icon { font-size: 2.5rem; margin-bottom: 12px; }
-.form-success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--green); margin-bottom: 8px; }
-.form-success-text { font-size: .68rem; color: var(--gray); line-height: 1.7; }
-
-/* ── CTA FOOTER ── */
-.cta-footer {
-  background: var(--black); padding: 50px 60px;
-  display: flex; align-items: center; justify-content: space-between; gap: 30px;
-}
-.cta-footer-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
-.cta-footer-sub { font-size: .65rem; color: rgba(255,255,255,.6); line-height: 1.6; }
-
-/* ── SITE FOOTER ── */
-.site-footer {
-  background: #0a0a0a; padding: 24px 60px;
-  display: flex; align-items: center; justify-content: space-between; gap: 20px;
-  border-top: 1px solid rgba(192,154,91,.15);
-}
-.footer-brand { font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fff; }
-.footer-brand span { color: var(--gold); }
-.footer-contact { display: flex; gap: 24px; align-items: center; }
-.footer-contact a { display: flex; align-items: center; gap: 6px; font-size: .6rem; color: rgba(255,255,255,.6); text-decoration: none; letter-spacing: .06em; transition: color .2s; }
-.footer-contact a:hover { color: var(--gold); }
-.footer-contact svg { color: var(--gold); }
-.footer-web { font-size: .6rem; color: rgba(255,255,255,.4); letter-spacing: .06em; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-img { height: 55vw; }
-  .hero-info { padding: 40px 24px 30px; }
-  .hero-title { font-size: 2.2rem; }
-  .nav { padding: 0 20px; }
-  .nav-links a:not(.nav-cta) { display: none; }
-  .works-banner { flex-direction: column; padding: 20px 24px; }
-  .amenities { flex-wrap: wrap; padding: 24px; }
-  .amenity { border-right: none; padding: 8px 20px; }
-  .photo-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: repeat(5,200px); }
-  .info-section { grid-template-columns: 1fr; padding: 30px 24px; gap: 30px; }
-  .info-block { border-right: none; padding: 0 !important; border-bottom: 1px solid var(--border); padding-bottom: 24px !important; }
-  .info-block:last-child { border-bottom: none; }
-  .price-summary { grid-template-columns: 1fr; padding: 30px 24px; gap: 24px; text-align: center; }
-  .cta-footer { flex-direction: column; text-align: center; padding: 40px 24px; }
-  .site-footer { flex-direction: column; text-align: center; padding: 20px 24px; gap: 14px; }
-  .footer-contact { flex-direction: column; gap: 12px; }
-}
+:root{--white:#fff;--off-white:#f8f6f3;--light-grey:#f2f0ed;--mid-grey:#e8e4df;--text:#747474;--text-dark:#3d3d3d;--accent:#c5a47e;--accent-dark:#a8845a;--tan-bg:#c5a47e;--border:#e0dbd4;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;line-height:1.7;}
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-brand-name{font-family:'Oswald',sans-serif;font-size:15px;font-weight:500;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;}
+.nav-brand-tag{font-size:9px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;display:block;}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-link{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);text-decoration:none;padding:10px 20px;border:1px solid var(--border);transition:all .2s;}
+.nav-link:hover{border-color:var(--accent);color:var(--accent);}
+.nav-cta{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--white);text-decoration:none;padding:10px 20px;background:var(--accent);border:1px solid var(--accent);transition:all .2s;cursor:pointer;}
+.nav-cta:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+.hero{position:relative;height:100vh;min-height:600px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding-bottom:80px;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 50%,rgba(0,0,0,.1) 100%);}
+.hero-content{position:relative;z-index:1;padding:0 80px;max-width:900px;}
+.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:600;}
+.hero-title{font-family:'Oswald',sans-serif;font-size:clamp(48px,7vw,90px);font-weight:400;letter-spacing:3px;color:#fff;text-transform:uppercase;line-height:1.05;margin-bottom:24px;}
+.hero-title em{font-style:italic;font-weight:300;text-transform:none;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.8);max-width:520px;line-height:1.8;margin-bottom:6px;}
+.hero-address{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:28px;}
+.hero-cta{display:inline-block;background:var(--accent);color:var(--white);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:16px 32px;transition:background .2s;cursor:pointer;border:none;}
+.hero-cta:hover{background:var(--accent-dark);}
+.stats-bar{background:var(--tan-bg);display:flex;justify-content:space-around;align-items:center;padding:32px 60px;}
+.stat{text-align:center;}
+.stat-val{display:block;font-family:'Oswald',sans-serif;font-size:28px;font-weight:400;letter-spacing:2px;color:var(--white);text-transform:uppercase;}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:4px;display:block;}
+.reno-banner{background:var(--off-white);border-top:3px solid var(--accent);border-bottom:1px solid var(--border);padding:20px 60px;display:flex;align-items:center;gap:24px;}
+.reno-icon{font-size:24px;flex-shrink:0;}
+.reno-text{flex:1;}
+.reno-label{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);font-weight:500;margin-bottom:4px;}
+.reno-desc{font-size:13px;color:var(--text);line-height:1.6;}
+.reno-link{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--white);text-decoration:none;background:var(--accent);padding:10px 20px;white-space:nowrap;flex-shrink:0;transition:background .2s;}
+.reno-link:hover{background:var(--accent-dark);}
+.split-block{display:flex;min-height:560px;}
+.split-photo{flex:1;background-size:cover;background-position:center;}
+.split-text{flex:1;padding:80px 60px;display:flex;flex-direction:column;justify-content:center;background:var(--white);}
+.split-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-weight:600;}
+.split-title{font-family:'Oswald',sans-serif;font-size:42px;font-weight:400;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;line-height:1.1;margin-bottom:12px;}
+.split-body{font-size:14px;line-height:1.8;color:var(--text);margin-bottom:28px;}
+.split-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);font-weight:600;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.split-list{list-style:none;margin-bottom:24px;}
+.split-list li{font-size:13px;color:var(--text);padding:5px 0;border-bottom:1px solid var(--mid-grey);display:flex;align-items:center;gap:8px;}
+.split-list li::before{content:"\2014";color:var(--accent);}
+.split-cta{display:inline-block;background:var(--accent);color:var(--white);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:16px 32px;transition:background .2s;cursor:pointer;border:none;font-weight:400;}
+.split-cta:hover{background:var(--accent-dark);}
+.price-box{background:var(--text-dark);padding:32px;margin-bottom:28px;}
+.price-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block;}
+.price-main{font-family:'Oswald',sans-serif;font-size:52px;font-weight:300;color:var(--white);line-height:1;}
+.price-per{font-size:12px;letter-spacing:1px;color:rgba(255,255,255,.6);margin-top:4px;display:block;}
+.price-note{font-size:11px;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.6;}
+.amenities-bar{background:var(--off-white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px 60px;}
+.amenities-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px;text-align:center;}
+.amen-item{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.amen-icon{width:44px;height:44px;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.amen-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dark);font-weight:600;line-height:1.4;text-align:center;}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
+.gallery-img{height:260px;background-size:cover;background-position:center;}
+.cta-section{background:var(--text-dark);padding:80px 60px;text-align:center;}
+.cta-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.cta-title{font-family:'Oswald',sans-serif;font-size:48px;font-weight:400;letter-spacing:3px;color:var(--white);text-transform:uppercase;margin-bottom:12px;}
+.cta-price{font-family:'Oswald',sans-serif;font-size:28px;font-weight:300;color:var(--accent);margin-bottom:8px;}
+.cta-note{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:32px;}
+.cta-avail{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:32px;display:block;}
+.crosssell{background:var(--off-white);padding:80px 60px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.crosssell-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.crosssell-title{font-family:'Oswald',sans-serif;font-size:42px;font-weight:400;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;line-height:1.1;margin-bottom:16px;}
+.crosssell-desc{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:32px;}
+.crosssell-img{height:360px;background-size:cover;background-position:center;}
+.site-footer{background:var(--text-dark);padding:48px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-brand{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;letter-spacing:3px;color:var(--white);text-transform:uppercase;text-decoration:none;}
+.footer-links{display:flex;gap:24px;align-items:center;}
+.footer-link{font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.5);text-decoration:none;}
+.footer-link:hover{color:var(--accent);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,.4);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-header{background:var(--text-dark);padding:28px 32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.modal-title{font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:2px;text-transform:uppercase;color:var(--white);font-weight:400;}
+.modal-subtitle{font-size:11px;color:var(--accent);letter-spacing:1px;margin-top:4px;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:22px;cursor:pointer;padding:0;line-height:1;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:32px;}
+.form-avail-note{background:var(--off-white);border-left:3px solid var(--accent);padding:14px 18px;font-size:13px;color:var(--text);margin-bottom:24px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);font-weight:600;margin-bottom:6px;}
+.form-label span{color:var(--accent);}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;border:1px solid var(--border);font-family:'Montserrat',sans-serif;font-size:13px;color:var(--text-dark);background:var(--white);outline:none;transition:border .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-textarea{height:90px;resize:vertical;}
+.form-note{font-size:11px;color:var(--text);margin-top:5px;}
+.btn-submit{width:100%;background:var(--accent);color:var(--white);border:none;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:16px;cursor:pointer;transition:background .2s;margin-top:8px;}
+.btn-submit:hover{background:var(--accent-dark);}
+.form-success{display:none;text-align:center;padding:40px 20px;}
+.form-success-icon{font-size:48px;margin-bottom:16px;}
+.form-success-title{font-family:'Oswald',sans-serif;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);margin-bottom:12px;}
+.form-success-text{font-size:14px;color:var(--text);line-height:1.7;}
+@media(max-width:900px){.split-block{flex-direction:column!important;}.split-photo{height:300px;}.split-text{padding:48px 24px;}.hero-content{padding:0 32px;}.site-nav{padding:16px 20px;}.stats-bar{flex-wrap:wrap;gap:20px;padding:24px;}.amenities-grid{grid-template-columns:repeat(3,1fr);}.gallery-grid{grid-template-columns:1fr;}.crosssell{grid-template-columns:1fr;padding:60px 24px;}.cta-section{padding:60px 24px;}.amenities-bar{padding:40px 24px;}.reno-banner{flex-direction:column;padding:20px 24px;}.site-footer{flex-direction:column;gap:16px;text-align:center;}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav" id="accueil">
-  <div class="nav-inner">
-    <div class="nav-brand">
-      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M48 18 C46 30 44 44 43 62" stroke="#C09A5B" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C36 12 22 13 16 22" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C42 8 46 0 55 4" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C56 10 66 10 70 18" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <polygon points="22,58 36,44 50,58" fill="#C09A5B"/>
-        <rect x="25" y="57" width="22" height="16" fill="#C09A5B"/>
-        <rect x="32" y="61" width="8" height="8" fill="#0b121e" rx="1"/>
-        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#C09A5B" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      </svg>
-      <div>
-        <div class="nav-brand-name">STOCKMAN <span>21</span></div>
-        <div class="nav-brand-tag">YOUR BETTER LIFE.</div>
-      </div>
-    </div>
-    <div class="nav-right">
-      <a href="montreal.html" class="nav-back">← Montréal</a>
-      <a href="huatulco.html" class="nav-back">← Huatulco</a>
-      <button class="nav-cta" onclick="openModal()">Demander une visite</button>
-    </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">
+    <div><span class="nav-brand-name">STOCKMAN 21</span><span class="nav-brand-tag">YOUR BETTER LIFE.</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="montreal.html" class="nav-link">← Montréal</a>
+    <a href="huatulco.html" class="nav-link">← Huatulco</a>
+    <button class="nav-cta" onclick="document.getElementById('modalOverlay').classList.add('open')">DEMANDER UNE VISITE</button>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="unite">
-  <div class="hero-info">
-    <div class="hero-badge">À louer dès août 2025</div>
-    <h1 class="hero-title">Condo moderne<br>sur le boul.<br>Vauquelin</h1>
+<section class="hero" style="background-image:url('img/vauquelin/exterieur.png');">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">À LOUER DÈS AOÛT 2025</p>
+    <h1 class="hero-title">Condo moderne<br><em>sur le boul. Vauquelin</em></h1>
     <p class="hero-sub">Confort, commodités et nature à proximité.</p>
-    <div class="hero-specs">
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        5 boul. Vauquelin, appt. 111, Longueuil
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        1 CHAMBRE
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6h10l2 10H7L9 6z"/><path d="M7 16H4l-2 4h20l-2-4h-3"/></svg>
-        1 SALLE DE BAIN
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        576 PI²
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        STATIONNEMENT ET LOCKER INCLUS
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v13"/><path d="M3 21h18"/><rect x="9" y="12" width="6" height="9"/></svg>
-        BALCON PRIVÉ
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8M8 12h8"/></svg>
-        SALLE D'ENTRAÎNEMENT DANS L'IMMEUBLE
-      </div>
-      <div class="spec-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-        CLIMATISATION – MINI SPLIT
-      </div>
-    </div>
+    <p class="hero-address">5 boul. Vauquelin, appt. 111, Longueuil</p>
+    <button class="hero-cta" onclick="document.getElementById('modalOverlay').classList.add('open')">PLANIFIER UNE VISITE</button>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat"><span class="stat-val">1</span><span class="stat-lbl">CHAMBRE</span></div>
+  <div class="stat"><span class="stat-val">1</span><span class="stat-lbl">SALLE DE BAIN</span></div>
+  <div class="stat"><span class="stat-val">576</span><span class="stat-lbl">PI²</span></div>
+  <div class="stat"><span class="stat-val">Incl.</span><span class="stat-lbl">STATIONNEMENT &amp; LOCKER</span></div>
+  <div class="stat"><span class="stat-val">Privé</span><span class="stat-lbl">BALCON</span></div>
+</div>
+
+<div class="reno-banner">
+  <div class="reno-icon">&#128295;</div>
+  <div class="reno-text">
+    <div class="reno-label">IMMEUBLE EN AMÉLIORATION EXTÉRIEURE</div>
+    <div class="reno-desc">Des travaux de rénovation de façade sont actuellement en cours afin d&#8217;améliorer l&#8217;enveloppe du bâtiment. Une tarification ajustée est proposée pendant cette période. Merci de votre compréhension.</div>
+  </div>
+  <a href="#" class="reno-link">EN SAVOIR PLUS</a>
+</div>
+
+<div class="split-block">
+  <div class="split-photo" style="background-image:url('img/vauquelin/salon.png');"></div>
+  <div class="split-text">
+    <p class="split-eyebrow">LA PROPRIÉTÉ</p>
+    <h2 class="split-title">Le Condo<br><em>Vauquelin</em></h2>
     <div class="price-box">
-      <div class="price-label">Loyer promotionnel</div>
-      <div class="price-amount">1 595 <sup>$</sup><sub>/ mois</sub></div>
-      <div class="price-notes">Non meublé<br>Stationnement intérieur et locker inclus</div>
+      <span class="price-label">LOYER PROMOTIONNEL</span>
+      <div class="price-main">1&#8239;595&#8239;$</div>
+      <span class="price-per">/ mois</span>
+      <div class="price-note">Non meublé&#8202;·&#8202;Stationnement intérieur et locker inclus</div>
     </div>
-    <button class="btn-visit" onclick="openModal()">Planifier une visite</button>
-  </div>
-
-  <div class="hero-img">
-    <img src="img/vauquelin/salon.png" alt="Salon lumineux"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="photo-placeholder" style="display:none; position:absolute; inset:0;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      <div class="photo-placeholder-text">Photo à venir</div>
-    </div>
-  </div>
-</section>
-
-<!-- WORKS BANNER -->
-<div class="works-banner">
-  <div class="works-inner">
-    <div class="works-icon">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-    </div>
-    <div>
-      <div class="works-title">Immeuble en amélioration extérieure</div>
-      <div class="works-text">Des travaux de rénovation de façade sont actuellement en cours afin d'améliorer l'enveloppe du bâtiment.<br>Une tarification ajustée est proposée pendant cette période. Merci de votre compréhension.</div>
-    </div>
-  </div>
-  <a href="#prix" class="works-link">En savoir plus</a>
-</div>
-
-<!-- AMENITY ICONS -->
-<div class="amenities" id="commodites">
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-    <div class="amenity-label">Climatisation<br>avec minisplit</div>
-  </div>
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-    <div class="amenity-label">Ascenseur</div>
-  </div>
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-    <div class="amenity-label">Stationnement<br>intérieur inclus</div>
-  </div>
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v13"/><path d="M3 21h18"/><rect x="9" y="12" width="6" height="9"/></svg>
-    <div class="amenity-label">Balcon<br>privé</div>
-  </div>
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><path d="M12 8v8M8 12h8"/></svg>
-    <div class="amenity-label">Salle d'entraînement<br>dans l'immeuble</div>
-  </div>
-  <div class="amenity">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-    <div class="amenity-label">Salle<br>de jeux</div>
-  </div>
-</div>
-
-<!-- PHOTOS -->
-<section id="photos">
-  <div class="photo-grid">
-    <div class="photo-cell">
-      <img src="img/vauquelin/salon.png" alt="Salon lumineux" onerror="this.replaceWith(makePH('Salon lumineux'))">
-      <div class="photo-label">Salon lumineux</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/cuisine.png" alt="Cuisine moderne" onerror="this.replaceWith(makePH('Cuisine moderne'))">
-      <div class="photo-label">Cuisine moderne</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/chambre.png" alt="Chambre confortable" onerror="this.replaceWith(makePH('Chambre confortable'))">
-      <div class="photo-label">Chambre confortable</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/salle-de-bain.png" alt="Salle de bain complète" onerror="this.replaceWith(makePH('Salle de bain'))">
-      <div class="photo-label">Salle de bain complète</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/balcon.png" alt="Balcon privé" onerror="this.replaceWith(makePH('Balcon privé'))">
-      <div class="photo-label">Balcon privé</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/exterieur.png" alt="Vue extérieure" onerror="this.replaceWith(makePH('Vue extérieure'))">
-      <div class="photo-label">Immeuble – Vue extérieure</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/stationnement.jpeg" alt="Stationnement intérieur" onerror="this.replaceWith(makePH('Stationnement'))">
-      <div class="photo-label">Stationnement et locker inclus</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/foret.jpeg" alt="Espaces verts à proximité" onerror="this.replaceWith(makePH('Nature'))">
-      <div class="photo-label">Pistes cyclables &amp; espaces verts</div>
-    </div>
-    <div class="photo-cell">
-      <img src="img/vauquelin/exterieur-reel.jpeg" alt="Immeuble en rénovation extérieure" onerror="this.replaceWith(makePH('Extérieur actuel'))">
-      <div class="photo-label">Immeuble en rénovation extérieure</div>
-    </div>
-  </div>
-</section>
-
-<!-- INFO -->
-<section class="info-section" id="localisation">
-  <div class="info-block">
-    <div class="info-block-title">Les avantages de l'unité</div>
-    <ul class="advantage-list">
-      <li>Rez-de-chaussée</li>
-      <li>1 chambre + 1 salle de bain — 576 pi²</li>
+    <p class="split-label">CARACTÉRISTIQUES</p>
+    <ul class="split-list">
+      <li>Rez-de-chaussée &mdash; 576 pi²</li>
+      <li>1 chambre + 1 salle de bain</li>
       <li>Non meublé</li>
       <li>Balcon privé</li>
       <li>Stationnement intérieur et locker inclus</li>
-      <li>Salle d'entraînement dans l'immeuble</li>
-      <li>Salle de jeux dans l'immeuble</li>
       <li>Climatisation avec minisplit</li>
-      <li>Immeuble construit en 2011</li>
-      <li>Ascenseur</li>
+      <li>Immeuble construit en 2011 &mdash; ascenseur</li>
     </ul>
+    <button class="split-cta" onclick="document.getElementById('modalOverlay').classList.add('open')">PLANIFIER UNE VISITE</button>
   </div>
-  <div class="info-block">
-    <div class="info-block-title">Localisation pratique</div>
-    <p style="font-size:.65rem;color:var(--gray);margin-bottom:16px;line-height:1.6;">Situé sur le boulevard Vauquelin à Longueuil, vous êtes à proximité de tout ce dont vous avez besoin :</p>
-    <ul class="location-list">
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Commerces, épiceries et restaurants</li>
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Arrêt d'autobus en face</li>
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Accès rapide aux autoroutes 132, 116 et 20</li>
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="14" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><circle cx="8" cy="20" r="1.5"/><circle cx="16" cy="20" r="1.5"/><path d="M7 17l-2 3M17 17l2 3"/></svg>Train de banlieue à proximité</li>
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h3"/></svg>Pistes cyclables adjacentes et espaces verts à moins de 5 min à pied</li>
-      <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Proche de l'aéroport Montréal–Saint-Hubert</li>
-    </ul>
-  </div>
-  <div class="info-block" style="padding-left:30px;">
-    <div class="info-block-title">Carte</div>
-    <div class="map-embed">
-      <iframe src="https://maps.google.com/maps?q=5+boul.+Vauquelin,+Longueuil,+QC&output=embed" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <div class="map-address"><strong>5 boul. Vauquelin, appt. 111</strong><br>Longueuil, Québec</div>
-  </div>
-</section>
-
-<!-- PRICE SUMMARY -->
-<section class="price-summary" id="prix">
-  <div>
-    <div class="ps-label">Loyer promotionnel</div>
-    <div class="ps-price">1 595 $<span style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:400;color:var(--gray);"> / mois</span></div>
-    <div class="ps-sub">Non meublé<br>Stationnement intérieur et locker inclus</div>
-  </div>
-  <div>
-  </div>
-  <div class="ps-date-block">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    <div class="ps-date-label">Disponible dès</div>
-    <div class="ps-date-value">Août 2025</div>
-    <button class="ps-date-btn" onclick="openModal()">Demander une visite</button>
-  </div>
-</section>
-
-<!-- CTA FOOTER -->
-<div class="cta-footer" id="contact">
-  <div>
-    <div class="cta-footer-title">Intéressé? Planifiez votre visite dès maintenant.</div>
-    <div class="cta-footer-sub">Ne manquez pas cette opportunité de vivre dans un condo moderne<br>offrant confort, commodités et emplacement idéal.</div>
-  </div>
-  <button class="btn-visit" onclick="openModal()">Demander une visite</button>
 </div>
 
-<!-- SITE FOOTER -->
+<div class="amenities-bar">
+  <div class="amenities-grid">
+    <div class="amen-item"><div class="amen-icon">&#10052;</div><div class="amen-label">CLIMATISATION<br>AVEC MINISPLIT</div></div>
+    <div class="amen-item"><div class="amen-icon">&#9195;</div><div class="amen-label">ASCENSEUR</div></div>
+    <div class="amen-item"><div class="amen-icon">&#128664;</div><div class="amen-label">STATIONNEMENT<br>INTÉRIEUR INCLUS</div></div>
+    <div class="amen-item"><div class="amen-icon">&#127968;</div><div class="amen-label">BALCON<br>PRIVÉ</div></div>
+    <div class="amen-item"><div class="amen-icon">&#127947;</div><div class="amen-label">SALLE D&#8217;ENTRAÎNEMENT<br>DANS L&#8217;IMMEUBLE</div></div>
+    <div class="amen-item"><div class="amen-icon">&#127918;</div><div class="amen-label">SALLE<br>DE JEUX</div></div>
+  </div>
+</div>
+
+<div class="gallery-grid">
+  <div class="gallery-img" style="background-image:url('img/vauquelin/salon.png');"></div>
+  <div class="gallery-img" style="background-image:url('img/vauquelin/cuisine.png');"></div>
+  <div class="gallery-img" style="background-image:url('img/vauquelin/chambre.png');"></div>
+  <div class="gallery-img" style="background-image:url('img/vauquelin/salle-de-bain.png');"></div>
+  <div class="gallery-img" style="background-image:url('img/vauquelin/balcon.png');"></div>
+  <div class="gallery-img" style="background-image:url('img/vauquelin/exterieur-reel.jpeg');"></div>
+</div>
+
+<div class="split-block" style="flex-direction:row-reverse;">
+  <div class="split-photo" style="background-image:url('img/vauquelin/foret.jpeg');"></div>
+  <div class="split-text">
+    <p class="split-eyebrow">LOCALISATION PRATIQUE</p>
+    <h2 class="split-title">Au coeur<br><em>de Longueuil</em></h2>
+    <p class="split-body">Situé sur le boulevard Vauquelin à Longueuil, vous êtes à proximité de tout ce dont vous avez besoin.</p>
+    <p class="split-label">COMMODITÉS À PROXIMITÉ</p>
+    <ul class="split-list">
+      <li>Commerces, épiceries et restaurants</li>
+      <li>Arrêt d&#8217;autobus en face</li>
+      <li>Accès rapide aux autoroutes 132, 116 et 20</li>
+      <li>Train de banlieue à proximité</li>
+      <li>Pistes cyclables et espaces verts &lt; 5 min à pied</li>
+      <li>Proche de l&#8217;aéroport Montréal&#8211;Saint-Hubert</li>
+    </ul>
+    <p style="font-size:12px;letter-spacing:1px;color:var(--accent);font-family:'Oswald',sans-serif;font-weight:400;text-transform:uppercase;margin-top:16px;">5 boul. Vauquelin, appt. 111<br>Longueuil, Québec</p>
+  </div>
+</div>
+
+<div class="cta-section">
+  <p class="cta-eyebrow">INTÉRESSÉ?</p>
+  <h2 class="cta-title">Planifiez votre visite<br>dès maintenant</h2>
+  <p class="cta-price">1&#8239;595&#8239;$ / mois</p>
+  <p class="cta-note">Non meublé &middot; Stationnement intérieur et locker inclus</p>
+  <span class="cta-avail">DISPONIBLE DÈS AOÛT 2025</span>
+  <p style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:24px;line-height:1.7;">Ne manquez pas cette opportunité de vivre dans un condo moderne<br>offrant confort, commodités et emplacement idéal.</p>
+  <button class="split-cta" onclick="document.getElementById('modalOverlay').classList.add('open')">DEMANDER UNE VISITE</button>
+</div>
+
+<div class="crosssell">
+  <div>
+    <p class="crosssell-eyebrow">AUSSI CHEZ STOCKMAN 21</p>
+    <h2 class="crosssell-title">Tour des<br>Canadiens 2</h2>
+    <p class="crosssell-desc">Une résidence emblematique au cœur du centre-ville de Montréal. Vue panoramique sur la ville, commodités haut de gamme, à deux pas du Centre Bell.</p>
+    <a href="montreal.html" class="split-cta">DÉCOUVRIR TDC2 →</a>
+  </div>
+  <div class="crosssell-img" style="background-image:url('img/montreal/tdc2-street.jpg');"></div>
+</div>
+
 <footer class="site-footer">
-  <div class="footer-brand">STOCKMAN <span>21</span> · Immobilier</div>
-  <div style="display:flex;gap:16px;align-items:center;">
-    <a href="montreal.html" style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#C09A5B'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Montréal</a>
-    <span style="color:rgba(255,255,255,.2);font-size:.6rem;">·</span>
-    <a href="huatulco.html" style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#C09A5B'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Huatulco</a>
+  <a href="index.html" class="footer-brand">STOCKMAN 21</a>
+  <div class="footer-links">
+    <a href="montreal.html" class="footer-link">Montréal</a>
+    <span style="color:rgba(255,255,255,.2);">&middot;</span>
+    <a href="huatulco.html" class="footer-link">Huatulco</a>
+    <span style="color:rgba(255,255,255,.2);">&middot;</span>
+    <a href="tel:5144271983" class="footer-link">514 427-1983</a>
+    <span style="color:rgba(255,255,255,.2);">&middot;</span>
+    <a href="mailto:stockman21ceo@gmail.com" class="footer-link">stockman21ceo@gmail.com</a>
   </div>
-  <div class="footer-contact">
-    <a href="tel:5144271983">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.12-1.12a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      514 427-1983
-    </a>
-    <a href="mailto:stockman21ceo@gmail.com">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      stockman21ceo@gmail.com
-    </a>
-    <span class="footer-web">stockman21.com</span>
-  </div>
+  <div class="footer-copy">&copy; 2025 Stockman 21 &middot; IMMOBILIER</div>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="visitModal">
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
       <div>
         <div class="modal-title">Planifier une visite</div>
-        <div class="modal-subtitle">5 boul. Vauquelin, appt. 111 · Longueuil</div>
+        <div class="modal-subtitle">5 boul. Vauquelin, appt. 111 &middot; Longueuil</div>
       </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-avail-note">
-        📅 Les visites sont disponibles <strong>les samedis et dimanches uniquement</strong>, de <strong>10h à 15h</strong>, à partir de <strong>août 2025</strong>.
+        &#128197; Les visites sont disponibles <strong>les samedis et dimanches uniquement</strong>, de <strong>10h à 15h</strong>, à partir de <strong>août 2025</strong>.
       </div>
       <div id="formContent">
         <div class="form-row">
@@ -604,18 +277,17 @@ body {
           <label class="form-label">Courriel <span>*</span></label>
           <input type="email" class="form-input" id="email" placeholder="votre@email.com">
         </div>
-        <div class="form-group">
-          <label class="form-label">Téléphone</label>
-          <input type="tel" class="form-input" id="phone" placeholder="514 000-0000">
-        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Date de visite <span>*</span></label>
-            <input type="date" class="form-input" id="visitDate" max="2027-06-30">
-            <div class="form-note">Samedis et dimanches · Disponible dès août 2025</div>
+            <label class="form-label">Jour souhaité <span>*</span></label>
+            <select class="form-select" id="visitDay">
+              <option value="">Choisir</option>
+              <option>Samedi</option>
+              <option>Dimanche</option>
+            </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Heure <span>*</span></label>
+            <label class="form-label">Heure souhaitée <span>*</span></label>
             <select class="form-select" id="visitTime">
               <option value="">Choisir</option>
               <option>10:00</option><option>10:30</option>
@@ -634,67 +306,35 @@ body {
         <button class="btn-submit" id="submitBtn" onclick="submitForm()">Envoyer ma demande de visite</button>
       </div>
       <div class="form-success" id="formSuccess">
-        <div class="form-success-icon">✅</div>
+        <div class="form-success-icon">&#9989;</div>
         <div class="form-success-title">Demande envoyée!</div>
-        <div class="form-success-text">Merci pour votre intérêt. Nous vous contacterons dans les 24 heures pour confirmer votre visite.<br><br><strong>stockman21ceo@gmail.com</strong> · <strong>514 427-1983</strong></div>
+        <div class="form-success-text">Merci pour votre intérêt. Nous vous contacterons dans les 24 heures pour confirmer votre visite.</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function makePH(label) {
-  const d = document.createElement('div');
-  d.className = 'photo-placeholder';
-  d.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div class="photo-placeholder-text">' + label + '</div>';
-  return d;
-}
-function openModal() {
-  document.getElementById('visitModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  document.getElementById('visitModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.getElementById('visitModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
-
-(function() {
-  const today = new Date();
-  const minStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-  document.getElementById('visitDate').min = minStr;
-})();
-
-document.getElementById('visitDate').addEventListener('change', function() {
-  const d = new Date(this.value + 'T12:00:00');
-  if (d.getDay() !== 0 && d.getDay() !== 6) {
-    alert('Les visites sont disponibles les samedis et dimanches uniquement.');
-    this.value = '';
-  }
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if(e.target === this) this.classList.remove('open');
 });
 
 function submitForm() {
-  const fn = document.getElementById('firstName').value.trim();
-  const ln = document.getElementById('lastName').value.trim();
-  const em = document.getElementById('email').value.trim();
-  const dt = document.getElementById('visitDate').value;
-  const tm = document.getElementById('visitTime').value;
-  if (!fn || !ln || !em || !dt || !tm) { alert('Veuillez remplir tous les champs obligatoires (*).'); return; }
-  const d = new Date(dt + 'T12:00:00');
-  if (d.getDay() !== 0 && d.getDay() !== 6) { alert('Veuillez choisir un samedi ou un dimanche.'); return; }
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true; btn.textContent = 'Envoi en cours…';
-  const dateStr = d.toLocaleDateString('fr-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-  const msg = document.getElementById('message').value.trim();
-  const subject = encodeURIComponent('Demande de visite – 5 boul. Vauquelin – ' + dateStr + ' à ' + tm);
-  const body = encodeURIComponent('Nouvelle demande de visite\n\nPrénom : ' + fn + '\nNom : ' + ln + '\nCourriel : ' + em + '\nTéléphone : ' + (document.getElementById('phone').value.trim() || 'Non fourni') + '\nDate : ' + dateStr + '\nHeure : ' + tm + (msg ? '\n\nMessage :\n' + msg : '') + '\n\n---\n5 boul. Vauquelin, appt. 111, Longueuil');
+  var fn = document.getElementById('firstName').value.trim();
+  var ln = document.getElementById('lastName').value.trim();
+  var em = document.getElementById('email').value.trim();
+  var day = document.getElementById('visitDay').value;
+  var time = document.getElementById('visitTime').value;
+  if(!fn || !ln || !em || !day || !time) {
+    alert('Veuillez remplir tous les champs obligatoires.');
+    return;
+  }
+  var msg = document.getElementById('message').value || '(aucun)';
+  var subject = encodeURIComponent('Demande de visite – Condo Vauquelin – ' + day + ' ' + time);
+  var body = encodeURIComponent('Prénom: ' + fn + '\nNom: ' + ln + '\nCourriel: ' + em + '\nJour: ' + day + '\nHeure: ' + time + '\nMessage: ' + msg);
   window.location.href = 'mailto:stockman21ceo@gmail.com?subject=' + subject + '&body=' + body;
-  setTimeout(function() {
-    document.getElementById('formContent').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Envoyer ma demande de visite';
-  }, 1200);
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
 }
 </script>
 </body>
