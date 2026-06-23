@@ -1,338 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-v="1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stockman 21 | Huatulco Vacation Rentals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --cream:#f5f0e8; --navy:#0b1b30; --gold:#c9963a;
-  --gold-d:#a87c2a; --border:rgba(201,150,58,.25);
-  --text:#2c2c2c; --muted:#7a7a7a; --white:#ffffff;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;}
-.lang-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:6px 16px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;cursor:pointer;transition:all .2s;}
-.lang-btn.active,.lang-btn:hover{background:var(--gold);color:var(--white);}
-.hero{position:relative;height:88vh;min-height:540px;overflow:hidden;display:flex;align-items:flex-end;padding-top:60px;}
-.hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&auto=format&fit=crop&q=85');background-size:cover;background-position:center 35%;}
-.hero-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,27,48,.95) 0%,rgba(11,27,48,.45) 48%,rgba(11,27,48,.1) 100%);}
-.hero-c{position:relative;z-index:1;padding:0 72px 80px;max-width:800px;}
-.hero-eye{font-size:11px;font-weight:600;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;}
-.hero-h{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:300;color:var(--white);line-height:1.1;margin-bottom:22px;}
-.hero-h em{font-style:italic;}
-.hero-line{width:48px;height:1px;background:var(--gold);margin:24px 0;opacity:.65;}
-.hero-sub{font-size:14px;font-weight:300;color:rgba(255,255,255,.72);line-height:1.88;max-width:510px;}
-.trust{background:var(--gold);padding:28px 72px;display:flex;justify-content:center;gap:60px;flex-wrap:wrap;}
-.t-item{text-align:center;color:var(--white);}
-.t-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;display:block;}
-.t-lbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.85;}
-.props{padding:96px 72px;background:var(--cream);}
-.s-head{text-align:center;margin-bottom:68px;}
-.s-eye{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
-.s-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--text);}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1200px;margin:0 auto;}
-.card{background:var(--white);border:1px solid var(--border);display:flex;flex-direction:column;}
-.c-photos{display:grid;grid-template-columns:2fr 1fr 1fr;height:220px;gap:3px;}
-.c-photos .ph{background-size:cover;background-position:center;}
-.c-body{padding:32px;display:flex;flex-direction:column;flex:1;}
-.c-tags{font-size:9.5px;font-weight:700;letter-spacing:.17em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;line-height:1.5;}
-.c-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:12px;}
-.c-name{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--text);line-height:1.1;}
-.c-pblock{text-align:right;flex-shrink:0;}
-.c-price{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:var(--text);}
-.c-plbl{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:2px;}
-.c-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--gold);padding:6px 14px;font-size:9.5px;font-weight:700;letter-spacing:.13em;color:var(--text);margin-bottom:22px;}
-.c-badge .st{color:var(--gold);}
-.c-desc{font-size:13px;line-height:1.88;color:#505050;margin-bottom:22px;}
-.c-ams{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-bottom:28px;flex:1;}
-.am{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);}
-.am::before{content:'✓';color:var(--gold);font-weight:700;font-size:13px;flex-shrink:0;}
-.c-cta{display:block;background:var(--gold);color:var(--white);border:none;padding:17px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;text-align:center;text-decoration:none;cursor:pointer;transition:background .2s;margin-top:auto;}
-.c-cta:hover{background:var(--gold-d);}
-.detail{background:var(--navy);padding:96px 72px;border-top:1px solid rgba(201,150,58,.15);}
-.d-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start;}
-.d-eye{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
-.d-name{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,3.5vw,3rem);font-weight:300;color:var(--gold);margin-bottom:22px;}
-.d-desc{font-size:14px;line-height:1.92;color:rgba(255,255,255,.68);margin-bottom:28px;}
-.d-host{display:flex;align-items:center;gap:12px;}
-.d-stars{color:var(--gold);font-size:15px;letter-spacing:2px;}
-.d-badges{font-size:9.5px;font-weight:500;letter-spacing:.1em;color:rgba(255,255,255,.42);text-transform:uppercase;}
-.d-atitle{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:24px;}
-.d-ams{list-style:none;display:flex;flex-direction:column;gap:16px;margin-bottom:44px;}
-.d-ams li{display:flex;align-items:center;gap:14px;font-size:14px;color:rgba(255,255,255,.82);}
-.d-ams li::before{content:'✓';color:var(--gold);font-size:14px;flex-shrink:0;}
-.d-hr{border:none;border-top:1px solid rgba(201,150,58,.2);margin:36px 0;}
-.d-slbl{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
-.d-sn{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:var(--white);line-height:1;}
-footer{background:#060e1a;padding:40px 72px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
-.f-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--gold);}
-.f-txt{font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.08em;}
-@media(max-width:960px){
-  .grid,.d-in{grid-template-columns:1fr;gap:44px;}
-  .props,.detail{padding:72px 32px;}
-  .trust{padding:28px 32px;gap:32px;}
-  .hero-c{padding:0 32px 60px;}
-  footer{padding:32px;flex-direction:column;text-align:center;}
-}
-.tamarindos-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 20px 0 24px;
-  width: 100%;
-}
-.tamarindos-gallery img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.2s;
-}
-.tamarindos-gallery img:hover { transform: scale(1.02); }
-@media (max-width: 768px) {
-  .tamarindos-gallery { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-  .tamarindos-gallery { grid-template-columns: 1fr; }
-}
+:root{--white:#fff;--off-white:#f8f6f3;--light-grey:#f2f0ed;--mid-grey:#e8e4df;--text:#747474;--text-dark:#3d3d3d;--accent:#c5a47e;--accent-dark:#a8845a;--tan-bg:#c5a47e;--border:#e0dbd4;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;line-height:1.7;}
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-brand-name{font-family:'Oswald',sans-serif;font-size:15px;font-weight:500;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;}
+.nav-brand-tag{font-size:9px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;display:block;}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-link{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);text-decoration:none;padding:10px 20px;border:1px solid var(--border);transition:all .2s;}
+.nav-link:hover{border-color:var(--accent);color:var(--accent);}
+.lang-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:6px 14px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.lang-btn.active,.lang-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--white);}
+.hero{position:relative;height:100vh;min-height:600px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding-bottom:80px;margin-top:0;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 50%,rgba(0,0,0,.1) 100%);}
+.hero-content{position:relative;z-index:1;padding:0 80px;max-width:900px;}
+.hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:600;}
+.hero-title{font-family:'Oswald',sans-serif;font-size:clamp(48px,7vw,90px);font-weight:400;letter-spacing:3px;color:#fff;text-transform:uppercase;line-height:1.05;margin-bottom:24px;}
+.hero-title em{font-style:italic;font-weight:300;text-transform:none;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.8);max-width:520px;line-height:1.8;}
+.stats-bar{background:var(--tan-bg);display:flex;justify-content:space-around;align-items:center;padding:32px 60px;}
+.stat{text-align:center;}
+.stat-val{display:block;font-family:'Oswald',sans-serif;font-size:28px;font-weight:400;letter-spacing:2px;color:var(--white);text-transform:uppercase;}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-top:4px;display:block;}
+.split-block{display:flex;min-height:560px;}
+.split-photo{flex:1;background-size:cover;background-position:center;}
+.split-text{flex:1;padding:80px 60px;display:flex;flex-direction:column;justify-content:center;background:var(--white);}
+.split-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-weight:600;}
+.split-title{font-family:'Oswald',sans-serif;font-size:42px;font-weight:400;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;line-height:1.1;margin-bottom:12px;}
+.split-sub{font-size:11px;letter-spacing:1px;color:var(--accent);margin-bottom:20px;}
+.split-body{font-size:14px;line-height:1.8;color:var(--text);margin-bottom:28px;}
+.split-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dark);font-weight:600;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.split-list{list-style:none;margin-bottom:24px;}
+.split-list li{font-size:13px;color:var(--text);padding:5px 0;border-bottom:1px solid var(--mid-grey);display:flex;align-items:center;gap:8px;}
+.split-list li::before{content:'—';color:var(--accent);}
+.split-cta{display:inline-block;background:var(--accent);color:var(--white);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:16px 32px;transition:background .2s;}
+.split-cta:hover{background:var(--accent-dark);}
+.split-block-sm{min-height:336px;max-height:336px;overflow:hidden;align-items:start;}
+.props-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.prop-card{background:var(--white);border:1px solid var(--border);}
+.prop-card-img{height:280px;background-size:cover;background-position:center;}
+.prop-card-body{padding:40px;}
+.prop-card-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:12px;display:block;}
+.prop-card-title{font-family:'Oswald',sans-serif;font-size:32px;font-weight:400;letter-spacing:2px;color:var(--text-dark);text-transform:uppercase;margin-bottom:8px;}
+.prop-card-price{font-size:13px;letter-spacing:1px;color:var(--accent);font-weight:600;margin-bottom:20px;}
+.prop-card-desc{font-size:14px;line-height:1.8;color:var(--text);margin-bottom:24px;}
+.prop-amenities{list-style:none;margin-bottom:28px;}
+.prop-amenities li{font-size:12px;letter-spacing:.5px;color:var(--text);padding:5px 0;border-bottom:1px solid var(--mid-grey);display:flex;align-items:center;gap:8px;}
+.prop-amenities li::before{content:'—';color:var(--accent);}
+.prop-cta{display:inline-block;background:var(--accent);color:var(--white);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:14px 28px;margin-bottom:10px;transition:background .2s;width:100%;text-align:center;}
+.prop-cta:hover{background:var(--accent-dark);}
+.prop-cta-sec{display:block;border:1px solid var(--accent);color:var(--accent);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:10px 20px;transition:all .2s;width:100%;text-align:center;margin-top:10px;}
+.prop-cta-sec:hover{background:var(--accent);color:var(--white);}
+.props-section{padding:80px 60px 40px;}
+.section-heading{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:40px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.crosssell{background:var(--text-dark);padding:80px 60px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.crosssell-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.crosssell-title{font-family:'Oswald',sans-serif;font-size:48px;font-weight:400;letter-spacing:3px;color:var(--white);text-transform:uppercase;line-height:1.05;margin-bottom:16px;}
+.crosssell-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+.crosssell-desc{font-size:14px;color:#aaa;line-height:1.8;margin-bottom:32px;}
+.crosssell-img{height:420px;background-size:cover;background-position:center;}
+.site-footer{background:var(--off-white);border-top:1px solid var(--border);padding:48px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-brand{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;letter-spacing:3px;color:var(--text-dark);text-transform:uppercase;text-decoration:none;}
+.footer-copy{font-size:11px;letter-spacing:1px;color:var(--text);}
+@media(max-width:900px){.props-grid{grid-template-columns:1fr;}.crosssell{grid-template-columns:1fr;}.props-section{padding:60px 24px 30px;}.crosssell{padding:60px 24px;}.split-block{flex-direction:column!important;}.split-photo{height:300px;}.split-text{padding:48px 24px;}.hero-content{padding:0 32px;}.site-nav{padding:16px 20px;}.stats-bar{flex-wrap:wrap;gap:20px;padding:24px;}.site-footer{flex-direction:column;gap:16px;text-align:center;}}
 </style>
 </head>
 <body>
 
-
-<header style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,27,48,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,150,58,.18);">
-  <div style="max-width:1200px;margin:0 auto;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <svg width="32" height="32" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M48 18 C46 30 44 44 43 62" stroke="#c9963a" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C36 12 22 13 16 22" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C42 8 46 0 55 4" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M47 22 C56 10 66 10 70 18" stroke="#c9963a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <polygon points="22,58 36,44 50,58" fill="#c9963a"/>
-        <rect x="25" y="57" width="22" height="16" fill="#c9963a"/>
-        <rect x="32" y="61" width="8" height="8" fill="#0b1b30" rx="1"/>
-        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#c9963a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      </svg>
-      <div>
-        <div style="font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;line-height:1;">STOCKMAN <span style="color:#c9963a">21</span></div>
-        <div style="font-family:'Montserrat',sans-serif;font-size:.45rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(201,150,58,.7);margin-top:2px;">YOUR BETTER LIFE.</div>
-      </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">
+    <div>
+      <span class="nav-brand-name">STOCKMAN 21</span>
+      <span class="nav-brand-tag">YOUR BETTER LIFE.</span>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <a href="montreal.html" class="lang-btn" style="text-decoration:none;">Montréal →</a>
-      <a href="vauquelin.html" class="lang-btn" style="text-decoration:none;">Vauquelin →</a>
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">FR</button>
-    </div>
+  </a>
+  <div class="nav-links">
+    <a href="montreal.html" class="nav-link">Montr&#233;al &#8594;</a>
+    <a href="vauquelin.html" class="nav-link">Vauquelin &#8594;</a>
+    <button class="lang-btn active">EN</button>
+    <button class="lang-btn">FR</button>
   </div>
-</header>
+</nav>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-ov"></div>
-  <div class="hero-c">
-    <p class="hero-eye" data-en="Huatulco · Oaxaca · Pacific Mexico" data-fr="Huatulco · Oaxaca · Mexique Pacifique">Huatulco · Oaxaca · Pacific Mexico</p>
-    <h1 class="hero-h" data-en="Your Private Retreat<br>on the <em>Pacific Coast</em>" data-fr="Votre retraite privée<br>sur la <em>côte Pacifique</em>">Your Private Retreat<br>on the <em>Pacific Coast</em></h1>
-    <div class="hero-line"></div>
-    <p class="hero-sub"
-       data-en="Two handpicked vacation rentals in Huatulco — Mexico's best-kept secret on the Pacific. Pristine turquoise bays, warm weather year-round, and a world away from the crowds."
-       data-fr="Deux locations de vacances soigneusement choisies à Huatulco — le secret le mieux gardé du Mexique sur le Pacifique. Baies turquoise immaculées, climat chaud toute l'année, loin de la foule.">
-      Two handpicked vacation rentals in Huatulco — Mexico's best-kept secret on the Pacific. Pristine turquoise bays, warm weather year-round, and a world away from the crowds.
-    </p>
+<section class="hero" style="background-image:url('img/huatulco/huatulco-hero.jpg');">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">HUATULCO &middot; OAXACA &middot; PACIFIC MEXICO</p>
+    <h1 class="hero-title">Your Private Retreat<br><em>on the Pacific Coast</em></h1>
+    <p class="hero-sub">Two handpicked vacation rentals in Huatulco &#8212; Mexico&#39;s best-kept secret on the Pacific. Pristine turquoise bays, warm weather year-round, and a world away from the crowds.</p>
   </div>
 </section>
 
-<div class="trust">
-  <div class="t-item"><span class="t-num">5.0 ★</span><span class="t-lbl" data-en="Perfect rating" data-fr="Note parfaite">Perfect rating</span></div>
-  <div class="t-item"><span class="t-num" data-en="Superhost" data-fr="Superhôte">Superhost</span><span class="t-lbl" data-en="Verified on Airbnb" data-fr="Vérifié sur Airbnb">Verified on Airbnb</span></div>
-  <div class="t-item"><span class="t-num">&lt;24h</span><span class="t-lbl" data-en="Response time" data-fr="Délai de réponse">Response time</span></div>
-  <div class="t-item"><span class="t-num">10</span><span class="t-lbl" data-en="Nights minimum" data-fr="Nuits minimum">Nights minimum</span></div>
+<div class="stats-bar">
+  <div class="stat"><span class="stat-val">5.0 &#9733;</span><span class="stat-lbl">PERFECT RATING</span></div>
+  <div class="stat"><span class="stat-val">Superhost</span><span class="stat-lbl">VERIFIED ON AIRBNB</span></div>
+  <div class="stat"><span class="stat-val">&lt;24h</span><span class="stat-lbl">RESPONSE TIME</span></div>
+  <div class="stat"><span class="stat-val">10</span><span class="stat-lbl">NIGHTS MINIMUM</span></div>
 </div>
 
-<section class="props">
-  <div class="s-head">
-    <p class="s-eye" data-en="Our Properties" data-fr="Nos propriétés">Our Properties</p>
-    <h2 class="s-title" data-en="Choose Your Escape" data-fr="Choisissez votre escapade">Choose Your Escape</h2>
-  </div>
-  <div class="grid">
-    <div class="card">
-      <div class="c-photos">
-        <div class="ph" style="background-image:url('https://a0.muscache.com/im/pictures/hosting/Hosting-1488542384895420095/original/109e488a-0a3b-45ba-b3ae-09f951804ca3.jpeg')"></div>
-        <div class="ph" style="background-image:url('https://a0.muscache.com/im/pictures/hosting/Hosting-1488542384895420095/original/88b122c6-9500-4a7a-9c0b-0a94db99b9ec.jpeg')"></div>
-        <div class="ph" style="background-image:url('https://a0.muscache.com/im/pictures/hosting/Hosting-1488542384895420095/original/55dede9a-c3aa-4e6b-876f-a80fbdeb4dcc.jpeg')"></div>
-      </div>
-      <div class="c-body">
-        <div class="c-tags" data-en="SUITE · BEACH CLUBS · CHAHUÉ · BLUE FLAG" data-fr="SUITE · BEACH CLUBS · CHAHUÉ · PAVILLON BLEU">SUITE · BEACH CLUBS · CHAHUÉ · BLUE FLAG</div>
-        <div class="c-row">
-          <h3 class="c-name">Suite Solana</h3>
-          <div class="c-pblock"><div class="c-price">$110–130 CAD</div><div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div></div>
-        </div>
-        <div class="c-badge"><span class="st">★★★★★</span><span data-en="NEW · 5.0" data-fr="NOUVEAU · 5.0">NEW · 5.0</span></div>
-        <p class="c-desc" data-en="Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation." data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée.">Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation.</p>
-        <div class="c-ams">
-          <div class="am" data-en="Starlink WiFi" data-fr="WiFi Starlink">Starlink WiFi</div>
-          <div class="am" data-en="Swimming pool" data-fr="Piscine">Swimming pool</div>
-          <div class="am" data-en="Air conditioning" data-fr="Climatisation">Air conditioning</div>
-          <div class="am" data-en="Fully equipped kitchen" data-fr="Cuisine entièrement équipée">Fully equipped kitchen</div>
-        </div>
-        <a href="https://www.airbnb.ca/rooms/1488542384895420095" target="_blank" rel="noopener noreferrer" class="c-cta" data-en="BOOK ON AIRBNB — SUITE SOLANA →" data-fr="RÉSERVER SUR AIRBNB — SUITE SOLANA →">BOOK ON AIRBNB — SUITE SOLANA →</a>
-        <a href="solana-guests.html" class="c-cta" style="background:transparent;border:1px solid var(--gold);color:var(--gold);margin-top:8px;" data-en="GUEST REGISTRATION FORMS →" data-fr="FORMULAIRES D'ENREGISTREMENT →">GUEST REGISTRATION FORMS →</a>
+<section class="props-section">
+  <p class="section-heading">OUR PROPERTIES</p>
+  <div class="props-grid">
+    <div class="prop-card">
+      <div class="prop-card-img" style="background-image:url('img/huatulco/huatulco-hero.jpg');"></div>
+      <div class="prop-card-body">
+        <span class="prop-card-tag">SUITE &middot; BEACH CLUBS &middot; CHAHU&#201; &middot; BLUE FLAG</span>
+        <h2 class="prop-card-title">Suite Solana</h2>
+        <p class="prop-card-price">$110&#8211;130 CAD &nbsp;&middot;&nbsp; PER NIGHT &nbsp;&nbsp; &#9733;&#9733;&#9733;&#9733;&#9733; NEW &middot; 5.0</p>
+        <p class="prop-card-desc">Newly built suite, bright and spacious. Beach access. Perfect for those seeking independence, space and extended relaxation.</p>
+        <ul class="prop-amenities">
+          <li>Starlink WiFi</li>
+          <li>Swimming pool</li>
+          <li>Air conditioning</li>
+          <li>Fully equipped kitchen</li>
+        </ul>
+        <a href="https://www.airbnb.ca/rooms/1488542384895420095" target="_blank" rel="noopener noreferrer" class="prop-cta">BOOK ON AIRBNB &#8212; SUITE SOLANA &#8594;</a>
+        <a href="solana-guests.html" class="prop-cta-sec">GUEST REGISTRATION FORMS &#8594;</a>
       </div>
     </div>
-    <div class="card">
-      <div class="c-photos">
-        <div class="ph" style="background-image:url('img/tamarindos/tamarindos-rooftop.jpg')"></div>
-        <div class="ph" style="background-image:url('img/tamarindos/tamarindos-bedroom.jpg')"></div>
-        <div class="ph" style="background-image:url('img/tamarindos/tamarindos-pool.jpg')"></div>
-      </div>
-      <div class="c-body">
-        <div class="c-tags" data-en="BOUTIQUE BUILDING · CHAHUÉ BEACH · COMMERCIAL ZONE" data-fr="IMMEUBLE BOUTIQUE · PLAGE CHAHUÉ · ZONE COMMERCIALE">BOUTIQUE BUILDING · CHAHUÉ BEACH · COMMERCIAL ZONE</div>
-        <div class="c-row">
-          <h3 class="c-name">Loft Tamarindos</h3>
-          <div class="c-pblock"><div class="c-price">$70–105 CAD</div><div class="c-plbl" data-en="per night" data-fr="par nuit">per night</div></div>
-        </div>
-        <div class="c-badge"><span class="st">★★★★★</span><span data-en="SUPERHOST · 4.9" data-fr="SUPERHÔTE · 4.9">SUPERHOST · 4.9</span></div>
-        <p class="c-desc" data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers." data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou le télétravail.">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers.</p>
-        <div class="c-ams">
-          <div class="am" data-en="Stable WiFi" data-fr="WiFi stable">Stable WiFi</div>
-          <div class="am" data-en="Swimming pool" data-fr="Piscine">Swimming pool</div>
-          <div class="am" data-en="Beach 10 min away" data-fr="Plage à 10 minutes">Beach 10 min away</div>
-          <div class="am" data-en="Full kitchen" data-fr="Cuisine complète">Full kitchen</div>
-        </div>
-        <a href="https://www.airbnb.ca/rooms/47977613" target="_blank" rel="noopener noreferrer" class="c-cta" data-en="BOOK ON AIRBNB — LOFT TAMARINDOS →" data-fr="RÉSERVER SUR AIRBNB — LOFT TAMARINDOS →">BOOK ON AIRBNB — LOFT TAMARINDOS →</a>
+    <div class="prop-card">
+      <div class="prop-card-img" style="background-image:url('img/tamarindos/tamarindos-rooftop.jpg');"></div>
+      <div class="prop-card-body">
+        <span class="prop-card-tag">BOUTIQUE BUILDING &middot; CHAHU&#201; BEACH &middot; COMMERCIAL ZONE</span>
+        <h2 class="prop-card-title">Loft Tamarindos</h2>
+        <p class="prop-card-price">$70&#8211;105 CAD &nbsp;&middot;&nbsp; PER NIGHT &nbsp;&nbsp; &#9733;&#9733;&#9733;&#9733;&#9733; SUPERHOST &middot; 4.9</p>
+        <p class="prop-card-desc">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco&#39;s main bays &#8212; ideal for couples or remote workers.</p>
+        <ul class="prop-amenities">
+          <li>Stable WiFi</li>
+          <li>Swimming pool</li>
+          <li>Beach 10 min away</li>
+          <li>Full kitchen</li>
+        </ul>
+        <a href="https://www.airbnb.ca/rooms/47977613" target="_blank" rel="noopener noreferrer" class="prop-cta">BOOK ON AIRBNB &#8212; LOFT TAMARINDOS &#8594;</a>
       </div>
     </div>
   </div>
 </section>
 
-<section class="detail">
-  <div class="d-in">
-    <div>
-      <p class="d-eye" data-en="Property detail" data-fr="Détail de la propriété">Property detail</p>
-      <h2 class="d-name">Suite Solana</h2>
-      <p class="d-desc" data-en="Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco." data-fr="Suite nouvellement construite, lumineuse et spacieuse. Accès à la plage à seulement 5 minutes. Parfaite pour ceux qui cherchent indépendance, espace et relaxation prolongée au cœur de Huatulco.">Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco.</p>
-      <div class="d-host"><div class="d-stars">★★★★★</div><div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div></div>
-    </div>
-    <div>
-      <p class="d-atitle" data-en="Full Amenities" data-fr="Équipements complets">Full Amenities</p>
-      <ul class="d-ams">
-        <li data-en="Starlink WiFi" data-fr="WiFi Starlink">Starlink WiFi</li>
-        <li data-en="Swimming pool" data-fr="Piscine">Swimming pool</li>
-        <li data-en="Air conditioning" data-fr="Climatisation">Air conditioning</li>
-        <li data-en="Fully equipped kitchen" data-fr="Cuisine entièrement équipée">Fully equipped kitchen</li>
-        <li data-en="Beach within walking distance" data-fr="Plage accessible à pied">Beach within walking distance</li>
-        <li data-en="Supermarket 5 min walk" data-fr="Supermarché à 5 min à pied">Supermarket 5 min walk</li>
-      </ul>
-      <hr class="d-hr">
-      <p class="d-slbl" data-en="Minimum stay" data-fr="Séjour minimum">Minimum stay</p>
-      <p class="d-sn" data-en="10 nights" data-fr="10 nuits">10 nights</p>
-    </div>
+<div class="split-block" style="flex-direction:row-reverse;">
+  <div class="split-photo" style="background-image:url('img/huatulco/huatulco-hero.jpg');"></div>
+  <div class="split-text">
+    <p class="split-eyebrow">PROPERTY DETAIL</p>
+    <h2 class="split-title">Suite Solana</h2>
+    <p class="split-sub">&#9733;&#9733;&#9733;&#9733;&#9733; SUPERHOST &middot; VERIFIED IDENTITY &middot; RESPONSE &lt;24H</p>
+    <p class="split-body">Newly built suite, bright and spacious. Beach access just 5 minutes away. Perfect for those seeking independence, space and extended relaxation in the heart of Huatulco.</p>
+    <p class="split-label">FULL AMENITIES</p>
+    <ul class="split-list">
+      <li>Starlink WiFi</li>
+      <li>Swimming pool</li>
+      <li>Air conditioning</li>
+      <li>Fully equipped kitchen</li>
+      <li>Beach within walking distance</li>
+      <li>Supermarket 5 min walk</li>
+    </ul>
+    <p class="split-label" style="margin-top:20px;">MINIMUM STAY</p>
+    <p style="font-size:14px;color:var(--text);margin-bottom:28px;">10 nights</p>
+    <a href="https://www.airbnb.ca/rooms/1488542384895420095" target="_blank" rel="noopener noreferrer" class="split-cta">BOOK SUITE SOLANA &#8594;</a>
   </div>
-</section>
+</div>
 
-<section class="detail" style="border-top:1px solid rgba(201,150,58,.07)">
-  <div class="d-in">
-    <div>
-      <p class="d-eye" data-en="Property detail" data-fr="Détail de la propriété">Property detail</p>
-      <h2 class="d-name">Loft Tamarindos</h2>
-      <p class="d-desc" data-en="Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast." data-fr="Loft moderne dans un immeuble boutique. Calme et central. À 10 minutes des principales baies de Huatulco — idéal pour les couples ou les travailleurs à distance qui découvrent la côte Pacifique.">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco's main bays — ideal for couples or remote workers discovering the Pacific Coast.</p>
-      <div class="d-host"><div class="d-stars">★★★★★</div><div class="d-badges" data-en="SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H" data-fr="SUPERHÔTE · IDENTITÉ VÉRIFIÉE · RÉPONSE &lt;24H">SUPERHOST · VERIFIED IDENTITY · RESPONSE &lt;24H</div></div>
-    </div>
-    <div>
-      <p class="d-atitle" data-en="Full Amenities" data-fr="Équipements complets">Full Amenities</p>
-      <ul class="d-ams">
-        <li data-en="Stable WiFi" data-fr="WiFi stable">Stable WiFi</li>
-        <li data-en="Swimming pool" data-fr="Piscine">Swimming pool</li>
-        <li data-en="Beach 10 min away" data-fr="Plage à 10 minutes">Beach 10 min away</li>
-        <li data-en="Full kitchen" data-fr="Cuisine complète">Full kitchen</li>
-        <li data-en="Washer included" data-fr="Lave-linge inclus">Washer included</li>
-        <li data-en="Free parking" data-fr="Stationnement gratuit">Free parking</li>
-      </ul>
-      <hr class="d-hr">
-      <p class="d-slbl" data-en="Minimum stay" data-fr="Séjour minimum">Minimum stay</p>
-      <p class="d-sn" data-en="10 nights" data-fr="10 nuits">10 nights</p>
-    </div>
+<div class="split-block">
+  <div class="split-photo" style="background-image:url('img/tamarindos/tamarindos-bedroom.jpg');"></div>
+  <div class="split-text">
+    <p class="split-eyebrow">PROPERTY DETAIL</p>
+    <h2 class="split-title">Loft Tamarindos</h2>
+    <p class="split-sub">&#9733;&#9733;&#9733;&#9733;&#9733; SUPERHOST &middot; VERIFIED IDENTITY &middot; RESPONSE &lt;24H</p>
+    <p class="split-body">Modern loft in a boutique building. Quiet and central. 10 minutes from Huatulco&#39;s main bays &#8212; ideal for couples or remote workers discovering the Pacific Coast.</p>
+    <p class="split-label">FULL AMENITIES</p>
+    <ul class="split-list">
+      <li>Stable WiFi</li>
+      <li>Swimming pool</li>
+      <li>Beach 10 min away</li>
+      <li>Full kitchen</li>
+      <li>Washer included</li>
+      <li>Free parking</li>
+    </ul>
+    <p class="split-label" style="margin-top:20px;">MINIMUM STAY</p>
+    <p style="font-size:14px;color:var(--text);margin-bottom:28px;">10 nights</p>
+    <a href="https://www.airbnb.ca/rooms/47977613" target="_blank" rel="noopener noreferrer" class="split-cta">BOOK LOFT TAMARINDOS &#8594;</a>
   </div>
-</section>
+</div>
 
-<section id="montreal" style="background:var(--cream);padding:80px 24px;border-top:1px solid var(--border);">
-  <div style="max-width:900px;margin:0 auto;text-align:center;">
-    <p class="s-eye" data-en="Now in Montréal" data-fr="Maintenant à Montréal">Now in Montréal</p>
-    <h2 class="s-title" style="margin-bottom:14px;">Tour des Canadiens 2</h2>
-    <p style="color:var(--gold);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;" data-en="Downtown · Floor 45 · Available May 2027" data-fr="Centre-ville · Étage 45 · Disponible mai 2027">Downtown · Floor 45 · Available May 2027</p>
-    <p style="color:var(--muted);font-size:14px;max-width:600px;margin:0 auto 32px;line-height:1.8;" data-en="A landmark residence steps from Centre Bell and the heart of downtown Montréal. Panoramic city views, world-class amenities, and the Stockman 21 standard of living." data-fr="Une résidence emblématique à deux pas du Centre Bell et du cœur du centre-ville de Montréal. Vues panoramiques, équipements de classe mondiale et le standard de vie Stockman 21.">A landmark residence steps from Centre Bell and the heart of downtown Montréal. Panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
-    <a href="montreal.html" class="c-cta" style="display:inline-block;max-width:340px;text-decoration:none;" data-en="DISCOVER TOUR DES CANADIENS 2 →" data-fr="DÉCOUVRIR TOUR DES CANADIENS 2 →">DISCOVER TOUR DES CANADIENS 2 →</a>
+<div class="crosssell">
+  <div>
+    <p class="crosssell-eyebrow">NOW IN MONTR&#201;AL</p>
+    <h2 class="crosssell-title">Tour des<br>Canadiens 2</h2>
+    <p class="crosssell-sub">DOWNTOWN &middot; FLOOR 45 &middot; AVAILABLE MAY 2027</p>
+    <p class="crosssell-desc">A landmark residence steps from Centre Bell and the heart of downtown Montr&#233;al. Panoramic city views, world-class amenities, and the Stockman 21 standard of living.</p>
+    <a href="montreal.html" class="split-cta">DISCOVER TOUR DES CANADIENS 2 &#8594;</a>
   </div>
-</section>
+  <div class="crosssell-img" style="background-image:url('img/montreal/tdc2-street.jpg');"></div>
+</div>
 
-<footer>
-  <div class="f-brand">Stockman 21</div>
-  <p class="f-txt">© 2025 Stockman 21 · Huatulco, Oaxaca, México</p>
+<footer class="site-footer">
+  <a href="index.html" class="footer-brand">STOCKMAN 21</a>
+  <p class="footer-copy">&#169; 2025 Stockman 21 &middot; Huatulco, Oaxaca, M&#233;xico</p>
 </footer>
 
-<div id="stk-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:99999;align-items:center;justify-content:center;flex-direction:column;">
-  <button onclick="stkLbClose()" style="position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;line-height:1;">×</button>
-  <button onclick="stkLbNav(-1)" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">‹</button>
-  <button onclick="stkLbNav(1)"  style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#b8955a;font-size:36px;cursor:pointer;line-height:1;">›</button>
-  <img id="stk-lb-img" src="" alt="" style="max-width:90vw;max-height:88vh;object-fit:contain;border-radius:4px;">
-</div>
-<script>
-(function(){
-  var activeImgs = [], cur = 0;
-  function init(){
-    var lb = document.getElementById('stk-lightbox');
-    lb.style.display = 'none';
-    var tamImgs = Array.from(document.querySelectorAll('.tamarindos-gallery img'));
-    tamImgs.forEach(function(img, i){
-      img.addEventListener('click', function(){ stkLbOpen(i, tamImgs); });
-    });
-    lb.addEventListener('click', function(e){ if(e.target===lb) stkLbClose(); });
-    document.addEventListener('keydown', function(e){
-      var lb = document.getElementById('stk-lightbox');
-      if(lb.style.display==='flex'){
-        if(e.key==='Escape') stkLbClose();
-        if(e.key==='ArrowLeft') stkLbNav(-1);
-        if(e.key==='ArrowRight') stkLbNav(1);
-      }
-    });
-  }
-  window.stkLbOpen = function(i, imgs){
-    activeImgs = imgs || activeImgs;
-    cur = i;
-    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
-    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
-    document.getElementById('stk-lightbox').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  };
-  window.stkLbClose = function(){
-    document.getElementById('stk-lightbox').style.display = 'none';
-    document.body.style.overflow = '';
-  };
-  window.stkLbNav = function(dir){
-    cur = (cur + dir + activeImgs.length) % activeImgs.length;
-    document.getElementById('stk-lb-img').src = activeImgs[cur].src;
-    document.getElementById('stk-lb-img').alt = activeImgs[cur].alt;
-  };
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else { init(); }
-})();
-</script>
-
-<script>
-function setLang(lang){
-  document.getElementById('btn-en').classList.toggle('active',lang==='en');
-  document.getElementById('btn-fr').classList.toggle('active',lang==='fr');
-  document.querySelectorAll('[data-en]').forEach(el=>{
-    el.innerHTML=el.getAttribute('data-'+lang);
-  });
-  document.documentElement.lang=lang;
-}
-</script>
 </body>
 </html>
