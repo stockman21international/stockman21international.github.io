@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-v="10">
+<html lang="en" data-v="11">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -219,6 +219,17 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
     <div class="section-label" data-en="Request Your Stay" data-fr="Demander Votre S&#233;jour">Request Your Stay</div>
     <h2 data-en="Select Your Dates" data-fr="Choisissez Vos Dates">Select Your Dates</h2>
     <p class="block-body" data-en="Indicate your preferred dates. We will confirm availability and send you a personalized offer within 24 hours." data-fr="Indiquez vos dates souhait&#233;es. Nous confirmerons la disponibilit&#233; et vous enverrons une offre personnalis&#233;e dans les 24 heures.">Indicate your preferred dates. We will confirm availability and send you a personalized offer within 24 hours.</p>
+
+    <!-- Availability Notice -->
+    <div class="availability-notice" style="background:#fffbf5;border-left:3px solid #c5a47e;padding:20px 24px;margin:24px 0 28px;border-radius:2px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:1.1rem;color:#c5a47e;flex-shrink:0;">&#9432;</span>
+        <div>
+          <p style="font-family:'Oswald',sans-serif;font-size:.75rem;letter-spacing:.15em;color:#c5a47e;text-transform:uppercase;margin-bottom:6px;" data-en="Limited Seasonal Availability" data-fr="Disponibilité Saisonnière Limitée">Limited Seasonal Availability</p>
+          <p style="font-size:.85rem;font-weight:300;line-height:1.7;color:#555;" data-en="This property serves as a primary residence and is available for rent on select dates during the summer season only. Once you submit your request, we will share the available dates and confirm your booking personally." data-fr="Cette propriété est une résidence principale et n&apos;est disponible à la location que certaines périodes durant la saison estivale. Une fois votre demande soumise, nous vous communiquerons les dates disponibles et confirmerons votre séjour personnellement.">This property serves as a primary residence and is available for rent on select dates during the summer season only. Once you submit your request, we will share the available dates and confirm your booking personally.</p>
+        </div>
+      </div>
+    </div>
     <div class="cal-wrap">
       <div class="cal-display" id="mtl-cal-display">Select your check-in date</div>
       <div class="cal-months" id="mtl-cal"></div>
