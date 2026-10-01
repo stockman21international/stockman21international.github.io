@@ -41,6 +41,8 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
 .split-img{overflow:hidden;}
 .split-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s;}
 .split-img img:hover{transform:scale(1.03);}
+.split-img img.mirror-photo{transform:scaleX(-1);}
+.split-img img.mirror-photo:hover{transform:scale(-1.03,1.03);}
 .split-text{padding:80px 60px;display:flex;flex-direction:column;justify-content:center;}
 .split-text.bg-off{background:var(--off-white);}
 .split-text.bg-tan{background:var(--tan-bg);}
@@ -131,7 +133,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
   <div class="nav-links">
     <a class="nav-btn" href="huatulco.html">&#8592; Huatulco</a>
     <a class="nav-btn" href="vauquelin.html">Vauquelin &#8594;</a>
-      <a class="nav-btn" href="stationnement.html">Parking</a>
+      <a class="nav-btn" href="stationnement.html">Stationnement centre-ville</a>
     <button class="nav-lang active" id="btn-en" onclick="setLang('en')">EN</button>
     <button class="nav-lang" id="btn-fr" onclick="setLang('fr')">FR</button>
     <a class="nav-reserve" href="#reserve" data-en="Reserve &#8594;" data-fr="R&#233;server &#8594;">Reserve &#8594;</a>
@@ -161,7 +163,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
 </section>
 
 <section class="split-block">
-  <div class="split-img"><img src="img/montreal/tdc2-bedroom.jpg" alt="Tour des Canadiens 2 exterior"></div>
+  <div class="split-img"><img class="mirror-photo" src="img/montreal/tdc2-bedroom.jpg" alt="Tour des Canadiens 2 exterior"></div>
   <div class="split-text">
     <div class="section-label" data-en="The Property" data-fr="La Propri&#233;t&#233;">The Property</div>
     <h2 class="block-title" data-en="An Icon Above the Skyline" data-fr="Une Ic&#244;ne Au-Dessus des Toits">An Icon Above the Skyline</h2>
