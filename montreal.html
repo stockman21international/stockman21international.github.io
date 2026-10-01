@@ -120,16 +120,25 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
   .reserve-section{padding:60px 30px;}
   .gallery-header,.credits-section,.site-footer{padding-left:30px;padding-right:30px;}
 }
+
+.stockman-brand{display:inline-flex;align-items:center;flex-shrink:0;text-decoration:none}
+@media(max-width:1000px){.site-nav{flex-wrap:wrap;gap:10px;padding:10px 20px}.nav-links{flex-wrap:wrap;gap:6px}}
+
+.stockman-brand{gap:10px;color:#3d3d3d}.stockman-brand svg{width:36px;height:36px;flex-shrink:0}.stockman-name{display:block;font-family:Montserrat,Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:1.28px;line-height:1.1}.stockman-name b{color:#C09A5B}.stockman-tag{display:block;font-family:Montserrat,Arial,sans-serif;font-size:7.2px;font-weight:600;letter-spacing:1.58px;color:#a8845a;margin-top:4px}
 </style>
 </head>
 <body>
 <nav class="site-nav">
-  <a class="nav-brand" href="https://stockman21international.github.io/">
-    <div>
-      <span class="nav-brand-name">Stockman 21</span>
-      <span class="nav-brand-tag">Your Better Life</span>
-    </div>
-  </a>
+  <a class="stockman-brand" href="montreal.html" aria-label="Stockman 21 — Your Better Life"><svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 18 C46 30 44 44 43 62" stroke="#C09A5B" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C36 12 22 13 16 22" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C42 8 46 0 55 4" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M47 22 C56 10 66 10 70 18" stroke="#C09A5B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <polygon points="22,58 36,44 50,58" fill="#C09A5B"/>
+        <rect x="25" y="57" width="22" height="16" fill="#C09A5B"/>
+        <rect x="32" y="61" width="8" height="8" fill="#0b121e" rx="1"/>
+        <path d="M10,76 C16,72 22,78 28,76 C34,74 40,78 46,76 C52,74 58,78 64,76" stroke="#C09A5B" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      </svg><span><span class="stockman-name">STOCKMAN <b>21</b></span><span class="stockman-tag">YOUR BETTER LIFE.</span></span></a>
   <div class="nav-links">
     <a class="nav-btn" href="huatulco.html">&#8592; Huatulco</a>
     <a class="nav-btn" href="vauquelin.html">Vauquelin &#8594;</a>
