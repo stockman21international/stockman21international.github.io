@@ -54,8 +54,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
 .block-title.wht{color:#fff;}
 .block-body{font-size:15px;line-height:1.8;color:var(--text);margin-bottom:16px;}
 .block-body.wht{color:rgba(255,255,255,.85);}
-.price-display{font-family:'Oswald',sans-serif;font-size:34px;font-weight:500;color:var(--accent);letter-spacing:2px;margin:20px 0 6px;}
-.price-note{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text);}
+.price-note{margin-top:20px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text);}
 .amen-list{list-style:none;margin-top:16px;}
 .amen-list li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);font-size:14px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:10px;}
 .amen-list li::before{content:'\2192';color:rgba(255,255,255,.5);font-size:12px;}
@@ -94,6 +93,9 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
 .fta{resize:vertical;min-height:80px;}
 .fsub{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:background .25s;width:100%;}
 .fsub:hover{background:var(--accent-dark);}
+#mtl-form[hidden]{display:none;}
+.mtl-direct{text-decoration:none;margin-top:16px;}
+.mtl-direct-note{line-height:1.5;}
 .fnote{grid-column:1/-1;font-size:12px;color:var(--text);text-align:center;padding-top:8px;}
 #mtl-msg{grid-column:1/-1;text-align:center;padding:12px;font-size:13px;display:none;}
 #mtl-msg.ok{background:#e8f4e8;color:#2d6a2d;border:1px solid #b8d8b8;}
@@ -177,7 +179,6 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
     <div class="section-label" data-en="The Property" data-fr="La Propri&#233;t&#233;">The Property</div>
     <h2 class="block-title" data-en="An Icon Above the Skyline" data-fr="Une Ic&#244;ne Au-Dessus des Toits">An Icon Above the Skyline</h2>
     <p class="block-body" data-en="Tour des Canadiens 2 is a 54-storey landmark of sparkling glass rising above downtown Montr&#233;al. A luxurious marble-accented lobby welcomes you home, connecting via Skybridge to Windsor Station and the Bell Centre. Floor 45 offers sweeping panoramic views of the city and beyond." data-fr="La Tour des Canadiens 2 est un rep&#232;re de 54 &#233;tages en verre scintillant dominant le centre-ville de Montr&#233;al. Un lobby en marbre luxueux vous accueille, reli&#233; par passerelle &#224; la Gare Windsor et au Centre Bell. Le 45e &#233;tage offre des vues panoramiques &#224; couper le souffle.">Tour des Canadiens 2 is a 54-storey landmark of sparkling glass rising above downtown Montr&#233;al. A luxurious marble-accented lobby welcomes you home, connecting via Skybridge to Windsor Station and the Bell Centre. Floor 45 offers sweeping panoramic views of the city and beyond.</p>
-    <div class="price-display" data-en="From 295&nbsp;$/night" data-fr="&#192; partir de 295&nbsp;$/nuit">From 295&nbsp;$/night</div>
     <div class="price-note" data-en="Available for sublet from December 2026 to March 2027" data-fr="Disponible en sous-location de décembre 2026 à mars 2027">Available for sublet from December 2026 to March 2027</div>
   </div>
 </section>
@@ -248,7 +249,9 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
     </div>
     <input type="hidden" id="mtl-date-from">
     <input type="hidden" id="mtl-date-to">
-    <form class="res-form" id="mtl-form" onsubmit="submitMtlForm(event)">
+    <a class="fsub mtl-direct" id="mtl-email-direct" href="mailto:stockman21ceo@gmail.com"><span data-en="Email us directly" data-fr="Écrivez-nous directement">Email us directly</span><span aria-hidden="true">&#8594;</span></a>
+    <p class="fnote mtl-direct-note" data-en="This opens an email draft. Send it from your email app to contact us." data-fr="Ce bouton ouvre un brouillon. Envoyez-le depuis votre application de courriel pour nous joindre.">This opens an email draft. Send it from your email app to contact us.</p>
+    <form class="res-form" id="mtl-form" onsubmit="submitMtlForm(event)" hidden>
       <div class="fg"><label class="fl" data-en="First &amp; Last Name" data-fr="Pr&#233;nom &amp; Nom">First &amp; Last Name</label><input class="fi" type="text" id="mtl-name" required placeholder="John Smith"></div>
       <div class="fg"><label class="fl" data-en="Email" data-fr="Courriel">Email</label><input class="fi" type="email" id="mtl-email" required placeholder="john@example.com"></div>
       <div class="fg"><label class="fl" data-en="Phone (optional)" data-fr="T&#233;l&#233;phone (optionnel)">Phone (optional)</label><input class="fi" type="tel" id="mtl-phone" placeholder="+1 514 000-0000"></div>
@@ -297,60 +300,97 @@ function setLang(l){
   var MF=["Janvier","F\u00e9vrier","Mars","Avril","Mai","Juin","Juillet","Ao\u00fbt","Septembre","Octobre","Novembre","D\u00e9cembre"];
   var DW=["Su","Mo","Tu","We","Th","Fr","Sa"];
   var DF=["Di","Lu","Ma","Me","Je","Ve","Sa"];
-  var SY=2026,SM=11,sd=null,ed=null,hd=null;
+  var SY=2026,SM=11,MONTHS=4,sd=null,ed=null,hd=null;
+  // UTC dates represent calendar days, not instants of a stay.
+  function dayAt(y,m,d){return new Date(Date.UTC(y,m,d));}
+  function iso(d){return d?d.toISOString().slice(0,10):"";}
+  var firstDay=iso(dayAt(SY,SM,1)),lastDay=iso(dayAt(SY,SM+MONTHS,0));
+  var mtlDate=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Toronto",year:"numeric",month:"2-digit",day:"2-digit"});
+  function todayMtl(){
+    var p={};mtlDate.formatToParts(new Date()).forEach(function(part){p[part.type]=part.value;});
+    return p.year+"-"+p.month+"-"+p.day;
+  }
+  window.__mtlValidDates=function(from,to){
+    return /^\d{4}-\d{2}-\d{2}$/.test(from)&&/^\d{4}-\d{2}-\d{2}$/.test(to)&&
+      [from,to].every(function(d){var parsed=new Date(d);return Number.isFinite(parsed.getTime())&&iso(parsed)===d;})&&
+      from>=firstDay&&from>=todayMtl()&&from<to&&to<=lastDay;
+  };
   function upd(){
     var el=document.getElementById("mtl-cal-display"),fr=lang()==="fr";
+    document.getElementById("mtl-date-from").value=iso(sd);
+    document.getElementById("mtl-date-to").value=iso(ed);
+    updateMtlEmailDraft();
     if(!sd){el.textContent=fr?"S\u00e9lectionnez votre date d'arriv\u00e9e":"Select your check-in date";return;}
-    var m1=(fr?MF:MN)[sd.getMonth()];
-    if(!ed){el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getDate()+", "+sd.getFullYear()+" \u2014 S\u00e9lectionnez la date de d\u00e9part":"Check-in: "+m1+" "+sd.getDate()+", "+sd.getFullYear()+" \u2014 Select check-out";return;}
-    var m2=(fr?MF:MN)[ed.getMonth()],nights=Math.round((ed-sd)/864e5);
-    el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getDate()+" \u2192 D\u00e9part\u00a0: "+m2+" "+ed.getDate()+", "+ed.getFullYear()+" \u00b7 "+nights+" nuit"+(nights!==1?"s":""):"Check-in: "+m1+" "+sd.getDate()+" \u2192 Check-out: "+m2+" "+ed.getDate()+", "+ed.getFullYear()+" \u00b7 "+nights+" night"+(nights!==1?"s":"");
-    document.getElementById("mtl-date-from").value=sd.toISOString().split("T")[0];
-    document.getElementById("mtl-date-to").value=ed.toISOString().split("T")[0];
+    var m1=(fr?MF:MN)[sd.getUTCMonth()];
+    if(!ed){el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 S\u00e9lectionnez la date de d\u00e9part":"Check-in: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 Select check-out";return;}
+    var m2=(fr?MF:MN)[ed.getUTCMonth()],nights=(ed-sd)/864e5;
+    el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getUTCDate()+" \u2192 D\u00e9part\u00a0: "+m2+" "+ed.getUTCDate()+", "+ed.getUTCFullYear()+" \u00b7 "+nights+" nuit"+(nights!==1?"s":""):"Check-in: "+m1+" "+sd.getUTCDate()+" \u2192 Check-out: "+m2+" "+ed.getUTCDate()+", "+ed.getUTCFullYear()+" \u00b7 "+nights+" night"+(nights!==1?"s":"");
   }
   function render(){
     var fr=lang()==="fr",c=document.getElementById("mtl-cal");
     if(!c)return;
     c.innerHTML="";
-    var today=new Date();today.setHours(0,0,0,0);
-    for(var mi=0;mi<4;mi++){
-      var mo=(SM+mi)%12,yr=SY+(SM+mi>=12?1:0);
+    var today=todayMtl();
+    for(var mi=0;mi<MONTHS;mi++){
+      var mo=(SM+mi)%12,yr=SY+Math.floor((SM+mi)/12);
       var md=document.createElement("div");
       var tt=document.createElement("div");tt.className="cal-month-title";tt.textContent=(fr?MF:MN)[mo]+" "+yr;md.appendChild(tt);
       var dg=document.createElement("div");dg.className="cal-grid";
       (fr?DF:DW).forEach(function(d){var dw=document.createElement("div");dw.className="cal-dow";dw.textContent=d;dg.appendChild(dw);});
-      var first=new Date(yr,mo,1).getDay();
+      var first=dayAt(yr,mo,1).getUTCDay();
       for(var i=0;i<first;i++){var em=document.createElement("div");em.className="cal-day cal-empty";dg.appendChild(em);}
-      var days=new Date(yr,mo+1,0).getDate();
+      var days=dayAt(yr,mo+1,0).getUTCDate();
       for(var day=1;day<=days;day++){
         (function(dt){
-          var de=document.createElement("div");de.className="cal-day";de.textContent=dt.getDate();
-          if(dt<today)de.classList.add("cal-past");
+          var de=document.createElement("div");de.className="cal-day";de.textContent=dt.getUTCDate();
+          var date=iso(dt);
+          if(date<today){de.classList.add("cal-past");de.setAttribute("aria-disabled","true");dg.appendChild(de);return;}
           if(sd&&dt.getTime()===sd.getTime())de.classList.add("cal-start");
           if(ed&&dt.getTime()===ed.getTime())de.classList.add("cal-end");
           if((sd&&ed&&dt>sd&&dt<ed)||(!ed&&hd&&sd&&dt>sd&&dt<=hd))de.classList.add("cal-in-range");
-          de.onclick=function(){if(!sd||(sd&&ed)){sd=dt;ed=null;}else{if(dt<=sd){sd=dt;ed=null;}else{ed=dt;}}hd=null;upd();render();};
+          de.onclick=function(){
+            if(date<todayMtl())return;
+            if(date===lastDay&&(!sd||ed||dt<=sd||iso(sd)<todayMtl()))return;
+            if(!sd||ed||dt<=sd||iso(sd)<todayMtl()){sd=dt;ed=null;}else{ed=dt;}
+            hd=null;upd();render();
+          };
           de.onmouseenter=function(){if(sd&&!ed){hd=dt;render();}};
           de.onmouseleave=function(){if(sd&&!ed){hd=null;render();}};
           dg.appendChild(de);
-        })(new Date(yr,mo,day));
+        })(dayAt(yr,mo,day));
       }
       md.appendChild(dg);c.appendChild(md);
     }
-    if(sd){var r=document.createElement("div");r.className="cal-reset";r.textContent=fr?"\u2715 Effacer les dates":"\u2715 Clear dates";r.onclick=function(){sd=null;ed=null;hd=null;upd();render();};c.appendChild(r);}
+    if(sd){var r=document.createElement("div");r.className="cal-reset";r.textContent=fr?"\u2715 Effacer les dates":"\u2715 Clear dates";r.onclick=reset;c.appendChild(r);}
   }
+  function reset(){sd=null;ed=null;hd=null;upd();render();}
   render();upd();
-  window.__calRender=render;window.__calUpdate=upd;
+  window.__calRender=render;window.__calUpdate=upd;window.__mtlResetDates=reset;
 })();
+// Enable the form only when the Stockman 21 EmailJS public key is configured.
+function updateMtlEmailDraft(){
+  var link=document.getElementById("mtl-email-direct");
+  var fr=lang()==="fr",from=document.getElementById("mtl-date-from").value,to=document.getElementById("mtl-date-to").value;
+  var subject=fr?"Demande de sous-location – Studio Montréal":"Sublet inquiry – Montréal Studio";
+  var body=window.__mtlValidDates(from,to) ? (fr?"Arrivée : ":"Check-in: ")+from+"\n"+(fr?"Départ : ":"Check-out: ")+to+"\n\n" : "";
+  link.href="mailto:stockman21ceo@gmail.com?subject="+encodeURIComponent(subject)+(body?"&body="+encodeURIComponent(body):"");
+}
+document.getElementById("mtl-email-direct").addEventListener("click",updateMtlEmailDraft);
+function mtlPublicKey(){return "";}
+if(mtlPublicKey()&&window.emailjs)document.getElementById("mtl-form").hidden=false;
 async function submitMtlForm(e){
   e.preventDefault();
   var msg=document.getElementById("mtl-msg"),fr=lang()==="fr";
   var from=document.getElementById("mtl-date-from").value,to=document.getElementById("mtl-date-to").value;
-  if(!from||!to){msg.className="err";msg.style.display="block";
-    msg.textContent=fr?"Veuillez s\u00e9lectionner vos dates sur le calendrier.":"Please select your dates on the calendar.";return;}
-  var btn=e.target.querySelector("button[type=submit]");btn.disabled=true;
+  if(!window.__mtlValidDates(from,to)){msg.className="err";msg.style.display="block";
+    msg.textContent=fr?"Veuillez s\u00e9lectionner des dates valides sur le calendrier.":"Please select valid dates on the calendar.";return;}
+  var publicKey=mtlPublicKey();
+  if(!publicKey||!window.emailjs){
+    return showMtlContact(msg,fr);
+  }
+  var btn=e.target.querySelector("button[type=submit]");if(btn.disabled)return;btn.disabled=true;
   try{
-    await emailjs.init("user_placeholder");
+    emailjs.init({publicKey:publicKey});
     await emailjs.send("service_stockman21","template_mtl",{
       name:document.getElementById("mtl-name").value,
       email:document.getElementById("mtl-email").value,
@@ -361,12 +401,19 @@ async function submitMtlForm(e){
     });
     msg.className="ok";msg.style.display="block";
     msg.textContent=fr?"Demande envoy\u00e9e\u00a0! Nous vous r\u00e9pondrons dans les 24 heures.":"Request sent! We will reply within 24 hours.";
-    e.target.reset();
+    e.target.reset();window.__mtlResetDates();
   }catch(err){
-    msg.className="err";msg.style.display="block";
-    msg.textContent=fr?"Erreur d'envoi. Contactez-nous\u00a0: stockman21ceo@gmail.com":"Send error. Contact us: stockman21ceo@gmail.com";
+    showMtlContact(msg,fr);
   }
   btn.disabled=false;
+}
+function showMtlContact(msg,fr){
+  msg.className="err";msg.style.display="block";
+  msg.textContent=fr?"Votre demande n’a pas été envoyée. Écrivez-nous à ":"Your request was not sent. Email us at ";
+  var link=document.createElement("a");
+  link.href="mailto:stockman21ceo@gmail.com";
+  link.textContent="stockman21ceo@gmail.com";
+  msg.appendChild(link);
 }
 </script>
 </body>
