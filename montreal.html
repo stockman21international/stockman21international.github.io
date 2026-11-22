@@ -300,7 +300,7 @@ function setLang(l){
   var MF=["Janvier","F\u00e9vrier","Mars","Avril","Mai","Juin","Juillet","Ao\u00fbt","Septembre","Octobre","Novembre","D\u00e9cembre"];
   var DW=["Su","Mo","Tu","We","Th","Fr","Sa"];
   var DF=["Di","Lu","Ma","Me","Je","Ve","Sa"];
-  var SY=2026,SM=11,MONTHS=4,sd=null,ed=null,hd=null;
+  var SY=2026,SM=11,MONTHS=4,sd=null,ed=null;
   // UTC dates represent calendar days, not instants of a stay.
   function dayAt(y,m,d){return new Date(Date.UTC(y,m,d));}
   function iso(d){return d?d.toISOString().slice(0,10):"";}
@@ -347,15 +347,13 @@ function setLang(l){
           if(date<today){de.classList.add("cal-past");de.setAttribute("aria-disabled","true");dg.appendChild(de);return;}
           if(sd&&dt.getTime()===sd.getTime())de.classList.add("cal-start");
           if(ed&&dt.getTime()===ed.getTime())de.classList.add("cal-end");
-          if((sd&&ed&&dt>sd&&dt<ed)||(!ed&&hd&&sd&&dt>sd&&dt<=hd))de.classList.add("cal-in-range");
+          if(sd&&ed&&dt>sd&&dt<ed)de.classList.add("cal-in-range");
           de.onclick=function(){
             if(date<todayMtl())return;
             if(date===lastDay&&(!sd||ed||dt<=sd||iso(sd)<todayMtl()))return;
             if(!sd||ed||dt<=sd||iso(sd)<todayMtl()){sd=dt;ed=null;}else{ed=dt;}
-            hd=null;upd();render();
+            upd();render();
           };
-          de.onmouseenter=function(){if(sd&&!ed){hd=dt;render();}};
-          de.onmouseleave=function(){if(sd&&!ed){hd=null;render();}};
           dg.appendChild(de);
         })(dayAt(yr,mo,day));
       }
@@ -363,7 +361,7 @@ function setLang(l){
     }
     if(sd){var r=document.createElement("div");r.className="cal-reset";r.textContent=fr?"\u2715 Effacer les dates":"\u2715 Clear dates";r.onclick=reset;c.appendChild(r);}
   }
-  function reset(){sd=null;ed=null;hd=null;upd();render();}
+  function reset(){sd=null;ed=null;upd();render();}
   render();upd();
   window.__calRender=render;window.__calUpdate=upd;window.__mtlResetDates=reset;
 })();
