@@ -166,7 +166,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
       <div class="hero-sep"></div>
       <div class="hero-meta-item"><span class="label" data-en="Available:&nbsp;" data-fr="Disponible&nbsp;:&nbsp;">Available:&nbsp;</span><span class="value" data-en="December 2026 to March 2027" data-fr="Décembre 2026 à mars 2027">December 2026 to March 2027</span></div>
       <div class="hero-sep"></div>
-      <div class="hero-meta-item"><span class="label" data-en="Stay:&nbsp;" data-fr="S&#233;jour&nbsp;:&nbsp;">Stay:&nbsp;</span><span class="value" data-en="Short-Term" data-fr="Court terme">Short-Term</span></div>
+      <div class="hero-meta-item"><span class="label" data-en="Stay:&nbsp;" data-fr="S&#233;jour&nbsp;:&nbsp;">Stay:&nbsp;</span><span class="value" data-en="Sublet" data-fr="Sous-location">Sublet</span></div>
     </div>
   </div>
 </section>
@@ -238,7 +238,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
         <span style="font-size:1.1rem;color:#c5a47e;flex-shrink:0;">&#9432;</span>
         <div>
           <p style="font-family:'Oswald',sans-serif;font-size:.75rem;letter-spacing:.15em;color:#c5a47e;text-transform:uppercase;margin-bottom:6px;" data-en="Limited Seasonal Availability" data-fr="Disponibilité Saisonnière Limitée">Limited Seasonal Availability</p>
-          <p style="font-size:.85rem;font-weight:300;line-height:1.7;color:#555;" data-en="This property serves as a primary residence and is available for rent on select dates during the summer season only. Once you submit your request, we will share the available dates and confirm your booking personally." data-fr="Cette propriété est une résidence principale et n&apos;est disponible à la location que certaines périodes durant la saison estivale. Une fois votre demande soumise, nous vous communiquerons les dates disponibles et confirmerons votre séjour personnellement.">This property serves as a primary residence and is available for rent on select dates during the summer season only. Once you submit your request, we will share the available dates and confirm your booking personally.</p>
+          <p style="font-size:.85rem;font-weight:300;line-height:1.7;color:#555;" data-en="The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation." data-fr="Le Studio est disponible en sous-location de décembre 2026 à mars 2027. Les dates exactes restent à confirmer.">The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation.</p>
         </div>
       </div>
     </div>
@@ -265,7 +265,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
   <div class="credits-inner">
     <div><div class="cr-label" data-en="Developer" data-fr="Promoteur">Developer</div><div class="cr-val">Canderel Residential</div></div>
     <div><div class="cr-label" data-en="Architect" data-fr="Architecte">Architect</div><div class="cr-val">Page + Steele / IBI Group</div></div>
-    <div><div class="cr-label" data-en="Short-Term Rental" data-fr="Location Courte Dur&#233;e">Short-Term Rental</div><div class="cr-val">Stockman 21 International</div></div>
+    <div><div class="cr-label" data-en="Sublet" data-fr="Sous-location">Sublet</div><div class="cr-val">Stockman 21 International</div></div>
   </div>
 </section>
 
@@ -313,7 +313,7 @@ function setLang(l){
     if(!c)return;
     c.innerHTML="";
     var today=new Date();today.setHours(0,0,0,0);
-    for(var mi=0;mi<2;mi++){
+    for(var mi=0;mi<4;mi++){
       var mo=(SM+mi)%12,yr=SY+(SM+mi>=12?1:0);
       var md=document.createElement("div");
       var tt=document.createElement("div");tt.className="cal-month-title";tt.textContent=(fr?MF:MN)[mo]+" "+yr;md.appendChild(tt);
