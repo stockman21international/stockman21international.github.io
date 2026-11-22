@@ -239,7 +239,7 @@ body{background:var(--white);color:var(--text);font-family:'Montserrat',sans-ser
         <span style="font-size:1.1rem;color:#c5a47e;flex-shrink:0;">&#9432;</span>
         <div>
           <p style="font-family:'Oswald',sans-serif;font-size:.75rem;letter-spacing:.15em;color:#c5a47e;text-transform:uppercase;margin-bottom:6px;" data-en="Limited Seasonal Availability" data-fr="Disponibilité Saisonnière Limitée">Limited Seasonal Availability</p>
-          <p style="font-size:.85rem;font-weight:300;line-height:1.7;color:#555;" data-en="The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation." data-fr="Le Studio est disponible en sous-location de décembre 2026 à mars 2027. Les dates exactes restent à confirmer.">The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation.</p>
+          <p style="font-size:.85rem;font-weight:300;line-height:1.7;color:#555;" data-en="The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation. Minimum stay: 32 nights." data-fr="Le Studio est disponible en sous-location de décembre 2026 à mars 2027. Les dates exactes restent à confirmer. Séjour minimum de 32 nuits.">The Studio is available for sublet from December 2026 to March 2027. Exact dates are subject to confirmation. Minimum stay: 32 nights.</p>
         </div>
       </div>
     </div>
@@ -300,11 +300,12 @@ function setLang(l){
   var MF=["Janvier","F\u00e9vrier","Mars","Avril","Mai","Juin","Juillet","Ao\u00fbt","Septembre","Octobre","Novembre","D\u00e9cembre"];
   var DW=["Su","Mo","Tu","We","Th","Fr","Sa"];
   var DF=["Di","Lu","Ma","Me","Je","Ve","Sa"];
-  var SY=2026,SM=11,MONTHS=4,sd=null,ed=null;
+  var SY=2026,SM=11,MONTHS=4,MIN_NIGHTS=32,DAY_MS=864e5,sd=null,ed=null;
   // UTC dates represent calendar days, not instants of a stay.
   function dayAt(y,m,d){return new Date(Date.UTC(y,m,d));}
   function iso(d){return d?d.toISOString().slice(0,10):"";}
   var firstDay=iso(dayAt(SY,SM,1)),lastDay=iso(dayAt(SY,SM+MONTHS,0));
+  var lastArrival=iso(new Date(Date.parse(lastDay)-MIN_NIGHTS*DAY_MS));
   var mtlDate=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Toronto",year:"numeric",month:"2-digit",day:"2-digit"});
   function todayMtl(){
     var p={};mtlDate.formatToParts(new Date()).forEach(function(part){p[part.type]=part.value;});
@@ -313,7 +314,7 @@ function setLang(l){
   window.__mtlValidDates=function(from,to){
     return /^\d{4}-\d{2}-\d{2}$/.test(from)&&/^\d{4}-\d{2}-\d{2}$/.test(to)&&
       [from,to].every(function(d){var parsed=new Date(d);return Number.isFinite(parsed.getTime())&&iso(parsed)===d;})&&
-      from>=firstDay&&from>=todayMtl()&&from<to&&to<=lastDay;
+      from>=firstDay&&from>=todayMtl()&&to<=lastDay&&Date.parse(to)-Date.parse(from)>=MIN_NIGHTS*DAY_MS;
   };
   function upd(){
     var el=document.getElementById("mtl-cal-display"),fr=lang()==="fr";
@@ -322,7 +323,7 @@ function setLang(l){
     updateMtlEmailDraft();
     if(!sd){el.textContent=fr?"S\u00e9lectionnez votre date d'arriv\u00e9e":"Select your check-in date";return;}
     var m1=(fr?MF:MN)[sd.getUTCMonth()];
-    if(!ed){el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 S\u00e9lectionnez la date de d\u00e9part":"Check-in: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 Select check-out";return;}
+    if(!ed){el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 S\u00e9lectionnez le d\u00e9part (32 nuits min.)":"Check-in: "+m1+" "+sd.getUTCDate()+", "+sd.getUTCFullYear()+" \u2014 Select check-out (32 nights min.)";return;}
     var m2=(fr?MF:MN)[ed.getUTCMonth()],nights=(ed-sd)/864e5;
     el.textContent=fr?"Arriv\u00e9e\u00a0: "+m1+" "+sd.getUTCDate()+" \u2192 D\u00e9part\u00a0: "+m2+" "+ed.getUTCDate()+", "+ed.getUTCFullYear()+" \u00b7 "+nights+" nuit"+(nights!==1?"s":""):"Check-in: "+m1+" "+sd.getUTCDate()+" \u2192 Check-out: "+m2+" "+ed.getUTCDate()+", "+ed.getUTCFullYear()+" \u00b7 "+nights+" night"+(nights!==1?"s":"");
   }
@@ -344,14 +345,21 @@ function setLang(l){
         (function(dt){
           var de=document.createElement("div");de.className="cal-day";de.textContent=dt.getUTCDate();
           var date=iso(dt);
-          if(date<today){de.classList.add("cal-past");de.setAttribute("aria-disabled","true");dg.appendChild(de);return;}
+          var selectingEnd=sd&&!ed&&dt>sd&&iso(sd)>=today;
+          if(date<today||(selectingEnd ? dt-sd<MIN_NIGHTS*DAY_MS : date>lastArrival)){de.classList.add("cal-past");de.setAttribute("aria-disabled","true");dg.appendChild(de);return;}
           if(sd&&dt.getTime()===sd.getTime())de.classList.add("cal-start");
           if(ed&&dt.getTime()===ed.getTime())de.classList.add("cal-end");
           if(sd&&ed&&dt>sd&&dt<ed)de.classList.add("cal-in-range");
           de.onclick=function(){
-            if(date<todayMtl())return;
-            if(date===lastDay&&(!sd||ed||dt<=sd||iso(sd)<todayMtl()))return;
-            if(!sd||ed||dt<=sd||iso(sd)<todayMtl()){sd=dt;ed=null;}else{ed=dt;}
+            var currentDay=todayMtl();
+            if(date<currentDay)return;
+            if(sd&&!ed&&dt>sd&&iso(sd)>=currentDay){
+              if(!window.__mtlValidDates(iso(sd),date))return;
+              ed=dt;
+            }else{
+              if(date>lastArrival)return;
+              sd=dt;ed=null;
+            }
             upd();render();
           };
           dg.appendChild(de);
